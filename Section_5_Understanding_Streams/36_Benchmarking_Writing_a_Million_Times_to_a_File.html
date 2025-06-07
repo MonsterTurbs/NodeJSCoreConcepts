@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Beginner-Friendly Study Notes – Writing Large Files & Intro to Streams</title>
+  <style>
+    /* Base styles */
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+
+    /* Container for cards */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr; /* One card per row */
+      gap: 20px;
+    }
+
+    /* Individual card styles */
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+
+    /* Print-friendly adjustments */
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Beginner-Friendly Study Notes: Writing Large Files & Intro to Streams</h1>
+
+  <div class="container">
+
+    <!-- Card 1: Writing to a File Many Times -->
+    <div class="card">
+      <h2>🖊️ Challenge: Write a Million Lines</h2>
+      <ul>
+        <li><span class="emoji">🎯</span>Create a file (e.g., <code>test.txt</code>) and write something to it one million times.</li>
+        <li><span class="emoji">🔧</span>Use <code>fs.promises</code> to open the file in write mode:<br>
+          <pre><code>const fs = require('fs/promises');
+(async () => {
+  console.time('writeMany');
+  const fileHandle = await fs.open('test.txt', 'w');
+  for (let i = 0; i < 1_000_000; i++) {
+    await fileHandle.write(`${i}\n`);
+  }
+  await fileHandle.close();
+  console.timeEnd('writeMany');
+})();</code></pre>
+        </li>
+        <li><span class="emoji">⏱️</span>This uses <code>console.time</code> / <code>console.timeEnd</code> to measure how many seconds it takes.</li>
+        <li><span class="emoji">📊</span>On a modern laptop, this often takes around 8 seconds, but results vary by CPU speed, disk, and background processes.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Measuring CPU & Memory -->
+    <div class="card">
+      <h2>📈 Observing Resource Usage</h2>
+      <ul>
+        <li><span class="emoji">💻</span>Open your system monitor (Activity Monitor on macOS, Task Manager on Windows, or <code>top</code> on Linux) while running the script.</li>
+        <li><span class="emoji">⚡</span>During execution, CPU usage hits ~100% on one core (Node.js is single-threaded). If you see “100%,” it means one core at full load on an 8-core machine.</li>
+        <li><span class="emoji">💾</span>Memory hovers around 50 MB—mostly the overhead of Node.js plus buffers as you write. Keep an eye on “Memory” in Activity Monitor (or “RES” column in <code>top</code>).</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Callback vs. Promise vs. Sync Versions -->
+    <div class="card">
+      <h2>⚙️ Callback & Sync Variations</h2>
+      <ul>
+        <li><span class="emoji">🅿️</span><strong>Promise version</strong> (as shown above) is easy to read but can be slower because each <code>await</code> waits for disk I/O before continuing.</li>
+        <li><span class="emoji">🔄</span><strong>Synchronous version</strong> (<code>fs.writeSync</code>) runs in ~1.6 s because it blocks the event loop until each write finishes, avoiding callbacks/promises overhead:</li>
+          <pre><code>const fs = require('fs');
+console.time('writeManySync');
+const fd = fs.openSync('test.txt', 'w');
+for (let i = 0; i < 1_000_000; i++) {
+  fs.writeSync(fd, Buffer.from(`${i}\n`));
+}
+fs.closeSync(fd);
+console.timeEnd('writeManySync');</code></pre>
+        <li><span class="emoji">⚠️</span>While faster, sync I/O blocks the entire Node process—no other code runs simultaneously.</li>
+        <li><span class="emoji">🎯</span><strong>Callback version</strong> with <code>fs.open</code> and <code>fs.write</code> can interleave many pending writes. It may finish quickly but can reorder lines and use hundreds of megabytes of memory, risking crashes if you queue too many callbacks.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Importance of Buffers -->
+    <div class="card">
+      <h2>🔢 Buffers: Core of File I/O & Streams</h2>
+      <ul>
+        <li><span class="emoji">📦</span>Buffers store raw bytes in memory. Every time you call <code>writeSync(fd, Buffer.from(...))</code>, you create a buffer representing that string as bytes (UTF-8 by default).</li>
+        <li><span class="emoji">🧠</span>Understanding buffers is crucial for streams—streams read or write data in buffer chunks rather than loading entire files at once.</li>
+        <li><span class="emoji">🔍</span>If you don’t know buffers yet, pause here and learn about them before moving on to streams.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Transition to Streams -->
+    <div class="card">
+      <h2>🔄 Why Move to Streams?</h2>
+      <ul>
+        <li><span class="emoji">🚀</span>Writing 1 million lines with sync I/O blocked Node for ~1.6 s. For larger files (or continuous data), blocking would freeze your app.</li>
+        <li><span class="emoji">🌡️</span>Callback version risked high memory (≥ 700 MB) and out‐of‐memory errors when queuing too many writes.</li>
+        <li><span class="emoji">⚡</span>Streams let you process data in manageable chunks, controlling backpressure so memory stays low and Node remains responsive.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Next Steps with Streams -->
+    <div class="card">
+      <h2>➡️ Next Up: Using Streams for File I/O</h2>
+      <ul>
+        <li><span class="emoji">📖</span>In the next lesson, we’ll use <code>fs.createReadStream</code> and <code>fs.createWriteStream</code> to read/write files in chunks.</li>
+        <li><span class="emoji">🔍</span>We’ll compare performance: handling data chunk-by-chunk vs. blocking or queuing millions of writes.</li>
+        <li><span class="emoji">🎉</span>By the end, you’ll see why streams are the preferred way to handle large or continuous data in Node.js.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

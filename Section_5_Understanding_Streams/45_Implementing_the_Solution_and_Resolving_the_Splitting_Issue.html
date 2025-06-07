@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Study Notes – Fixing Partial Numbers & Even Filter</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr; /* one card per row */
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    pre {
+      background-color: #eef2f7;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Handling Partial Numbers & Even Filter</h1>
+  <div class="container">
+
+    <!-- Card 1: Quick Recap of Problem & Goal -->
+    <div class="card">
+      <h2>📋 Problem Recap & Goal</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>We read a large file of consecutive numbers (e.g., “0  1  2  …  999999”) using a Readable Stream.</li>
+        <li><span class="emoji">✂️</span>Numbers arrive in fixed‐size chunks (buffers). A multi‐digit number may be split across two chunks, leaving incomplete fragments.</li>
+        <li><span class="emoji">🎯</span>Objective: Extract only even numbers (or numbers divisible by 10, etc.) into a new file, handling any partial splits correctly and avoiding memory overuse.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Checking for Split Numbers -->
+    <div class="card">
+      <h2>🔍 Detecting Split Numbers</h2>
+      <ul>
+        <li><span class="emoji">❗</span>After splitting a chunk’s text on two spaces, the first and last array elements may be partial numbers.</li>
+        <li><span class="emoji">🔢</span>To detect a split at the end of <code>numbers</code> array:
+          <pre><code>let lastStr = numbers[numbers.length - 1];
+let prevStr = numbers[numbers.length - 2];
+if (Number(lastStr) !== Number(prevStr) + 1) {
+  // this means the last element is incomplete (split)</code></pre>
+        </li>
+        <li><span class="emoji">🔪</span>Use <code>pop()</code> to remove that incomplete tail and store it in <code>split</code> for the next chunk:
+          <pre><code>split = numbers.pop();</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Stitching First Element with Previous Split -->
+    <div class="card">
+      <h2>🔗 Stitching First Element</h2>
+      <ul>
+        <li><span class="emoji">🧵</span>On the next chunk, prepend <code>split</code> from previous chunk to its first element:
+          <pre><code>let firstStr = numbers[0];
+if (split) {
+  numbers[0] = (split + firstStr).trim();
+}</code></pre>
+        </li>
+        <li><span class="emoji">🛠️</span>Trimming extra spaces helps avoid any leading/trailing whitespace issues:
+          <pre><code>numbers[0] = (split + firstStr).trim();</code></pre>
+        </li>
+        <li><span class="emoji">✔️</span>Now that stitched string is a full number again, ready for numeric checks.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Looping Over Numbers & Filtering Even -->
+    <div class="card">
+      <h2>🔢 Filtering Even Numbers</h2>
+      <ul>
+        <li><span class="emoji">1️⃣</span>Convert each string in <code>numbers</code> to a Number:
+          <pre><code>let n = Number(str);</code></pre>
+        </li>
+        <li><span class="emoji">2️⃣</span>Check evenness (<code>n % 2 === 0</code>). If true, write it out:
+          <pre><code>if (n % 2 === 0) {
+  if (!writeStream.write(str + '  ')) {
+    readStream.pause(); // handle backpressure
+  }
+}</code></pre>
+        </li>
+        <li><span class="emoji">3️⃣</span>If <code>write()</code> returns <code>false</code>, pause the read stream and wait for <code>'drain'</code> before resuming:
+          <pre><code>writeStream.on('drain', () => {
+  readStream.resume();
+});</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Handling Leftover at End of File -->
+    <div class="card">
+      <h2>📦 Final Leftover & Stream End</h2>
+      <ul>
+        <li><span class="emoji">🔚</span>On <code>'end'</code> of <code>readStream</code>, handle any remaining <code>split</code> (last fragment):
+          <pre><code>readStream.on('end', () => {
+  if (split) {
+    let lastNum = Number(split);
+    if (!isNaN(lastNum) && lastNum % 2 === 0) {
+      writeStream.write(split);
+    }
+  }
+  writeStream.end();
+});</code></pre>
+        </li>
+        <li><span class="emoji">✅</span>Once <code>writeStream.end()</code> is called, the <code>'finish'</code> event indicates completion and you can time/close the handle.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Full Example Code -->
+    <div class="card">
+      <h2>💻 Full Code Example</h2>
+      <pre><code>const fs = require('fs/promises');
+
+(async () => {
+  // Open files and create streams
+  const readHandle = await fs.open('textSmall.txt', 'r');
+  const readStream = readHandle.createReadStream();
+  const writeHandle = await fs.open('dest.txt', 'w');
+  const writeStream = writeHandle.createWriteStream();
+
+  let split = ''; // leftover from previous chunk
+
+  console.time('readFilter');
+  readStream.on('data', (chunk) => {
+    // 1. Prepend leftover, convert to string
+    let text = split + chunk.toString('utf8');
+    // 2. Split by two spaces
+    let numbers = text.split('  ');
+    // 3. Detect and remove incomplete tail
+    let lastStr = numbers[numbers.length - 1];
+    let prevStr = numbers[numbers.length - 2];
+    if (Number(lastStr) !== Number(prevStr) + 1) {
+      split = numbers.pop();
+    } else {
+      split = '';
+    }
+    // 4. Stitch first element if leftover exists
+    if (split && numbers.length > 0) {
+      numbers[0] = (split + numbers[0]).trim();
+      split = '';
+    }
+    // 5. Loop over complete numbers, write even ones
+    for (let str of numbers) {
+      let n = Number(str);
+      if (!isNaN(n) && n % 2 === 0) {
+        if (!writeStream.write(str + '  ')) {
+          readStream.pause();
+        }
+      }
+    }
+  });
+
+  // 6. Resume on drain
+  writeStream.on('drain', () => {
+    readStream.resume();
+  });
+
+  // 7. Handle end of read stream
+  readStream.on('end', () => {
+    if (split) {
+      let lastNum = Number(split);
+      if (!isNaN(lastNum) && lastNum % 2 === 0) {
+        writeStream.write(split);
+      }
+    }
+    writeStream.end();
+  });
+
+  // 8. On finish, stop timer and close handles
+  writeStream.on('finish', async () => {
+    console.timeEnd('readFilter');
+    await readHandle.close();
+    await writeHandle.close();
+  });
+})();</code></pre>
+    </div>
+
+    <!-- Card 7: Summary of Key Steps -->
+    <div class="card">
+      <h2>🔑 Key Steps & Tips</h2>
+      <ul>
+        <li><span class="emoji">🧩</span>Always carry the last fragment (<code>split</code>) between chunks.</li>
+        <li><span class="emoji">✂️</span>Use <code>pop()</code> to remove incomplete tail when split occurs.</li>
+        <li><span class="emoji">🔗</span>Stitch <code>split</code> + <code>numbers[0]</code> before converting to Number.</li>
+        <li><span class="emoji">⚖️</span>Convert each string to <code>Number(str)</code> before checking evenness (<code>n % 2 === 0</code>).</li>
+        <li><span class="emoji">⚠️</span>On <code>write()</code> returning <code>false</code>, call <code>readStream.pause()</code> and wait for <code>'drain'</code> before <code>resume()</code>.</li>
+        <li><span class="emoji">✅</span>Handle final leftover in <code>'end'</code> event, then call <code>writeStream.end()</code> to emit <code>'finish'</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Testing & Verification -->
+    <div class="card">
+      <h2>🧪 Testing & Verification</h2>
+      <ul>
+        <li><span class="emoji">🔢</span>Verify output by sampling: e.g., check that each even number +2 equals next written value.</li>
+        <li><span class="emoji">📝</span>Compare source file size vs. destination file size (dest should be ~half when filtering evens).</li>
+        <li><span class="emoji">🚀</span>Time code with <code>console.time()</code> / <code>console.timeEnd()</code> to measure performance.</li>
+        <li><span class="emoji">💡</span>Try filtering by multiples of 10 ( <code>n % 10 === 0</code> ) to confirm logic.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Next Steps -->
+    <div class="card">
+      <h2>➡️ Next Steps</h2>
+      <ul>
+        <li><span class="emoji">🔧</span>Optimize string-to-number conversion if performance is critical (e.g., avoid repeated <code>Number()</code> calls).</li>
+        <li><span class="emoji">📈</span>Experiment with larger <code>highWaterMark</code> values to see tradeoffs in speed vs. memory.</li>
+        <li><span class="emoji">📂</span>Extend to other filters (e.g., primes, multiples of 5). Implement a generic “processNumber(n)” callback.</li>
+        <li><span class="emoji">🚀</span>Learn about <code>stream.pipeline()</code> to simplify error handling and chaining streams.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Beginner-Friendly Study Notes – Readable Streams in Node.js</title>
+  <style>
+    /* Base styles */
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr; /* One card per row */
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Readable Streams in Node.js</h1>
+
+  <div class="container">
+
+    <!-- Card 1: What Is a Readable Stream? -->
+    <div class="card">
+      <h2>📖 What Is a Readable Stream?</h2>
+      <ul>
+        <li><span class="emoji">🌊</span>A Readable Stream lets you <strong>pull data</strong> from a source in chunks (small pieces) rather than loading everything into memory at once.</li>
+        <li><span class="emoji">📂</span>Common use: reading very large files (e.g., gigabytes) piece by piece to avoid memory overload.</li>
+        <li><span class="emoji">📚</span>In Node.js, you often get a Readable Stream from <code>fs.createReadStream(path)</code> or from sources like HTTP requests, sockets, or other modules.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Creating a Readable Stream -->
+    <div class="card">
+      <h2>🛠️ Creating a Readable Stream</h2>
+      <ul>
+        <li><span class="emoji">📂</span>Import the filesystem module:
+          <pre><code>const fs = require('fs/promises');</code></pre>
+        </li>
+        <li><span class="emoji">🔄</span>Open a file handle for reading:
+          <pre><code>const fileHandle = await fs.open('source.txt', 'r');</code></pre>
+        </li>
+        <li><span class="emoji">📥</span>Create the Readable Stream from that handle:
+          <pre><code>const readStream = fileHandle.createReadStream();</code></pre>
+        </li>
+        <li><span class="emoji">⚠️</span>Flag <code>'r'</code> means “read only.” Always close the handle after use:</li>
+          <pre><code>await fileHandle.close();</code></pre>
+      </ul>
+    </div>
+
+    <!-- Card 3: Consuming Data via 'data' Event -->
+    <div class="card">
+      <h2>🔊 Listening for ‘data’ Events</h2>
+      <ul>
+        <li><span class="emoji">🎧</span>Attach a listener to receive each chunk:
+          <pre><code>readStream.on('data', (chunk) => {
+  console.log('Received chunk:', chunk);
+});</code></pre>
+        </li>
+        <li><span class="emoji">🔢</span>By default, each <code>chunk</code> is a <code>Buffer</code> (raw bytes). You can inspect <code>chunk.length</code> to see its size.</li>
+        <li><span class="emoji">✔️</span>When no more data remains, the stream emits <code>'end'</code>:</li>
+          <pre><code>readStream.on('end', () => {
+  console.log('Finished reading all data');
+});</code></pre>
+      </ul>
+    </div>
+
+    <!-- Card 4: Default Chunk Size (highWaterMark) -->
+    <div class="card">
+      <h2>📏 HighWaterMark & Chunk Size</h2>
+      <ul>
+        <li><span class="emoji">🔢</span>By default, <code>fs.createReadStream</code> uses a <strong>highWaterMark</strong> of <code>64 * 1024</code> bytes (64 KB). That means each <code>chunk</code> will be ~64 KB.</li>
+        <li><span class="emoji">⚙️</span>You can override this by passing an options object:
+          <pre><code>const readStream = fileHandle.createReadStream({ highWaterMark: 400 });</code></pre>
+        </li>
+        <li><span class="emoji">📊</span>If <code>highWaterMark</code> is set to <code>400</code>, each chunk will be ~400 bytes instead of 64 KB.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Basic Copy Example (Readable → Writable) -->
+    <div class="card">
+      <h2>📂 Simple File Copy: Read & Write</h2>
+      <ul>
+        <li><span class="emoji">🔄</span>Goal: Read from <code>source.txt</code> in chunks and write each chunk to <code>dest.txt</code>.</li>
+        <li><span class="emoji">🖨️</span>Open read handle and write handle:
+          <pre><code>const srcHandle  = await fs.open('source.txt', 'r');
+const destHandle = await fs.open('dest.txt',   'w');</code></pre>
+        </li>
+        <li><span class="emoji">🔄</span>Create streams:
+          <pre><code>const readStream  = srcHandle.createReadStream();
+const writeStream = destHandle.createWriteStream();</code></pre>
+        </li>
+        <li><span class="emoji">➡️</span>Pipe chunks manually:
+          <pre><code>readStream.on('data', (chunk) => {
+  writeStream.write(chunk);
+});
+readStream.on('end', () => {
+  writeStream.end();
+});</code></pre>
+        </li>
+        <li><span class="emoji">✅</span>After running, <code>dest.txt</code> matches <code>source.txt</code> exactly (size & bytes).</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Backpressure – Why It Matters -->
+    <div class="card">
+      <h2>⚖️ Backpressure in Readable Streams</h2>
+      <ul>
+        <li><span class="emoji">🐏</span>If you read faster than you write, data piles up in memory (internal buffer). That causes high memory usage or crashes.</li>
+        <li><span class="emoji">📉</span>To prevent this, pause the read stream when the write stream’s buffer is full, and resume once it drains.</li>
+        <li><span class="emoji">⚠️</span>Without pause/resume, copying a huge file (e.g., 90 MB or 10 GB) can spike memory usage to gigabytes.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Handling Backpressure – pause() & resume() -->
+    <div class="card">
+      <h2>⏸️ Handling Backpressure: pause() & resume()</h2>
+      <ul>
+        <li><span class="emoji">⏸️</span>When <code>writeStream.write(chunk)</code> returns <code>false</code>, the write buffer is full. Immediately pause the read stream:</li>
+          <pre><code>if (!writeStream.write(chunk)) {
+  readStream.pause();
+}</code></pre>
+        </li>
+        <li><span class="emoji">🔔</span>Listen for the write stream’s <code>'drain'</code> event, then resume reading:</li>
+          <pre><code>writeStream.on('drain', () => {
+  readStream.resume();
+});</code></pre>
+        </li>
+        <li><span class="emoji">📊</span>This keeps memory usage low, even when copying very large files in real time.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Large File Copy Example -->
+    <div class="card">
+      <h2>🚀 Copying a Huge File Efficiently</h2>
+      <ul>
+        <li><span class="emoji">📂</span>First, generate a large file (e.g., 10 GB) using a writeMany script.</li>
+        <li><span class="emoji">🔎</span>Then, in <code>readBack.js</code>, copy it using backpressure logic:</li>
+          <pre><code>const { open } = require('fs/promises');
+(async () => {
+  const srcHandle  = await open('huge.txt', 'r');
+  const dstHandle  = await open('copy.txt','w');
+  const readStream  = srcHandle.createReadStream();
+  const writeStream = dstHandle.createWriteStream();
+
+  readStream.on('data', (chunk) => {
+    if (!writeStream.write(chunk)) {
+      readStream.pause();
+    }
+  });
+  writeStream.on('drain', () => {
+    readStream.resume();
+  });
+  readStream.on('end', () => {
+    writeStream.end();
+  });
+})();</code></pre>
+        </li>
+        <li><span class="emoji">📈</span>Result: Memory stays low (~30–50 MB) even copying a 10 GB file in seconds. Without backpressure, memory would spike to gigabytes and crash.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Monitoring & Benchmarking -->
+    <div class="card">
+      <h2>📊 Monitoring & Benchmarking</h2>
+      <ul>
+        <li><span class="emoji">⏱️</span>Use <code>console.time()</code> / <code>console.timeEnd()</code> around the copy logic to measure duration:</li>
+          <pre><code>console.time('copyTime');
+// run copy code…
+console.timeEnd('copyTime');</code></pre>
+        </li>
+        <li><span class="emoji">🔍</span>Watch system resources (Activity Monitor on macOS, Task Manager on Windows, top/htop on Linux) to see CPU & memory:</li>
+          <ul>
+            <li>CPU often sits at 100% on one core (Node is single-threaded).</li>
+            <li>Memory stays stable if backpressure is handled correctly.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">💡</span>Copying a 90 MB file took <strong>seconds</strong> with backpressure, vs. crashes when not handling it.</li>
+      </ul>
+    </div>
+
+    <!-- Card 10: Next Steps: Filtering Data -->
+    <div class="card">
+      <h2>🔍 Next Steps: Filtering Chunks</h2>
+      <ul>
+        <li><span class="emoji">🔢</span>Instead of writing every chunk directly, you can process it (e.g., extract only even numbers or prime numbers) before writing.</li>
+        <li><span class="emoji">✨</span>In the next video, we’ll learn how to:
+          <ul>
+            <li>Parse each chunk’s content (e.g., split text lines into numbers).</li>
+            <li>Conditionally write only matching values to the output file.</li>
+            <li>Still respect backpressure by pausing/resuming as needed.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🚀</span>Mastering this will let you build powerful, memory-efficient Node.js pipelines that filter or transform streaming data on the fly.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

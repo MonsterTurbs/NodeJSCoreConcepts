@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🧵 Study Notes: Spawning Threads in Node.js</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f5f7fa; color:#333; }
+    h1 { text-align:center; color:#2c5282; margin-bottom:1em; }
+    .container { display:flex; flex-direction:column; gap:16px; max-width:800px; margin:auto; }
+    .card {
+      background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      padding:20px;
+    }
+    .card h2 { margin-top:0; color:#3182ce; }
+    ul { padding-left:1.2em; margin:0; }
+    li { margin-bottom:0.6em; }
+    code { background:#e2e8f0; padding:2px 4px; border-radius:4px; font-family:monospace; }
+    @media print { .card { box-shadow:none; } }
+  </style>
+</head>
+<body>
+  <h1>🧵 Spawning Threads in Node.js</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ Import &amp; Worker Constructor</h2>
+      <ul>
+        <li>Use the built-in module: <code>const { Worker } = require('worker_threads');</code> 🛠️</li>
+        <li>Create a thread by pointing at a JS file: <code>new Worker('./calc.js');</code></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ Isolation of Variables</h2>
+      <ul>
+        <li>Each thread has its own copy of globals. <br>
+          ```js
+          // app.js (main thread)
+          const a = 400;
+          new Worker('./calc.js');  // calc.js: const a = 1000;
+          console.log(a);           // prints 400, not affected by calc.js
+          ```</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ Delayed Thread Creation</h2>
+      <ul>
+        <li>You can spawn threads later using timers:
+          <pre><code>setTimeout(() =&gt; {
+  new Worker('./calc.js');
+}, 5000);</code></pre>
+        </li>
+        <li>Keep thread alive with an empty event loop:
+          <code>setInterval(() =&gt; {}, 1000);</code></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ process.exit &amp; Console I/O</h2>
+      <ul>
+        <li><code>process.exit()</code> in a worker only terminates that thread, not the whole app.</li>
+        <li>Worker logs go via main thread’s stdio—if main blocks, logs wait until it’s free.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ Spawning Many Threads</h2>
+      <ul>
+        <li>Threads are lighter than processes but still cost memory &amp; time. 🚀</li>
+        <li>Example: spawn 4 threads in a loop:
+          <pre><code>for(let i=0; i&lt;4; i++){
+  new Worker('./calc.js');
+}
+// main CPU shows ~400% on a 4-core machine
+</code></pre>
+        </li>
+        <li>Avoid spawning one thread per request—use pools instead.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Offloading Blocking Code</h2>
+      <ul>
+        <li><strong>Bad:</strong> Blocking main thread:
+          <pre><code>while(true){}
+setTimeout(() =&gt; fs.writeFileSync('out.txt','hi'), 3000);
+// never runs until loop ends!</code></pre>
+        </li>
+        <li><strong>Good:</strong> Do it in a worker:
+          <pre><code>// in worker.js
+setTimeout(() =&gt; {
+  require('fs').writeFileSync('out.txt','hi');
+}, 3000);
+</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Key Takeaways</h2>
+      <ul>
+        <li>⚙️ Spawn threads via <code>new Worker(file)</code>.</li>
+        <li>🛡️ Threads are isolated—no shared globals unless you set up messaging or shared memory later.</li>
+        <li>💡 Use workers for heavy or blocking tasks, keep main thread responsive.</li>
+        <li>📊 Monitor CPU &amp; memory—too many threads can exhaust resources.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

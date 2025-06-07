@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🎨 Lossy Compression – Study Notes</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f9fafb; color:#333; }
+    h1 { text-align:center; margin-bottom:1em; }
+    .container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      max-width:700px;
+      margin:auto;
+    }
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      padding:20px;
+    }
+    .card h2 { margin-top:0; color:#047857; }
+    ul { padding-left:1.2em; }
+    code { background:#eef; padding:2px 4px; border-radius:4px; }
+    @media print {
+      body { background:#fff; }
+      .card { box-shadow:none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 Lossy Compression</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>❓ What Is Lossy Compression?</h2>
+      <ul>
+        <li>We <strong>lose some data</strong> (quality) to shrink file size.</li>
+        <li>Ideal for multimedia (<em>images, audio, video</em>), <strong>not</strong> for text/UTF-8.</li>
+        <li>Once done, <strong>you cannot restore</strong> the exact original.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📂 Common Lossy Formats</h2>
+      <ul>
+        <li><strong>Images:</strong> JPEG (removes colors/details humans don’t notice)</li>
+        <li><strong>Audio:</strong> MP3, AAC (drops inaudible frequencies)</li>
+        <li><strong>Video:</strong> H.264 (saves key frames + references motion)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>💡 Why It Works</h2>
+      <ul>
+        <li>Humans can’t perceive all details—drop “unimportant” bits.</li>
+        <li>Images: merge similar pixels → big size drop (50 MB → ~800 KB!)</li>
+        <li>Audio: collapse frequencies outside hearing range.</li>
+        <li>Video: store full frames + only changes between frames.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🚫 Don’t Re-Compress Lossy Files</h2>
+      <ul>
+        <li>Re-zipping/jpeg-compressing an already lossy file gives <strong>no gain</strong>.</li>
+        <li>May even grow size—wasteful compute for no benefit.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔧 How to Apply</h2>
+      <ul>
+        <li>Usually a one-time step <em>before</em> serving files.</li>
+        <li>Tools: <code>ffmpeg</code>, ImageMagick, online converters, or “Save As → JPEG” in editors.</li>
+        <li>Pick quality/bitrate slider to balance size vs. look/sound.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

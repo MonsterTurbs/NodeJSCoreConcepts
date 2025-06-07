@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🐾 Beginner Notes: Unix Paths &amp; CWD</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f7fafc;
+      color: #2d3748;
+      margin: 0; padding: 24px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+    }
+    .container {
+      max-width: 720px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #3182ce;
+    }
+    .emoji { margin-right: 6px; }
+    pre {
+      background: #edf2f7;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code {
+      background: #e2e8f0;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🗺️ Unix Paths &amp; Current Directory</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2><span class="emoji">🌳</span>Filesystem Tree</h2>
+      <p>
+        • Everything lives under the <code>/</code> (root) folder.<br/>
+        • Subfolders and files form a tree: <code>/home/user/docs/file.txt</code><br/>
+        • <code>ls /</code> shows top-level folders like <code>bin</code>, <code>etc</code>, <code>home</code>.
+      </p>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2><span class="emoji">🚪</span>Slash “/” = Separator &amp; Root</h2>
+      <ul>
+        <li><strong>Separator:</strong> Use <code>/</code> between folders: <code>foo/bar/baz</code></li>
+        <li><strong>Root path:</strong> Leading <code>/</code> means start from the top: <code>/usr/bin</code></li>
+      </ul>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2><span class="emoji">📍</span>Dot &amp; Dot-Dot</h2>
+      <ul>
+        <li><code>.</code> = current directory</li>
+        <li><code>..</code> = parent directory</li>
+        <li>Example: <code>cd ../sibling-folder</code> moves up, then into <code>sibling-folder</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2><span class="emoji">🛣️</span>Absolute vs. Relative Paths</h2>
+      <ul>
+        <li><strong>Absolute:</strong> Always starts with <code>/</code>. E.g. <code>/home/user/file.txt</code>.</li>
+        <li><strong>Relative:</strong> Depends on where you are. E.g. <code>./file.txt</code> or <code>subdir/file.txt</code>.</li>
+        <li>Absolute works anywhere; relative only works if you’re in the right folder.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2><span class="emoji">🔎</span>Current Working Directory</h2>
+      <p>
+        • Your “current folder” where commands run.<br/>
+        • Get it in shell: <code>pwd</code><br/>
+        • In Node.js: <code>console.log(process.cwd())</code><br/>
+        • Child processes inherit parent’s cwd by default.
+      </p>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2><span class="emoji">💻</span>Why FS &amp; Require Differ</h2>
+      <p>
+        • <code>require('./file.js')</code> resolves relative to the file’s own folder.<br/>
+        • <code>fs.readFileSync('./text.txt')</code> resolves relative to <strong>cwd</strong>!<br/>
+        • Mistake: If you run <code>node path/folder/app.js</code> from project root, FS looks for <code>./text.txt</code> in root, not in <code>path/folder</code>.
+      </p>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card">
+      <h2><span class="emoji">🛠️</span>Fix with __dirname &amp; path.join</h2>
+      <pre><code>const path = require('path');
+const fs   = require('fs');
+
+// __dirname is the folder where this file lives
+const txtPath = path.join(__dirname, 'text.txt');
+const contents = fs.readFileSync(txtPath, 'utf8');
+console.log(contents);
+</code></pre>
+      <p>This builds an <strong>absolute</strong> path, so it works from anywhere.</p>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="card">
+      <h2><span class="emoji">🚀</span>Key Takeaways</h2>
+      <ul>
+        <li>Understand <code>/</code>, <code>.</code>, <code>..</code>, absolute vs relative.</li>
+        <li>Current working directory (<code>pwd</code> / <code>process.cwd()</code>) affects FS calls.</li>
+        <li>Use <code>__dirname</code> + <code>path.join</code> for file-relative operations in Node.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

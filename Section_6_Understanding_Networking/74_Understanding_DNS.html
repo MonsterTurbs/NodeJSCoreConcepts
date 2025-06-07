@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DNS – Beginner-Friendly Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.5;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.3em;
+    }
+    .emoji {
+      font-size: 1.2em;
+      margin-right: 6px;
+    }
+    code {
+      background: #f4f4f4;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">🔍</span>What is DNS?</h2>
+    <p>DNS (Domain Name System) is like the Internet’s phone book. It converts easy-to-remember domain names (e.g. <code>google.com</code>) into IP addresses (e.g. <code>142.250.64.110</code>) so your browser can connect to the right server.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📡</span>How DNS Lookup Works</h2>
+    <ol>
+      <li>Your browser asks your configured DNS server “What’s the IP for <code>example.com</code>?”</li>
+      <li>DNS server checks its table and replies with the IP address.</li>
+      <li>Your computer then connects to that IP to load the website.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">⚙️</span>Your Local Hosts File</h2>
+    <p>You can override DNS on your own machine by editing <code>/etc/hosts</code> (Mac/Linux) or <code>C:\Windows\System32\drivers\etc\hosts</code> (Windows). Example entry:</p>
+    <pre><code>127.0.0.1   mysite.local</code></pre>
+    <p>This makes <code>mysite.local</code> point to your own computer.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">💻</span>Node.js DNS Lookup Example</h2>
+    <pre><code>import { promises as dns } from 'dns';
+
+(async () => {
+  const { address } = await dns.lookup('google.com');
+  console.log('Google IP →', address);
+})();</code></pre>
+    <p>Save as <code>simple-dns.js</code> and run <code>node simple-dns.js</code>.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔧</span>Building Your Own DNS</h2>
+    <p>You can write a custom DNS server in Node.js using the <code>net</code> (TCP) or <code>dgram</code> (UDP) modules. It listens on port <code>53</code>, parses queries, and returns IP records from your own table.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🚨</span>DNS Security Warning</h2>
+    <ul>
+      <li><strong>Rogue DNS:</strong> Malware or attackers can hijack your DNS settings to redirect you to fake sites.</li>
+      <li><strong>Be cautious:</strong> Always use trusted DNS servers (ISP, Google DNS 8.8.8.8, Cloudflare 1.1.1.1).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🌍</span>Why Use Domain Names?</h2>
+    <ul>
+      <li>Friendly and memorable compared to numeric IPs.</li>
+      <li>Enables load balancing: one domain → many IPs behind the scenes.</li>
+      <li>Easy to reassign: changing a site’s IP only requires DNS update, not reissuing URLs.</li>
+    </ul>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 How Node.js Works with Files – Study Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 How Node.js Works with Files – Study Notes</h1>
+  <div class="container">
+
+    <!-- Card 1: Layers from Hardware to Node.js -->
+    <div class="card">
+      <h2>🔍 Layers: Hardware → OS → Node.js</h2>
+      <ul>
+        <li><span class="emoji">💻</span>Your computer has <strong>hardware</strong> (hard drive, CPU, memory).</li>
+        <li><span class="emoji">⚙️</span>On top of hardware, you run an <strong>operating system</strong> (Windows, macOS, Linux).</li>
+        <li><span class="emoji">📦</span>When you start a Node.js app, it creates a new <strong>process</strong> managed by the OS.</li>
+        <li><span class="emoji">🔗</span>Node.js can’t talk directly to the hard drive—it asks the OS to do file tasks for it.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: What Happens When You Open a File -->
+    <div class="card">
+      <h2>📂 Opening a File via System Calls</h2>
+      <ul>
+        <li><span class="emoji">🚪</span>You ask Node.js to “open” a file by calling a JavaScript function (e.g., <code>fs.open()</code>).</li>
+        <li><span class="emoji">📞</span>Under the hood, Node.js (using Libuv) makes a <strong>system call</strong> to the OS (like <code>open()</code>).</li>
+        <li><span class="emoji">🗂️</span>The OS goes to the hard drive, finds the file bits (zeros and ones), and returns the data to Node.js.</li>
+        <li><span class="emoji">👍</span>Now Node.js has the file data, and you can read, write, or modify it in your code.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Other Common System Calls -->
+    <div class="card">
+      <h2>🔄 Common File System Calls</h2>
+      <ul>
+        <li><span class="emoji">✍️</span><strong>open</strong> – Ask the OS to open a file so you can read or write. 📖</li>
+        <li><span class="emoji">💾</span><strong>write</strong> – Tell the OS to write new data (zeros and ones) into a file. 📝</li>
+        <li><span class="emoji">✏️</span><strong>rename</strong> – Ask the OS to change a file’s name or move it. 🔀</li>
+        <li><span class="emoji">❌</span><strong>unlink</strong> – Ask the OS to delete a file from the hard drive. 🗑️</li>
+        <li><span class="emoji">📊</span>You don’t need to memorize all names—just know Node.js uses system calls via Libuv to handle files.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: The Role of Libuv -->
+    <div class="card">
+      <h2>🔧 Libuv: Node.js’s Bridge to the OS</h2>
+      <ul>
+        <li><span class="emoji">🌉</span><strong>Libuv</strong> is a C library that helps Node.js talk to the operating system.</li>
+        <li><span class="emoji">📞</span>When you call a file function in JS (e.g., <code>fs.readFile()</code>), Libuv makes the system call for you.</li>
+        <li><span class="emoji">🧵</span>Libuv also manages a <strong>thread pool</strong> to run blocking tasks (like heavy file reads) without freezing Node.js’s main thread.</li>
+        <li><span class="emoji">⚠️</span>You’ll learn more about the thread pool later—just remember Libuv handles file operations behind the scenes.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: How System Calls Flow -->
+    <div class="card">
+      <h2>🔄 System Call Flow Example</h2>
+      <ul>
+        <li><span class="emoji">1️⃣</span>You run a Node.js command, like <code>fs.readFileSync('example.txt')</code>. 📖</li>
+        <li><span class="emoji">2️⃣</span>Node.js (via Libuv) makes the <code>open()</code> system call to the OS. 📞</li>
+        <li><span class="emoji">3️⃣</span>The OS locates <code>example.txt</code> on the hard drive and returns its bits. 💽</li>
+        <li><span class="emoji">4️⃣</span>Node.js gets the bits, then you can <strong>read</strong> or <strong>modify</strong> them in JavaScript. ✏️</li>
+        <li><span class="emoji">5️⃣</span>If you write a new file, Node.js calls <code>write()</code>, and the OS saves the bits back onto the drive. 💾</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Why It Matters for Beginners -->
+    <div class="card">
+      <h2>💡 Why Learn This?</h2>
+      <ul>
+        <li><span class="emoji">🛠️</span>Knowing how Node.js talks to the OS helps you debug file-related issues (like “file not found”). 🐞</li>
+        <li><span class="emoji">🔀</span>You’ll understand why some file operations are “blocking” (making your app wait) and how to avoid that. ⏳</li>
+        <li><span class="emoji">🚀</span>As you build real apps, you’ll read configs, save uploads, and log info—this flow is what makes those tasks possible. 📈</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Next Steps -->
+    <div class="card">
+      <h2>➡️ Next Steps</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>In the next video, we’ll write code to <strong>read</strong> and <strong>write</strong> files using Node.js so you can see this flow in action. 💻</li>
+        <li><span class="emoji">📂</span>Practice calling <code>fs.readFile</code>, <code>fs.writeFile</code>, and watching how your terminal logs system calls. 👀</li>
+        <li><span class="emoji">📚</span>Later, we’ll explore Libuv’s thread pool and asynchronous methods to keep your app fast. 🚀</li>
+      </ul>
+      <p>Happy coding! 😊✨</p>
+    </div>
+
+  </div>
+</body>
+</html>

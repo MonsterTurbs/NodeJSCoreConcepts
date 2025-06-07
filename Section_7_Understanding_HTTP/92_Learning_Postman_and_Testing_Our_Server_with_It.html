@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Using Postman – Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.5;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      margin-bottom: 16px;
+      max-width: 800px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .emoji {
+      font-size: 1.4em;
+      margin-right: 8px;
+    }
+    code {
+      background: #f0f0f0;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">🚀</span>What is Postman?</h2>
+    <p>● A desktop tool to send HTTP <strong>requests</strong> and view <strong>responses</strong>.<br>
+       ● Great for API testing, designing &amp; documenting endpoints.<br>
+       ● Alternative tools: Swagger, HTTPie, cURL, etc.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔧</span>Methods, URL &amp; Params</h2>
+    <p>● Choose HTTP method: <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code>.<br>
+       ● Enter full URL: <code>http://localhost:8050/create-post</code>.<br>
+       ● Add query parameters in <em>Params</em> tab:<br>
+       <code>?key1=value1&amp;key2=value2</code> 😊</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📋</span>Headers Explained</h2>
+    <p>● Everything in Postman UI → becomes HTTP headers.<br>
+       ● Common ones:<br>
+       &nbsp;&nbsp;– <code>Authorization</code> (e.g. Bearer token)<br>
+       &nbsp;&nbsp;– <code>Content-Type</code> (e.g. <code>application/json</code>)<br>
+       &nbsp;&nbsp;– <code>Accept</code> (what response types client can handle)<br>
+       &nbsp;&nbsp;– <code>Connection</code> (<code>keep-alive</code> vs. <code>close</code>)<br>
+       &nbsp;&nbsp;– <code>Accept-Encoding</code> (e.g. <code>gzip</code> for compression)</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📦</span>Body Types</h2>
+    <p>● <strong>none</strong>: no body → no <code>Content-Type</code> or <code>Content-Length</code>.<br>
+       ● <strong>form-data</strong>: key/value pairs + files (multipart).<br>
+       ● <strong>x-www-form-urlencoded</strong>: simple form fields.<br>
+       ● <strong>raw</strong>: free text, JSON, XML, GraphQL.<br>
+       ● <strong>binary</strong>: upload a single file.<br>
+       ● <em>Choose type → Postman auto-sets headers.</em> 👍</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔍</span>Server Receives</h2>
+    <p>● Node.js gives you:<br>
+      &nbsp;&nbsp;– <code>req.method</code>, <code>req.url</code><br>
+      &nbsp;&nbsp;– <code>req.headers</code><br>
+      &nbsp;&nbsp;– <code>req</code> as a readable stream for body.<br>
+      ● It does <strong>not</strong> auto-parse body for you.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🛠️</span>Parsing the Body</h2>
+    <p>● Collect chunks:<br>
+      <code>let body = '';<br>
+      req.on('data', c =&gt; body += c.toString());</code><br>
+      ● On <code>'end'</code>:</p>
+    <ul>
+      <li>JSON: <code>const obj = JSON.parse(body);</code></li>
+      <li>Form-data: use <code>busboy</code>, <code>multer</code></li>
+      <li>URL-encoded: use <code>body-parser</code></li>
+      <li>GraphQL: use a GraphQL parser</li>
+    </ul>
+  </div>
+
+</body>
+</html>

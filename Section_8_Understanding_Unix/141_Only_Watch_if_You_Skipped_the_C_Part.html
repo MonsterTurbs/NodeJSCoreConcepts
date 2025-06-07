@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🔧 Massive Communication App: Quick Setup</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #eef2f5;
+      color: #2c3e50;
+    }
+    h1 {
+      text-align: center;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+      color: #34495e;
+    }
+    pre {
+      background: #f7f9fa;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: monospace;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔧 Massive Communication App: Quick Setup</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>1️⃣ Two Versions Provided</h2>
+      <p>📂 In the resources you’ll find:</p>
+      <ul>
+        <li><strong>C version</strong> (<code>number_formatter.c</code>)</li>
+        <li><strong>Node.js version</strong> (<code>number_formatter.js</code>)</li>
+      </ul>
+      <p>👉 Download the one you prefer.</p>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>2️⃣ Compile the C Version</h2>
+      <p>📥 Navigate to the folder and run:</p>
+      <pre><code>gcc -o number_formatter number_formatter.c</code></pre>
+      <p>✅ Produces <code>./number_formatter</code> executable.</p>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>3️⃣ Place or Reference the Executable</h2>
+      <ul>
+        <li>🔗 Either put <code>number_formatter</code> in your <code>$PATH</code>,</li>
+        <li>📁 Or in Node code use <code>"./number_formatter"</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>4️⃣ Run the Node Or C “Second Part”</h2>
+      <p>📦 If you chose C:</p>
+      <pre><code>node app.js</code></pre>
+      <p>📦 If you chose Node.js:</p>
+      <pre><code>node app.js number_formatter.js dest.txt '$' ','</code></pre>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>5️⃣ High-Level Flow</h2>
+      <ol>
+        <li>Node reads <code>source.txt</code> via stream.</li>
+        <li>Pipes data into <em>formatter</em> (C or JS).</li>
+        <li>Formatter prints formatted numbers into <code>dest.txt</code>.</li>
+      </ol>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2>6️⃣ CPU &amp; Memory</h2>
+      <ul>
+        <li>⚙️ Formatter (C or JS) uses ~100% CPU.</li>
+        <li>💾 Node I/O uses low CPU &amp; small memory.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card">
+      <h2>7️⃣ Code Comparison</h2>
+      <p>🆚 Both versions share same logic:</p>
+      <ul>
+        <li>Read chunks from stdin.</li>
+        <li>Split by spaces → numbers.</li>
+        <li>Format with prefix &amp; separators.</li>
+        <li>Write to output file.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="card">
+      <h2>8️⃣ Why C &amp; Node Together?</h2>
+      <p>🌐 Use the best tool for each job:</p>
+      <ul>
+        <li>C for heavy processing.</li>
+        <li>Node for file/network I/O.</li>
+      </ul>
+      <p>🔄 Streams glue them seamlessly.</p>
+    </div>
+
+    <!-- Card 9 -->
+    <div class="card">
+      <h2>9️⃣ Next Steps</h2>
+      <p>🎓 If you skipped C lectures, now you have working code.</p>
+      <p>🔙 Otherwise, review the C/JS implementation to deepen understanding.</p>
+    </div>
+
+  </div>
+</body>
+</html>

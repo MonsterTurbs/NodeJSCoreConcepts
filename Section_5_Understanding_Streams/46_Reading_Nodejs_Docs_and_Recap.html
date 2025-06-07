@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Study Notes – Readable Streams</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr; /* one card per row */
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    pre {
+      background-color: #eef2f7;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Readable Streams in Node.js</h1>
+  <div class="container">
+
+    <!-- Card 1: What Is a Readable Stream? -->
+    <div class="card">
+      <h2>📚 What Is a Readable Stream?</h2>
+      <ul>
+        <li><span class="emoji">🔄</span>A Readable Stream is a way to read data in chunks instead of loading the entire source into memory.</li>
+        <li><span class="emoji">⚙️</span>Examples: reading large files, processing HTTP requests, or receiving data from another process (like FFmpeg).</li>
+        <li><span class="emoji">🌊</span>“Streaming” means data flows continuously in manageable pieces, keeping memory usage low.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Two Modes – Flowing & Paused -->
+    <div class="card">
+      <h2>🔄 Two Modes: Flowing &amp; Paused</h2>
+      <ul>
+        <li><span class="emoji">🛑</span>**Paused Mode**: Stream is idle; no data emitted until you call methods or add listeners.</li>
+        <li><span class="emoji">🏄‍♂️</span>**Flowing Mode**: Data events are generated automatically and delivered as soon as chunks arrive.</li>
+        <li><span class="emoji">▶️</span>Switch to **flowing** by:
+          <ul>
+            <li>Adding a `data` event listener</li>
+            <li>Calling `readable.resume()`</li>
+            <li>Using `readable.pipe(dest)`</li>
+          </ul>
+        </li>
+        <li><span class="emoji">⏸️</span>Switch to **paused** by:
+          <ul>
+            <li>Calling `readable.pause()`</li>
+            <li>Removing all destinations (when piping)</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔍</span>Check mode via <code>readable.readableFlowing</code>:
+          <ul>
+            <li>`null` = no consumer (not started)</li>
+            <li>`true` = flowing mode</li>
+            <li>`false` = paused mode</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Consuming Data with `data` Event -->
+    <div class="card">
+      <h2>📥 Consuming Data: `data` Event</h2>
+      <ul>
+        <li><span class="emoji">📦</span>When in flowing mode, each chunk arrives via:
+          <pre><code>readStream.on('data', (chunk) =&gt; {
+  // process chunk (Buffer or string)
+});</code></pre>
+        </li>
+        <li><span class="emoji">⚙️</span>By default, `chunk` is a Buffer. To get strings, use:
+          <pre><code>readStream.setEncoding('utf8');</code></pre>
+        </li>
+        <li><span class="emoji">🛑</span>**Pause** with:
+          <pre><code>readStream.pause();</code></pre>
+        </li>
+        <li><span class="emoji">▶️</span>**Resume** with:
+          <pre><code>readStream.resume();</code></pre>
+        </li>
+        <li><span class="emoji">🔚</span>**End Event**: Emitted when no more data is available:
+          <pre><code>readStream.on('end', () =&gt; {
+  // all data consumed
+});</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Readable Events & Properties -->
+    <div class="card">
+      <h2>⚙️ Stream Events &amp; Properties</h2>
+      <ul>
+        <li><span class="emoji">🔒</span><strong>`readable.on('error', ...)`</strong> – Emitted on read errors.</li>
+        <li><span class="emoji">❌</span><strong>`readable.on('close', ...)`</strong> – Emitted when underlying resource (file descriptor) closes.</li>
+        <li><span class="emoji">🛑</span><strong>`readable.on('pause', ...)`</strong> – Emitted when stream is paused.</li>
+        <li><span class="emoji">🔄</span><strong>`readable.on('resume', ...)`</strong> – Emitted when stream resumes from pause.</li>
+        <li><span class="emoji">🔊</span><strong>`readable.readableFlowing`</strong> – `null` / `false` / `true` indicates mode.</li>
+        <li><span class="emoji">📊</span><strong>`readable.readableHighWaterMark`</strong> – Size of internal buffer (default 64 KB for fs.createReadStream).</li>
+        <li><span class="emoji">📈</span><strong>`readable.readableLength`</strong> – Amount of data (in bytes) currently stored in buffer.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Two Consumption APIs -->
+    <div class="card">
+      <h2>🔧 Two Ways to Read</h2>
+      <ul>
+        <li><span class="emoji">🌊</span>**Flowing API**: Use `data` event (shown earlier). Convenient for most cases where you just process as chunks arrive.</li>
+        <li><span class="emoji">📖</span>**Non-Flowing (Paused) API**: Use `readable` event and `read()` calls:
+          <pre><code>readStream.on('readable', () =&gt; {
+  let chunk;
+  while ((chunk = readStream.read()) !== null) {
+    // process chunk
+  }
+});</code></pre>
+        </li>
+        <li><span class="emoji">⚠️</span>Do not mix both in the same stream; choose one style per stream to avoid confusion.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Piping Streams -->
+    <div class="card">
+      <h2>🔗 Piping: Simplified Stream Chaining</h2>
+      <ul>
+        <li><span class="emoji">➡️</span>**Pipe Syntax**: Automatically handles data flow and backpressure:
+          <pre><code>readStream.pipe(writeStream);</code></pre>
+        </li>
+        <li><span class="emoji">🔧</span>Piping automates:</li>
+        <ul>
+          <li>Switching to flowing mode.</li>
+          <li>Pausing `readStream` when `writeStream` is busy.</li>
+          <li>Resuming `readStream` on `writeStream`’s `drain` event.</li>
+        </ul>
+        <li><span class="emoji">🎯</span>Ideal for simple “read from file → write to file” tasks without manual pause/resume logic.</li>
+        <li><span class="emoji">📚</span>Example:
+          <pre><code>const readStream = fs.createReadStream('source.txt');
+const writeStream = fs.createWriteStream('dest.txt');
+readStream.pipe(writeStream);
+
+writeStream.on('finish', () =&gt; {
+  console.log('Copy complete!');
+});</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 7: HighWaterMark & Backpressure -->
+    <div class="card">
+      <h2>📊 HighWaterMark &amp; Backpressure</h2>
+      <ul>
+        <li><span class="emoji">📏</span><strong>HighWaterMark</strong>: Controls internal buffer size. Default for files: 64 KB.</li>
+        <li><span class="emoji">⚠️</span>If writes are slower than reads, buffer fills up; backpressure is applied:</li>
+        <ul>
+          <li>`readStream.pause()` is called (automatically when piping).</li>
+          <li>Waiting for `writeStream`’s `<code>drain</code>` event to resume reading.</li>
+        </ul>
+        <li><span class="emoji">💡</span>You can customize HWM:
+          <pre><code>const readStream = fs.createReadStream('file.txt', {
+  highWaterMark: 32 * 1024  // 32 KB
+});</code></pre>
+        </li>
+        <li><span class="emoji">✅</span>Proper backpressure avoids out‐of‐memory crashes when handling very large data.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Readable Stream Example -->
+    <div class="card">
+      <h2>🖥️ Readable Stream Example</h2>
+      <pre><code>const fs = require('fs');
+
+// Using fs.createReadStream to read a large file in 64 KB chunks
+const readStream = fs.createReadStream('bigFile.txt');
+
+// Switch to flowing mode and process each chunk
+readStream.on('data', (chunk) =&gt; {
+  console.log(`Received chunk: ${chunk.length} bytes`);
+  // Convert chunk to string if needed:
+  // let text = chunk.toString('utf8');
+  // process text...
+});
+
+readStream.on('end', () =&gt; {
+  console.log('Finished reading file!');
+});
+
+readStream.on('error', (err) =&gt; {
+  console.error('Error reading file:', err);
+});</code></pre>
+    </div>
+
+    <!-- Card 9: Summary & Tips -->
+    <div class="card">
+      <h2>📌 Summary &amp; Tips</h2>
+      <ul>
+        <li><span class="emoji">✅</span>Streams read or write piece-by-piece—ideal for large data.</li>
+        <li><span class="emoji">⚙️</span>Always choose one consumption style: Flowing (`data`) or Paused (`readable` + `read()`).</li>
+        <li><span class="emoji">🔗</span>Use `pipe()` whenever possible to simplify backpressure handling.</li>
+        <li><span class="emoji">📏</span>Adjust <code>highWaterMark</code> to tune buffer size (tradeoff between memory and speed).</li>
+        <li><span class="emoji">🔍</span>Monitor `<code>readableFlowing</code>` to debug if your stream is paused or flowing.</li>
+        <li><span class="emoji">💡</span>Remember: `<code>end</code>` is emitted automatically; `<code>finish</code>` is for write streams after `<code>end()</code>`.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

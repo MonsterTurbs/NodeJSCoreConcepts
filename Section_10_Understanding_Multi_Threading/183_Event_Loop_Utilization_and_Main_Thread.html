@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>⏳ Event Loop & Main Thread</title>
+  <style>
+    body { background: #f9fafb; font-family: Arial, sans-serif; margin: 20px; }
+    .card { background: #ffffff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 20px; max-width: 600px; margin: auto; }
+    h1 { text-align: center; color: #2c3e50; }
+    h2 { color: #16a085; margin-top: 0; }
+    ul { padding-left: 1.2em; }
+    li { margin-bottom: 0.6em; }
+    code { background: #ecf0f1; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>⏳ Event Loop & Main Thread</h1>
+
+    <h2>🔄 What Is the Event Loop?</h2>
+    <ul>
+      <li>It’s the engine that runs Node.js JavaScript code.</li>
+      <li>Continuously checks task queues, runs callbacks, then repeats.</li>
+      <li>Keeps the main thread non-blocking for asynchronous I/O. ⚙️</li>
+    </ul>
+
+    <h2>🧵 Main Thread Duties</h2>
+    <ul>
+      <li>Executes your JavaScript, one instruction at a time.</li>
+      <li>Schedules and dispatches async callbacks (timers, I/O) via the event loop.</li>
+      <li>Runs non-blocking code quickly, then yields to next callback. 🚦</li>
+    </ul>
+
+    <h2>🛑 Blocking vs Non-Blocking</h2>
+    <ul>
+      <li><strong>Blocking code</strong> (e.g., <code>while(true)</code>) freezes the main thread.</li>
+      <li><strong>Non-blocking code</strong> (e.g., <code>setTimeout</code>, I/O) uses callbacks—event loop handles resume.</li>
+      <li>Always avoid heavy loops or sync I/O on main thread! 🚫</li>
+    </ul>
+
+    <h2>🔍 Visualizing Flow</h2>
+    <ul>
+      <li>🏃‍♂️ Main thread runs top-level code.</li>
+      <li>⏲️ Syncs timers, I/O requests → yields to sleep state.</li>
+      <li>⚡ On events (timer, network), moves callbacks to ready queue.</li>
+      <li>🔁 Dispatcher picks next callback → main thread resumes work.</li>
+    </ul>
+
+    <h2>💡 Tips for Beginners</h2>
+    <ul>
+      <li>Use non-blocking APIs (e.g., <code>fs.readFile</code> vs <code>fs.readFileSync</code>).</li>
+      <li>Break large tasks into smaller chunks or move to worker threads.</li>
+      <li>Monitor event loop lag with tools like <code>node:perf_hooks</code> or <code>clinic</code>. 📈</li>
+    </ul>
+  </div>
+</body>
+</html>

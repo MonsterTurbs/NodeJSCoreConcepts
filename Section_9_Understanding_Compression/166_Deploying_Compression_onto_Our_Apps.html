@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>📼 Adding HTTP Compression – Study Notes</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f3f4f6; color:#1f2937; }
+    h1 { text-align:center; color:#2563eb; margin-bottom:1em; }
+    .container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      max-width:720px;
+      margin:auto;
+    }
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      padding:20px;
+    }
+    .card h2 { margin-top:0; color:#064e3b; }
+    ul { padding-left:1.2em; }
+    code { background:#e0f2fe; padding:2px 4px; border-radius:4px; }
+    @media print { .card { box-shadow:none; } }
+  </style>
+</head>
+<body>
+  <h1>📼 Adding Compression to Your App</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>⚙️ 1. Why Compress?</h2>
+      <ul>
+        <li>Reduces bytes sent over network → faster page loads 🚀</li>
+        <li>Lower bandwidth usage (mobile data savings!) 📶</li>
+        <li>Simple switch in code or proxy gives big gains (~2–3× speedup) ✨</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🧩 2. Enable in Node Code</h2>
+      <ul>
+        <li>Import built-in module:
+          <pre><code>const zlib = require('zlib');</code></pre>
+        </li>
+        <li>For file responses (streams):
+          <pre><code>res.setHeader('Content-Encoding','gzip');
+fs.createReadStream(path)
+  .pipe(zlib.createGzip())
+  .pipe(res);</code></pre>
+        </li>
+        <li>For small JSON bodies:
+          <pre><code>zlib.gzip(JSON.stringify(data), (err, buf) =&gt; {
+  res.setHeader('Content-Encoding','gzip');
+  res.end(buf);
+});</code></pre>
+        </li>
+        <li>Adjust headers: keep original Content-Type, update Content-Encoding, Content-Length</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🌐 3. Enable in Proxy (nginx / custom)</h2>
+      <ul>
+        <li>No code changes! Let your HTTP proxy handle it:</li>
+        <li>nginx example:
+          <pre><code>gzip on;
+gzip_min_length 256;
+gzip_types text/html text/css application/json application/javascript;</code></pre>
+        </li>
+        <li>Or custom Node proxy:
+          <pre><code>upstream your_app { server localhost:8060; }
+server {
+  listen 80;
+  location / {
+    proxy_pass http://your_app;
+    proxy_set_header Accept-Encoding "";
+    gzip on;
+    gzip_types text/* application/json;
+  }
+}</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔒 4. Best Practices &amp; Caveats</h2>
+      <ul>
+        <li>Check <code>Accept-Encoding</code> header first → choose gzip/deflate/brotli supported by client ✅</li>
+        <li>Avoid compressing:
+          <ul>
+            <li>Already-compressed files (images, videos) 📷</li>
+            <li>Small responses (<256 B) – overhead may exceed benefit ⚖️</li>
+            <li>Sensitive payloads (authentication tokens) to prevent BREACH risk 🔐</li>
+          </ul>
+        </li>
+        <li>Use middleware if on Express:
+          <pre><code>const compression = require('compression');
+app.use(compression());</code></pre>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

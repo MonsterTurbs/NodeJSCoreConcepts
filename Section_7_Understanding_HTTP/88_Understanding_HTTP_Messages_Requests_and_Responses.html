@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTTP Basics – Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.5;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .emoji {
+      font-size: 1.3em;
+      margin-right: 8px;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">🌐</span>Client–Server Model</h2>
+    <p>
+      • <strong>Client</strong>: device (browser, phone, etc.) that <em>requests</em> resources.<br>
+      • <strong>Server</strong>: computer that <em>serves</em> resources back.<br>
+      • They communicate over the network using TCP (HTTP/1.1 &amp; 2) or UDP (HTTP/3).
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔗</span>Establishing Connection</h2>
+    <p>
+      1. Client ↔️ Server must open a TCP connection (three-way handshake)<br>
+      2. Over that connection, HTTP messages flow back and forth<br>
+      3. HTTP/3 uses UDP + QUIC instead of TCP
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">✉️</span>What’s a Message?</h2>
+    <p>
+      • A single HTTP exchange—from start of headers to end of body—called a <strong>message</strong>.<br>
+      • Can span multiple TCP segments (chunks).
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📨</span>Request vs. Response</h2>
+    <p>
+      • <strong>Request</strong>: message sent <em>from</em> client <em>to</em> server.<br>
+      • <strong>Response</strong>: message sent <em>from</em> server <em>to</em> client.<br>
+      • Server can only send a response <em>after</em> receiving a request.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">💡</span>HTTP Message Structure</h2>
+    <pre><code>
+── Request ────────────────────────────────────
+[Start]      Method + URL        →  e.g. GET /path
+             Headers            →  metadata (Content-Type, Host…)
+             [Body, optional]   →  data (JSON, files…)
+             [End Marker]       →  signals end of body
+
+── Response ───────────────────────────────────
+[Start]      Status Code + Text →  e.g. 200 OK
+             Headers            →  metadata (Content-Type, Length…)
+             [Body, optional]   →  resource data
+             [End Marker]       →  signals end of body
+    </code></pre>
+  </div>
+
+</body>
+</html>

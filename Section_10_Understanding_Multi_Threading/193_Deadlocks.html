@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>⛔ Deadlocks: Beginner-Friendly Study Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7fa;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #d62828;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #9d0208;
+    }
+    .card ul {
+      padding-left: 20px;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body { background-color: #fff; color: #000; }
+      .card { box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>⛔ Deadlocks: Beginner-Friendly Notes</h1>
+  <div class="container">
+
+    <!-- Card 1: What Is a Deadlock? -->
+    <div class="card">
+      <h2>❌ What Is a Deadlock?</h2>
+      <ul>
+        <li><span class="emoji">🔒</span>Multiple threads/processes wait forever for resources held by each other.</li>
+        <li><span class="emoji">⛓️</span>Result: permanent blocking, nothing can proceed.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Simple Example -->
+    <div class="card">
+      <h2>⚙️ Simple Code Example</h2>
+      <ul>
+        <li><span class="emoji">🛠️</span>Thread locks a mutex, then throws an error before unlocking.</li>
+        <li><span class="emoji">🤦‍♂️</span>Other thread waits for that mutex → gets stuck forever.</li>
+        <li><span class="emoji">🏴‍☠️</span>Fix: always unlock in a <code>finally</code> (or <code>try…catch…finally</code>) block.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Traffic Intersection Analogy -->
+    <div class="card">
+      <h2>🚗 Intersection Analogy</h2>
+      <ul>
+        <li><span class="emoji">🚦</span>Four cars at an all-way stop each wait for the next → none can move.</li>
+        <li><span class="emoji">🔄</span>One car must yield or proceed out-of-order to break the cycle.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Lock Ordering -->
+    <div class="card">
+      <h2>🔢 Preventing Deadlocks: Lock Ordering</h2>
+      <ul>
+        <li><span class="emoji">📋</span>Always acquire multiple locks in the <strong>same order</strong>:</li>
+        <li>
+          <code>lock(A); unlock(A); lock(B); unlock(B);</code><br>
+          <code>lock(B); unlock(B); lock(A); unlock(A);</code>
+        </li>
+        <li><span class="emoji">✅</span>No circular wait → no deadlock.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Resource Graph -->
+    <div class="card">
+      <h2>📊 Resource Graph</h2>
+      <ul>
+        <li><span class="emoji">📈</span>Plot thread progress vs. other thread:</li>
+        <li>
+          Paths entering the red “deadlock region” mean permanent block.<br>
+          Avoid those regions by design.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Key Takeaways -->
+    <div class="card">
+      <h2>📝 Key Takeaways</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>Deadlocks are rare but critical—test thoroughly!</li>
+        <li><span class="emoji">📐</span>Design lock acquisitions carefully (consistent order).</li>
+        <li><span class="emoji">🔧</span>Always release locks even on errors.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

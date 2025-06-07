@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🎓 Job Queue: Resume on Restart – Study Notes</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f0f4f8; color:#333; }
+    h1 { text-align:center; margin-bottom:1em; }
+    .container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      max-width:700px;
+      margin:auto;
+    }
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 1px 4px rgba(0,0,0,0.1);
+      padding:16px;
+      transition:transform .2s;
+    }
+    .card:hover { transform:translateY(-3px); }
+    .card h2 { margin-top:0; color:#2c3e50; }
+    .card pre {
+      background:#eef3f7;
+      padding:8px;
+      overflow-x:auto;
+      border-radius:4px;
+    }
+    @media print {
+      body { background:#fff; }
+      .card { box-shadow:none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎓 Job Queue: Resume on Restart</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ Why Resume Jobs? 🔄</h2>
+      <p>When the server restarts, queued resizes with <code>processing=true</code> stay unfinished. We need to re-enqueue them so users don’t lose their work!</p>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ When to Resume? ⏰</h2>
+      <p>In <code>JobQueue</code> constructor: after <code>this.jobs = []</code>, read DB, find all videos where <code>resizes[key].processing === true</code>, and <code>enqueue()</code> each.</p>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ Code: Scan &amp; Enqueue 📋</h2>
+      <pre><code>DB.update();
+DB.videos.forEach(video =&gt; {
+  Object.keys(video.resizes).forEach(key =&gt; {
+    if (video.resizes[key].processing) {
+      const [w, h] = key.split('x');
+      this.enqueue({
+        type: 'resize',
+        videoId: video.videoId,
+        width: Number(w),
+        height: Number(h)
+      });
+    }
+  });
+});</code></pre>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ Handle FFmpeg Prompts ❗</h2>
+      <p>FFmpeg may ask “overwrite?” if output exists. Add <code>-y</code> flag to arguments to auto-answer “yes.”</p>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ Limit CPU Usage 🖥️</h2>
+      <p>FFmpeg can eat all cores. Use <code>-threads N</code> to restrict it:<br/><code>spawn('ffmpeg', ['-threads','2', …])</code></p>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Summary 📚</h2>
+      <ul>
+        <li>✅ On startup, re-enqueue unfinished jobs</li>
+        <li>⚙️ Use <code>-y</code> to skip prompts</li>
+        <li>🌐 Use <code>-threads</code> or <code>nice</code> to manage CPU</li>
+        <li>🔄 Ensures long tasks keep running after restarts</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

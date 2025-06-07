@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🧑‍💻 Node Native Add-ons & Multithreading: Beginner Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f9fc;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #0a5f7a;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #117a65;
+    }
+    .card ul {
+      padding-left: 20px;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🛠️ Node.js Native Add-ons & Multithreading</h1>
+  <div class="container">
+
+    <!-- Card 1: Why Native Add-ons? -->
+    <div class="card">
+      <h2>💡 Why Use Native Add-ons?</h2>
+      <ul>
+        <li><span class="emoji">⚡</span>Run C/C++ code directly inside Node.js for 🔥 high CPU tasks</li>
+        <li><span class="emoji">🚀</span>Massive speedups (e.g. prime gen in 1s vs 60s in JS)</li>
+        <li><span class="emoji">🤝</span>Leverage existing C/C++ libraries & multithreading</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: How It Works -->
+    <div class="card">
+      <h2>🔧 How Native Add-ons Work</h2>
+      <ul>
+        <li><span class="emoji">🔗</span>Write C/C++ functions (e.g. `generatePrimes`)  
+          & compile into a binary module</li>
+        <li><span class="emoji">🔌</span>Use Node-API (N-API) or `node-addon-api` to bind C++ ↔ JS</li>
+        <li><span class="emoji">📦</span>`require('bindings')('your_module')` → call as normal JS function</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Binding Example -->
+    <div class="card">
+      <h2>📑 Binding Example</h2>
+      <ul>
+        <li><span class="emoji">🗂️</span><code>binding.cc</code> defines wrapper:
+          <pre>napi_create_function(…, "generatePrimes", generatePrimesWrapped)</pre>
+        </li>
+        <li><span class="emoji">🔄</span>Convert between JS types & C++ (arrays, strings, BigInt)</li>
+        <li><span class="emoji">🎯</span>Run C++ logic off the main thread, callback when done</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Performance Gains -->
+    <div class="card">
+      <h2>📈 Real-World Speedup</h2>
+      <ul>
+        <li><span class="emoji">🕐</span>JS Prime gen (1 thread): ~60 s</li>
+        <li><span class="emoji">🏃‍♂️</span>C++ Prime gen (1 thread): ~1 s</li>
+        <li><span class="emoji">💥</span>C++ (8 threads): ~0.16 s</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Integrating in Node -->
+    <div class="card">
+      <h2>🖥 Integrating in Your App</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>Include in JS:
+          <pre>const { generatePrimes } = require('bindings')('heavyLifter');</pre>
+        </li>
+        <li><span class="emoji">▶️</span>Call naturally:
+          <pre>generatePrimes({count:400, start:"900...", threads:8}, (err, primes)=>{…});</pre>
+        </li>
+        <li><span class="emoji">💤</span>Runs async—main thread remains free!</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Getting Started -->
+    <div class="card">
+      <h2>🚀 Getting Started</h2>
+      <ul>
+        <li><span class="emoji">📘</span>Read Node.js docs:  
+          “C/C++ Add-ons” & “C/C++ Add-ons with N-API”</li>
+        <li><span class="emoji">📂</span>Explore <a href="https://github.com/nodejs/node-addon-examples">node-addon-examples</a></li>
+        <li><span class="emoji">🔧</span>Try the “node-cpu-intensive” demo repo on GitHub</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Key Tips -->
+    <div class="card">
+      <h2>📝 Key Tips</h2>
+      <ul>
+        <li><span class="emoji">🛡️</span>Use mutexes (e.g. `std::lock_guard`) to protect shared data</li>
+        <li><span class="emoji">📈</span>Profile & compare: only offload heavy CPU work</li>
+        <li><span class="emoji">👥</span>Collaborate with C/C++ colleagues for complex tasks</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📝 Study Notes – Encryption & Decryption with Transform Streams</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji { margin-right: 6px; }
+    pre {
+      background-color: #eef2f7;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    @media print {
+      body { background-color: #fff; color: #000; }
+      .card { box-shadow: none; margin-bottom: 20px; }
+      pre { background-color: transparent; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Encrypt & Decrypt with Transform Streams</h1>
+  <div class="container">
+
+    <!-- Card 1: Basics -->
+    <div class="card">
+      <h2>🔐 What Is Encryption & Decryption?</h2>
+      <ul>
+        <li><span class="emoji">✏️</span><strong>Encryption:</strong> Converting readable data into a code that hides its meaning.</li>
+        <li><span class="emoji">🔓</span><strong>Decryption:</strong> Reversing encryption to get the original data back.</li>
+        <li><span class="emoji">💾</span>Both use binary data (0s and 1s) like many other operations (compression, encoding).</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Transform Stream Role -->
+    <div class="card">
+      <h2>🔄 Transform Stream for Encryption</h2>
+      <ul>
+        <li><span class="emoji">🛠️</span>Transforms data as it passes through: reads, modifies, then outputs.</li>
+        <li><span class="emoji">📥</span>Implement <code>_transform(chunk, encoding, cb)</code> to encrypt or decrypt <code>chunk</code>.</li>
+        <li><span class="emoji">➡️</span>Write to stream: <code>transform.write(data)</code>; Read from stream: <code>transform.on('data', ...)</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Example Setup -->
+    <div class="card">
+      <h2>🖊️ Example: Simple Cipher</h2>
+      <ul>
+        <li><span class="emoji">🔑</span>Choose a key (e.g., shift number for Caesar cipher).</li>
+        <li><span class="emoji">📄</span>In <code>_transform</code>, convert <code>chunk</code> to string, shift characters by key, then <code>push()</code>.</li>
+        <li><span class="emoji">📜</span>For decryption, reverse the shift by using negative key.</li>
+      </ul>
+      <pre><code>const { Transform } = require('stream');
+
+class CaesarCipher extends Transform {
+  constructor(shift) {
+    super();
+    this.shift = shift;
+  }
+
+  _transform(chunk, encoding, callback) {
+    const input = chunk.toString();
+    let output = '';
+    for (let char of input) {
+      // Shift only letters
+      const code = char.charCodeAt(0);
+      // Example for lowercase
+      if (code >= 97 && code <= 122) {
+        const shifted = ((code - 97 + this.shift) % 26) + 97;
+        output += String.fromCharCode(shifted);
+      } else {
+        output += char;
+      }
+    }
+    this.push(output);
+    callback();
+  }
+}
+</code></pre>
+    </div>
+
+    <!-- Card 4: Usage -->
+    <div class="card">
+      <h2>🚀 Using the Cipher Stream</h2>
+      <ul>
+        <li><span class="emoji">⚡</span>Create: <code>const cipher = new CaesarCipher(3);</code></li>
+        <li><span class="emoji">🖊️</span>Encrypt: <code>cipher.write('hello'); cipher.end();</code></li>
+        <li><span class="emoji">👂</span>Read result: <code>cipher.on('data', data =&gt; console.log(data.toString()));</code></li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Best Practices -->
+    <div class="card">
+      <h2>📌 Best Practices</h2>
+      <ul>
+        <li><span class="emoji">⚠️</span>Always call <code>callback()</code> or <code>callback(err)</code> in <code>_transform</code>.</li>
+        <li><span class="emoji">🛡️</span>Handle binary data carefully: use <code>Buffer</code> if needed instead of string.
+        <li><span class="emoji">🔒</span>Use real encryption libraries (e.g., <code>crypto</code> module) for production security.</li>
+        <li><span class="emoji">📚</span>Learn about streams events: <code>'data'</code>, <code>'end'</code>, <code>'error'</code>, <code>'finish'</code>.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

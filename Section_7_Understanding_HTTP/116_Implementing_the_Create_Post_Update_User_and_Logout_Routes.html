@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>✏️ CRUD Routes – Beginner Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f2f6f8;
+      margin: 0; padding: 24px; color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 24px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 18px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #27ae60;
+    }
+    .card ul {
+      padding-left: 1.2em;
+      line-height: 1.6;
+    }
+    .emoji { margin-right: 6px; }
+    pre {
+      background: #f4f4f4;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>✏️ CRUD Routes Overview</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>🆕 Create Post</h2>
+      <ul>
+        <li><span class="emoji">📥</span>Read JSON body (parsed by middleware):  
+          <code>req.body.title</code> &amp; <code>req.body.body</code></li>
+        <li><span class="emoji">🆔</span>Make new post object:
+          <pre>const post = {
+  id: posts.length + 1,
+  title,
+  body,
+  userId: req.userId
+};</pre>
+        </li>
+        <li><span class="emoji">➕</span>Add to array &amp; respond:
+          <pre>posts.unshift(post);
+res.status(201).json(post);</pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>✏️ Update Profile</h2>
+      <ul>
+        <li><span class="emoji">📥</span>Read inputs:
+          <code>req.body.username</code>, <code>req.body.name</code>, <code>req.body.password</code></li>
+        <li><span class="emoji">🔍</span>Find your user:
+          <pre>const user = users.find(u =&gt; u.id===req.userId);</pre>
+        </li>
+        <li><span class="emoji">✏️</span>Apply changes:
+<pre>user.username = username;
+user.name     = name;
+if(password) user.password = password;</pre>
+        </li>
+        <li><span class="emoji">✅</span>Send back updated info:
+          <pre>res.status(200).json({
+  username: user.username,
+  name:     user.name
+});</pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔒 Log Out</h2>
+      <ul>
+        <li><span class="emoji">🗑️</span>Remove session record:
+          <pre>const idx = sessions.findIndex(s =&gt; s.userId===req.userId);
+if(idx&gt;=-1) sessions.splice(idx,1);</pre>
+        </li>
+        <li><span class="emoji">🍪</span>Clear cookie:
+          <pre>res.setHeader("Set-Cookie",
+  "token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT");</pre>
+        </li>
+        <li><span class="emoji">📤</span>Confirm log out:
+          <pre>res.status(200).json({message:"Logged out successfully"});</pre>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

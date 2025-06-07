@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🎓 Video App: Cluster Mode – Study Notes</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f0f4f8; color:#333; }
+    h1 { text-align:center; margin-bottom:1em; }
+    .container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      max-width:700px;
+      margin:auto;
+    }
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 1px 4px rgba(0,0,0,0.1);
+      padding:16px;
+      transition:transform .2s;
+    }
+    .card:hover { transform:translateY(-3px); }
+    .card h2 { margin-top:0; color:#2c3e50; }
+    pre {
+      background:#eef3f7;
+      padding:8px;
+      overflow-x:auto;
+      border-radius:4px;
+    }
+    @media print {
+      body { background:#fff; }
+      .card { box-shadow:none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎓 Video App: Cluster Mode</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ Why Cluster? ⚙️</h2>
+      <p>Use all CPU cores by running multiple Node workers. Ensures high throughput for uploads, downloads, and light APIs.</p>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ cluster.js Setup 📂</h2>
+      <pre><code>const cluster = require('cluster');
+if (cluster.isPrimary) {
+  const cores = require('os').availableParallelism();
+  for (let i=0; i&lt;cores; i++) cluster.fork();
+} else {
+  require('./index');
+}</code></pre>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ Primary vs Worker 🤝</h2>
+      <ul>
+        <li><strong>Primary</strong>: forks workers, holds the <code>JobQueue</code>, coordinates heavy tasks.</li>
+        <li><strong>Worker</strong>: runs Express/API (<code>index.js</code>), sends “resize” requests to primary via <code>process.send()</code>.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ Message Passing ✉️</h2>
+      <pre><code>// In worker (Video.js controller)
+process.send({
+  type:'new_resize',
+  data:{ videoId, width, height }
+});
+
+// In primary (cluster.js)
+cluster.on('message', (worker,msg)=> {
+  if (msg.type==='new_resize') {
+    jobs.enqueue({type:'resize',...msg.data});
+  }
+});</code></pre>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ Handle Worker Exit 🔄</h2>
+      <pre><code>cluster.on('exit', (worker, code, signal)=> {
+  console.log(`Worker ${worker.process.pid} died (${code||signal}), restarting`);
+  cluster.fork();
+});</code></pre>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Single-Process Fallback 🔀</h2>
+      <p>Allow “node index.js” too—no <code>process.send</code> errors—by initializing <code>JobQueue</code> only when <code>cluster.isPrimary</code>.</p>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Scaling Beyond One Machine 🌐</h2>
+      <p>Deploy on multiple servers: each can run cluster mode. All resizing still central in primary per server; combine via load-balancer for global scale.</p>
+    </div>
+
+  </div>
+</body>
+</html>

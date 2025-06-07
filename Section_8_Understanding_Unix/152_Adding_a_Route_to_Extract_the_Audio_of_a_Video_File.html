@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🎵 Extract Audio – Study Notes</title>
+  <style>
+    body {
+      margin: 0; padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .card p, .card ol, .card ul {
+      margin: 0.5em 0;
+      line-height: 1.4;
+    }
+    .card code {
+      background: #eef3f7;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎵 Extract Audio – Study Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ What It Does</h2>
+      <p>Extract the audio track from a video file and save it as <code>audio.aac</code> in its folder. 🎬➡️🎧</p>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ API Route</h2>
+      <p><strong>Patch</strong> <code>/api/video/extract-audio?videoId=&lt;id&gt;</code></p>
+      <p>Only once per video – after extraction, button changes to “Download Audio.”</p>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ Read &amp; Validate</h2>
+      <pre><code>
+const videoId = req.params.get('videoId');
+db.update();
+const video = db.videos.find(v => v.videoId === videoId);
+if (!video) 
+  return handleError(404, 'Video not found');
+if (video.extractedAudio) 
+  return handleError(400, 'Audio already extracted');
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ File Paths 📂</h2>
+      <pre><code>
+const srcPath = `storage/${videoId}/original.${video.extension}`;
+const outPath = `storage/${videoId}/audio.aac`;
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ Run FFmpeg <code>spawn</code> 🐚</h2>
+      <pre><code>
+await f.extractAudio(srcPath, outPath);
+// inside f.extractAudio:
+spawn('ffmpeg', [
+  '-i', srcPath,
+  '-vn',           // no video
+  '-c:a', 'copy',  // copy audio
+  outPath
+])
+.on('close', code => code===0?resolve():reject(...))
+.on('error', err => reject(err));
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Update DB &amp; Respond 💾</h2>
+      <pre><code>
+video.extractedAudio = true;
+db.save();
+res.status(200).json({
+  status: 'success',
+  message: 'Audio extracted successfully'
+});
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Error Cleanup 🚨🧹</h2>
+      <pre><code>
+catch(e) {
+  await util.deleteFile(outPath); // remove partial file
+  return handleError(e);
+}
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>✅ Recap</h2>
+      <ul>
+        <li>🔑 Read <code>videoId</code>, find in DB</li>
+        <li>🔒 Prevent re-extracting</li>
+        <li>🛠️ Spawn FFmpeg: copy audio</li>
+        <li>💾 Mark <code>extractedAudio=true</code> &amp; save</li>
+        <li>📤 Return success JSON</li>
+        <li>🗑️ On error, delete file &amp; report</li>
+      </ul>
+      <p>🎉 Now users can extract audio with one click!</p>
+    </div>
+
+  </div>
+</body>
+</html>

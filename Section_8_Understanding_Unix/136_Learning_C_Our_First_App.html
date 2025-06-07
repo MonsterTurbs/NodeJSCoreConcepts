@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>📘 First C App: Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      margin: 0; padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #1f618d;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    pre {
+      background: #ecf0f1;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code {
+      background: #dfe6e9;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📘 Your First C App: Quick Notes</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>📁 File &amp; Folder Setup</h2>
+      <ul>
+        <li>Create folder: <code>learning-C</code> 📂</li>
+        <li>Inside, make <code>app.c</code> for C code 📝</li>
+        <li>Extension <code>.c</code> tells compiler “this is C”</li>
+        <li>Header files use <code>.h</code> (we’ll cover later)</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>🧩 The <code>main</code> Function</h2>
+      <ul>
+        <li>Every C program starts at <code>int main()</code> 🚀</li>
+        <li>Only <code>main</code> runs by default</li>
+        <li>Return <code>0</code> means “success,” non-zero means “error” ⚠️</li>
+        <li>Example skeleton:
+<pre><code>int main() {
+    // your code here
+    return 0;
+}</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>⚙️ Compile &amp; Run</h2>
+      <ul>
+        <li>Compile with GCC:</li>
+        <pre><code>gcc -o app app.c</code></pre>
+        <li>Creates executable <code>app</code> (instead of default <code>a.out</code>)</li>
+        <li>Run it:</li>
+        <pre><code>./app</code></pre>
+        <li>That’s it! You just ran your C program.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>🖨 Printing Text with <code>printf</code></h2>
+      <ul>
+        <li>Use <code>printf()</code> to write to standard output:</li>
+        <pre><code>printf("Hello, C world!\n");</code></pre>
+        <li>Need to include header for I/O functions:</li>
+        <pre><code>#include &lt;stdio.h&gt;</code></pre>
+        <li>This header defines <code>printf</code> &amp; others</li>
+      </ul>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>🔍 Where Does <code>&lt;stdio.h&gt;</code> Come From?</h2>
+      <ul>
+        <li>Headers live in system include folders</li>
+        <li>GCC searches these paths:</li>
+        <pre><code>gcc -E -x c -v - &lt; /dev/null</code></pre>
+        <li>Look under “#include &lt;...&gt; search starts here:”</li>
+        <li>These folders contain files like <code>stdio.h</code></li>
+      </ul>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2>✅ Quick Recap</h2>
+      <ul>
+        <li>Create <code>.c</code> file, write <code>main()</code> 🖋️</li>
+        <li>Include needed headers (<code>&lt;stdio.h&gt;</code>) 📚</li>
+        <li>Compile with <code>gcc -o app app.c</code> ⚙️</li>
+        <li>Run with <code>./app</code> ▶️</li>
+      </ul>
+      <p>🎉 Congratulations on your first C program!</p>
+    </div>
+
+  </div>
+</body>
+</html>

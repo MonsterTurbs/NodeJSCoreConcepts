@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🌀 Deep Dive: Node.js Event Loop</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #1a73e8;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #0b3954;
+    }
+    .card ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🌀 Deep Dive: Node.js Event Loop</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2><span class="emoji">🎬</span>Three Startup Stages</h2>
+      <ul>
+        <li><strong>Stage 1: Run to End</strong> – PC counter executes your script top→bottom, scheduling async tasks.</li>
+        <li><strong>Stage 2: “Next Tick” & Microtasks</strong> – process.nextTick() & resolved-Promise callbacks run before the loop.</li>
+        <li><strong>Stage 3: Event Loop Phases</strong> – Timers, I/O callbacks, check (setImmediate), etc., repeat until no work left.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2><span class="emoji">🔄</span>How Async Scheduling Works</h2>
+      <ul>
+        <li>Calling <code>fs.writeFile</code> or <code>setTimeout</code> pushes work to libuv (C++ threads).</li>
+        <li>Main thread immediately continues—the I/O or timer runs in the background.</li>
+        <li>When done, libuv enqueues your callback into the proper event-loop queue.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2><span class="emoji">⏱️</span>Next Tick & Microtasks</h2>
+      <ul>
+        <li><code>process.nextTick()</code> and <code>Promise.resolve()</code> handlers go into a separate queue.</li>
+        <li>They run <em>before</em> any event-loop phase callbacks.</li>
+        <li>Use for immediate, high-priority callbacks.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2><span class="emoji">⏳</span>Event Loop Phases</h2>
+      <ul>
+        <li><strong>Timers:</strong> <code>setTimeout</code>, <code>setInterval</code></li>
+        <li><strong>I/O Callbacks:</strong> Completed I/O (e.g. file ops)</li>
+        <li><strong>Check:</strong> <code>setImmediate()</code></li>
+        <li><strong>Close:</strong> <code>'close'</code> events</li>
+        <li>Between each phase, Next Tick/Microtasks queue is drained.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2><span class="emoji">📊</span>Example 1: Order of Ops</h2>
+      <ul>
+        <li>Stage 1 prints <code>start</code> → <code>end</code>.</li>
+        <li>Stage 2 runs <code>nextTick</code> callbacks → <code>Promise</code> callbacks.</li>
+        <li>Stage 3 triggers <code>setTimeout(...,0)</code> → <code>setImmediate()</code>.</li>
+        <li>Result: <code>start, end, nextTick, Promise, timeout, immediate</code> (timeout/immediate order may swap).</li>
+      </ul>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2><span class="emoji">🧪</span>Example 2: Nested Phases</h2>
+      <ul>
+        <li>A → B → C → D log order arises from mixing phases:</li>
+        <li>  • A,B,C scheduled in <code>setTimeout</code> (Timers phase)</li>
+        <li>  • B’s callback schedules <code>setImmediate(D)</code> and <code>nextTick</code></li>
+        <li>  • <code>nextTick</code> runs before C, so B logs before C</li>
+        <li>  • Finally C, then Check phase runs D</li>
+      </ul>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card">
+      <h2><span class="emoji">🛠️</span>Testing & Variability</h2>
+      <ul>
+        <li>Multi-threaded I/O timing can reorder callbacks—test many runs.</li>
+        <li>Use scripts to spawn & verify outputs repeatedly.</li>
+        <li>Unexpected orders can appear rarely—ensure logic is robust.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="card">
+      <h2><span class="emoji">🔍</span>Learning Tips</h2>
+      <ul>
+        <li>Visualize the three stages & queues on paper.</li>
+        <li>Write small C examples to emulate async & event loop loops.</li>
+        <li>Experiment with code samples to see stages in action.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>👶 Beginner Notes: child_process in Node.js</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f0f4f8;
+      margin: 0; padding: 24px; color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2a6f97;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #1e3a5f;
+    }
+    .card pre {
+      background: #eef2f7;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Node.js child_process Basics</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2><span class="emoji">🚀</span>What Is <code>child_process</code>?</h2>
+      <p>
+        The <code>child_process</code> module lets your Node.js app run other programs on your computer.
+        You can <strong>spawn</strong> a new process or <strong>exec</strong> a shell command.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🌱</span><code>spawn</code> – Streamed Output</h2>
+      <p>
+        <code>spawn()</code> starts a program and gives you its output as a <strong>stream</strong>.
+        Great for big data or long-running tasks.
+      </p>
+      <pre>
+const { spawn } = require('child_process');
+const ls = spawn('ls', ['-l']);
+
+ls.stdout.on('data', chunk =&gt; {
+  console.log(chunk.toString());
+});</pre>
+      <p>📌 Streams let you handle data in small chunks without using lots of memory.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">⚡</span><code>exec</code> – Shell Commands</h2>
+      <p>
+        <code>exec()</code> runs a full shell command string and collects all its output before giving it to you.
+        Good for quick tasks or piping.
+      </p>
+      <pre>
+const { exec } = require('child_process');
+
+exec(`echo "hello"| tr ' ' '\n'`, (err, stdout, stderr) =&gt; {
+  if (err) {
+    console.error('Error:', err);
+    return;
+  }
+  console.log('Output:', stdout);
+  console.log('Errors:', stderr);
+});</pre>
+      <p>📌 Output comes back all at once in <code>stdout</code>, not as a stream.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">❓</span>spawn vs exec: When to Use?</h2>
+      <ul>
+        <li><strong>spawn</strong>: Use for large or continuous output (file transfers, logs).</li>
+        <li><strong>exec</strong>: Use for short commands or when you need shell features (pipes, &amp;&amp;).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🔍</span>Why <code>spawn</code> Didn’t Pipe?</h2>
+      <p>
+        <code>spawn</code> does <em>not</em> run your command through a shell by default.
+        So pipes (|) and shortcuts (ll) aren’t understood. They work in <code>exec</code> because it uses a shell.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">📚</span>Next Steps: Learn Unix Pipes</h2>
+      <p>
+        To master these Node.js features, you’ll need Unix skills:
+      </p>
+      <ul>
+        <li>📂 <strong>Pipes</strong> (<code>|</code>) to chain commands</li>
+        <li>🖥️ Standard streams: <code>stdin</code>, <code>stdout</code>, <code>stderr</code></li>
+        <li>🐚 Shell basics: commands like <code>ls</code>, <code>echo</code>, <code>tr</code></li>
+      </ul>
+      <p>We’ll cover these in the next videos!</p>
+    </div>
+
+  </div>
+</body>
+</html>

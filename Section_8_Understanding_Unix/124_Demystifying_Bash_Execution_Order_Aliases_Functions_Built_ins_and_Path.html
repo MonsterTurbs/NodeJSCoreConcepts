@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>📝 Beginner Notes: How Shell Finds Commands</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f0f4f8;
+      margin: 0; padding: 24px; color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2a6f97;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #1e3a5f;
+    }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 How Bash Finds Your Commands</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2><span class="emoji">⚙️</span>Command Lookup Order</h2>
+      <p>
+        When you type <code>hello</code> and press Enter, Bash checks in this order:
+      </p>
+      <ol>
+        <li><strong>Alias</strong> (custom shortcuts)</li>
+        <li><strong>Function</strong> (your defined scripts)</li>
+        <li><strong>Built-in</strong> (shell’s internal commands)</li>
+        <li><strong>PATH</strong> executable (program files on disk)</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🔗</span>1. Aliases</h2>
+      <p>
+        Quick text replacements.  
+        <code>alias ll='ls -l'</code>  
+        After you define it, typing <code>ll</code> runs <code>ls -l</code>.
+      </p>
+      <p><strong>Disable:</strong> <code>unalias ll</code></p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🧩</span>2. Functions</h2>
+      <p>
+        Mini-programs in your shell.  
+        <pre><code>myfunc(){
+  echo "Hello, $1!"
+}</code></pre>
+        Call with <code>myfunc world</code>, prints “Hello, world!”.
+      </p>
+      <p><strong>Remove:</strong> <code>unset -f myfunc</code></p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🚀</span>3. Built-ins</h2>
+      <p>
+        Commands built into Bash (no new process).  
+        <code>echo</code>, <code>cd</code>, <code>pwd</code>, etc.  
+        Faster than external programs!
+      </p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">📂</span>4. PATH Executables</h2>
+      <p>
+        If it’s not above, Bash searches folders in <code>$PATH</code> for an executable file.  
+        See your paths with:
+      </p>
+      <pre><code>echo $PATH | tr ':' '\n'</code></pre>
+      <p>
+        Add a folder:
+        <code>export PATH="$PATH:/home/you/bin"</code>
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>

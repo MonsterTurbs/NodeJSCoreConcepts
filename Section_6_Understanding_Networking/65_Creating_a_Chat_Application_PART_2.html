@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📝 Study Notes: TCP/UDP Port Numbers Explained</title>
+  <style>
+    body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; margin:0; padding:20px; color:#2d3748; }
+    h1 { text-align:center; color:#2c5282; margin-bottom:30px; }
+    .container { display:grid; grid-template-columns:1fr; gap:20px; }
+    .card { background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); padding:20px; transition:transform .2s; }
+    .card:hover { transform:translateY(-4px); box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+    .card h2 { font-size:1.3rem; margin-bottom:12px; color:#2c5282; }
+    .card ul { list-style:none; padding-left:0; }
+    .card li { margin-bottom:10px; line-height:1.6; }
+    .emoji { margin-right:6px; }
+    pre { background:#eef2f7; padding:10px; border-radius:4px; overflow-x:auto; }
+    @media print { body { background:#fff; color:#000; } .card { box-shadow:none; } pre { background:transparent; } }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: TCP/UDP Port Numbers</h1>
+  <div class="container">
+
+    <!-- Card 1: What Are Ports? -->
+    <div class="card">
+      <h2>🔢 What Are Port Numbers?</h2>
+      <ul>
+        <li><span class="emoji">📶</span>Ports connect the transport layer (TCP/UDP) to applications (HTTP, SSH).</li>
+        <li><span class="emoji">🎯</span>Each port is like a “door” on a device where apps send/receive data.</li>
+        <li><span class="emoji">🔗</span>To talk to a service, you specify both IP address and port number.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Port Range Categories -->
+    <div class="card">
+      <h2>🗂️ Port Range Categories</h2>
+      <ul>
+        <li><span class="emoji">🔒</span><strong>System Ports:</strong> 0–1023 (require admin/root privileges).</li>
+        <li><span class="emoji">👤</span><strong>User Ports:</strong> 1024–49151 (safe for user apps).</li>
+        <li><span class="emoji">🔀</span><strong>Dynamic/Ephemeral:</strong> 49152–65535 (temporary client ports).</li>
+        <li><span class="emoji">📚</span>The full valid range is 0–65535 on most OSes.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Well-Known Ports -->
+    <div class="card">
+      <h2>📖 Well-Known Ports</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>Port 80: HTTP</li>
+        <li><span class="emoji">🔒</span>Port 443: HTTPS</li>
+        <li><span class="emoji">⚙️</span>Port 22: SSH</li>
+        <li><span class="emoji">📧</span>Port 25: SMTP (email)</li>
+        <li><span class="emoji">📑</span>Many others listed in IANA registry.</li>
+      </ul>
+      <p>See <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml" target="_blank">IANA Port Numbers</a>.</p>
+    </div>
+
+    <!-- Card 4: TCP vs. UDP on Same Port -->
+    <div class="card">
+      <h2>🔀 TCP vs UDP on Same Port</h2>
+      <ul>
+        <li><span class="emoji">🔒</span>TCP and UDP are separate: you can run a TCP service and a UDP service on the same port number.</li>
+        <li><span class="emoji">🚫</span>You cannot run two TCP services on the same port or two UDP services on the same port.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Choosing a Port for Your Node.js App -->
+    <div class="card">
+      <h2>✅ Picking a Port for Node.js</h2>
+      <ul>
+        <li><span class="emoji">👤</span>Prefer ports ≥1024 to avoid needing root/admin rights.</li>
+        <li><span class="emoji">⚠️</span>Avoid well-known ports unless you’re replacing that service (e.g., run HTTPS on 443).</li>
+        <li><span class="emoji">🔍</span>If port in use, Node.js will error: <code>listen EADDRINUSE</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Example in Node.js -->
+    <div class="card">
+      <h2>💻 Node.js Example</h2>
+      <pre><code>const http = require('http');
+
+// Use a user port (e.g., 3000)
+const PORT = 3000;
+const server = http.createServer((req, res) =&gt; {
+  res.end('Hello on port ' + PORT);
+});
+
+server.listen(PORT, () =&gt; {
+  console.log('Server listening on', PORT);
+});
+</code></pre>
+      <p>Run <code>node app.js</code> and navigate to <code>http://localhost:3000</code>.</p>
+    </div>
+
+      <!-- Card: Chat App Intro -->
+    <div class="card">
+      <h2>💬 Starting Our Chat App Project</h2>
+      <ul>
+        <li><span class="emoji">🚀</span>Next, we'll build a real chat application using Node.js <code>net</code> module.</li>
+        <li><span class="emoji">🕒</span>About 2.5 hours spread over 9 lectures—hands‑on coding! </li>
+        <li><span class="emoji">🎯</span>You'll master TCP sockets, networking, and the <code>net</code> module.</li>
+        <li><span class="emoji">👉</span>Jump in and follow along—see you in the next lecture!</li>
+      </ul>
+    </div>
+      <!-- Card: Project Setup -->
+    <div class="card">
+      <h2>🗄️ Chat App: Project Structure</h2>
+      <ul>
+        <li><span class="emoji">📁</span>Create folder <code>chat-app</code>.</li>
+        <li><span class="emoji">📝</span>Inside, make <code>server.js</code> (the chat server) and <code>client.js</code> (chat client).</li>
+        <li><span class="emoji">🤝</span>Server accepts many clients; clients connect and exchange messages.</li>
+      </ul>
+    </div>
+
+    <!-- Card: Net Module Methods -->
+    <div class="card">
+      <h2>📦 <code>net</code> Module Basics</h2>
+      <ul>
+        <li><span class="emoji">🛠️</span><code>net.createServer()</code> → returns <code>net.Server</code>; your chat server.</li>
+        <li><span class="emoji">🔗</span><code>net.createConnection()</code> → returns <code>net.Socket</code>; your chat client.</li>
+        <li><span class="emoji">🎉</span>Use same module for TCP networking and IPC (Inter-Process Communication).</li>
+      </ul>
+    </div>
+
+    <!-- Card: TCP vs IPC -->
+    <div class="card">
+      <h2>🔀 TCP vs. IPC in <code>net</code> Module</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>TCP: Servers listen on <code>host</code>+<code>port</code>.</li>
+        <li><span class="emoji">⚙️</span>IPC: Servers listen on filesystem path (Unix socket/file pipe).</li>
+        <li><span class="emoji">💡</span>Chat app uses TCP; IPC is for inter-process messaging on same machine.</li>
+      </ul>
+    </div>
+
+    <!-- Card: Server Skeleton -->
+    <div class="card">
+      <h2>🚀 server.js Skeleton</h2>
+      <pre><code>const net = require('net');
+
+const server = net.createServer(socket => {
+  console.log('New connection!');
+  // handle incoming data via socket.on('data')
+});
+
+server.listen(3008, '127.0.0.1', () => {
+  console.log('Server listening on', server.address());
+});
+</code></pre>
+    </div>
+
+    <!-- Card: Client Skeleton -->
+    <div class="card">
+      <h2>🚀 client.js Skeleton</h2>
+      <pre><code>const net = require('net');
+
+const client = net.createConnection({ host:'127.0.0.1', port:3008 }, () => {
+  console.log('Connected to chat server!');
+  // send messages via client.write(message)
+});
+
+client.on('data', data => {
+  console.log('Received:', data.toString());
+});
+</code></pre>
+    </div>
+
+    <!-- Card: Socket as Duplex Stream -->
+    <div class="card">
+      <h2>🔄 Socket = Duplex Stream</h2>
+      <ul>
+        <li><span class="emoji">↔️</span>Every <code>socket</code> is a <code>stream.Duplex</code>—you can <code>.write()</code> and <code>.on('data')</code>.</li>
+        <li><span class="emoji">📦</span>Use socket events (<code>'data'</code>, <code>'end'</code>, <code>'close'</code>) to manage chat messages.</li>
+      </ul>
+    </div>
+  </div>
+  <!-- Card: Recap Key net Concepts -->
+  <div class="container">
+    <div class="card">
+      <h2>🔄 Quick Recap</h2>
+      <ul>
+        <li><span class="emoji">🔧</span><code>net.createServer()</code> → <code>net.Server</code></li>
+        <li><span class="emoji">🔗</span><code>net.createConnection()</code> → <code>net.Socket</code></li>
+        <li><span class="emoji">🌐</span>TCP sockets connect endpoints across networks; IPC sockets talk within the same machine.</li>
+        <li><span class="emoji">🗃️</span>Use <code>server.address()</code> to get host, port, and family info.</li>
+      </ul>
+    </div>
+
+    <!-- Card: Managing Multiple Clients -->
+    <div class="card">
+      <h2>👥 Tracking & Broadcasting</h2>
+      <ul>
+        <li><span class="emoji">📨</span>Keep an array of all <code>socket</code> objects on <code>'connection'</code> event:</li>
+        <pre><code>const clients = [];
+server.on('connection', socket => {
+  clients.push(socket);
+});</code></pre>
+        <li><span class="emoji">🔊</span>Broadcast incoming data to everyone:</li>
+        <pre><code>socket.on('data', msg => {
+  clients.forEach(s => s.write(msg));
+});</code></pre>
+      </ul>
+    </div>
+
+    <!-- Card: Console Input with readline -->
+    <div class="card">
+      <h2>🎤 Asking User Input</h2>
+      <ul>
+        <li><span class="emoji">🖥️</span>Use <code>readline/promises</code> to ask in server console:</li>
+        <pre><code>import readline from 'readline/promises';
+const rl = readline.createInterface(
+  { input: process.stdin, output: process.stdout }
+);
+const msg = await rl.question('Enter message: ');
+</code></pre>
+        <li><span class="emoji">🚀</span>Then broadcast <code>msg</code> to all clients.</li>
+      </ul>
+    </div>
+
+    <!-- Card: Next Steps -->
+    <div class="card">
+      <h2>✨ Next Improvements</h2>
+      <ul>
+        <li><span class="emoji">🎨</span>Clean up console UI (clear lines, prompt updates).</li>
+        <li><span class="emoji">🔒</span>Add user exit handling (<code>'exit'</code> command or <code>socket.end()</code>).</li>
+        <li><span class="emoji">🌍</span>Deploy server externally and connect from anywhere.</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

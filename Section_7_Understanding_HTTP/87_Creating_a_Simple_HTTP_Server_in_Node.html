@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple HTTP Server – Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.5;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .emoji {
+      font-size: 1.3em;
+      margin-right: 8px;
+    }
+    code {
+      background: #f4f4f4;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">🚀</span>Include the HTTP Module</h2>
+    <p>
+      Use Node’s built-in HTTP feature—no install needed!  
+      <code>const http = require('node:http');</code>  
+      The <code>node:</code> prefix means “native to Node.js.”
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🛠️</span>Create &amp; Start the Server</h2>
+    <p>
+      ```js
+      const server = http.createServer();
+      server.listen(8050, () => {
+        console.log('Server listening on http://localhost:8050');
+      });
+      ```
+      This opens port <code>8050</code> on all network interfaces (by default).
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📬</span>Handle Incoming Requests</h2>
+    <p>
+      Listen for the <code>'request'</code> event to see each HTTP call:
+      ```js
+      server.on('request', (req, res) => {
+        // req = incoming request (readable stream)
+        // res = outgoing response (writable stream)
+      });
+      ```
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔍</span>Log Method, URL &amp; Headers</h2>
+    <p>
+      Inside your handler:
+      ```js
+      console.log('→ Method:', req.method);
+      console.log('→ URL:',    req.url);
+      console.log('→ Headers:', req.headers);
+      ```
+      • <strong>Method</strong> tells what action the client wants (GET, POST…).<br>
+      • <strong>URL</strong> is the path after <code>/</code> (like <code>/users</code>).<br>
+      • <strong>Headers</strong> describe the request format and metadata.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📦</span>Read the Body as a Stream</h2>
+    <p>
+      Don’t do <code>req.body</code>—that would load all data into memory!<br>
+      Instead, stream it chunk by chunk:
+      ```js
+      req.on('data', chunk => {
+        console.log('📥 Chunk:', chunk.toString());
+      });
+      ```
+      Great for large uploads without crashing!
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">✅</span>Putting It All Together</h2>
+    <pre><code>const http = require('node:http');
+
+const server = http.createServer();
+server.on('request', (req, res) => {
+  console.log('→', req.method, req.url);
+  console.log('Headers:', req.headers);
+
+  req.on('data', chunk => {
+    console.log('Body chunk:', chunk.toString());
+  });
+
+  // send a simple response
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Hello, HTTP!');
+});
+
+server.listen(8050, () => {
+  console.log('Server listening on http://localhost:8050');
+});</code></pre>
+    <p>
+      Visit <code>http://localhost:8050</code> in your browser or use curl/postman to test!
+    </p>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📜 History of AES</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f7fa; margin: 0; padding: 20px; color: #333; }
+    h1 { text-align: center; color: #2c3e50; }
+    main { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 800px; margin: auto; }
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 16px; }
+    .card h2 { margin-top: 0; color: #1a242f; }
+    .card ul, .card p { margin: 8px 0; padding-left: 20px; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📜 A Brief History of AES</h1>
+  <main>
+    <section class="card">
+      <h2><span class="emoji">🔐</span>Before AES: DES</h2>
+      <p>Data Encryption Standard (DES) used a 56-bit key and 64-bit blocks. Once secure, it became vulnerable to brute-force by the late ’90s and is now obsolete.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🏁</span>The AES Competition</h2>
+      <ul>
+        <li>1997: NIST invited global submissions to replace DES.</li>
+        <li>15 algorithms entered; evaluated for security, speed, and simplicity.</li>
+        <li>2001: Rijndael chosen as the Advanced Encryption Standard (AES).</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">⚖️</span>Key Requirements</h2>
+      <ul>
+        <li><strong>Security:</strong> Resistant to attacks for decades.</li>
+        <li><strong>Efficiency:</strong> Fast in software & hardware (support for acceleration).</li>
+        <li><strong>Simplicity:</strong> Easy to analyze and verify by cryptographers.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🚀</span>Timeline</h2>
+      <ul>
+        <li>Early 1970s: DES developed by IBM & NSA.</li>
+        <li>1977: DES adopted as U.S. federal standard.</li>
+        <li>1997: NIST launches AES contest.</li>
+        <li>2001: AES (Rijndael) becomes U.S. and global standard.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🏛️</span>Government & Trust</h2>
+      <p>Unlike DES (developed with NSA), AES was chosen via open international competition to build public trust. Ongoing debates about backdoors highlight encryption’s importance and sensitivity.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔍</span>Looking Forward</h2>
+      <p>Changing standards takes years—if AES ever becomes vulnerable, its successor will emerge through careful study and public review, just like its origin.</p>
+    </section>
+  </main>
+</body>
+</html>

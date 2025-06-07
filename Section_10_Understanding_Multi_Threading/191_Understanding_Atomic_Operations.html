@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>⚙️ Atomic Operations: Beginner-Friendly Study Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0; padding: 20px; color: #333;
+    }
+    h1 {
+      text-align: center; color: #2a9d8f; margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff; border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px; transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0; color: #264653;
+    }
+    .card ul { padding-left: 20px; }
+    .card li { margin-bottom: 8px; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>⚙️ Atomic Operations: Beginner-Friendly Notes</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>🔒 What Are Atomics?</h2>
+      <ul>
+        <li><span class="emoji">⚛️</span>“Atomic” means <strong>indivisible</strong>—once started, cannot be interrupted.</li>
+        <li><span class="emoji">✅</span>Either completes fully or not at all.</li>
+        <li><span class="emoji">💻</span>Provided by CPU &amp; OS, wrapped by JavaScript’s <code>Atomics</code> object.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>🧱 Using Atomics in JS</h2>
+      <ul>
+        <li><span class="emoji">📦</span>Work on <strong>shared</strong> <em>typed arrays</em> (e.g. <code>Int32Array</code> on a <code>SharedArrayBuffer</code>).</li>
+        <li><span class="emoji">⚙️</span>Example: <code>Atomics.add(myArray, 0, 1)</code> adds 1 to element 0 <em>atomically</em>.</li>
+        <li><span class="emoji">🔗</span>Accessible in browser &amp; Node.js without extra libraries.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>🛠️ Common Atomic Methods</h2>
+      <ul>
+        <li><span class="emoji">➕</span><code>Atomics.add(typed, idx, val)</code></li>
+        <li><span class="emoji">💾</span><code>Atomics.store(typed, idx, val)</code></li>
+        <li><span class="emoji">📥</span><code>Atomics.load(typed, idx)</code></li>
+        <li><span class="emoji">➖</span><code>Atomics.sub(typed, idx, val)</code></li>
+        <li><span class="emoji">🔄</span><code>Atomics.compareExchange(typed, idx, old, new)</code></li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>⏸️ Wait &amp; Notify</h2>
+      <ul>
+        <li><span class="emoji">😴</span><code>Atomics.wait(typed, idx, value)</code> — thread sleeps until <code>typed[idx] !== value</code>.</li>
+        <li><span class="emoji">🔔</span><code>Atomics.notify(typed, idx, count)</code> — wakes up up to <code>count</code> sleepers.</li>
+        <li><span class="emoji">🔄</span>Use <em>wait/notify</em> to implement mutexes for critical sections.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>🚀 Why Use Atomics?</h2>
+      <ul>
+        <li><span class="emoji">⚡</span>Eliminate <strong>race conditions</strong> in shared-memory code.</li>
+        <li><span class="emoji">🔐</span>Ensure <em>mutual exclusion</em>—only one thread modifies critical data at once.</li>
+        <li><span class="emoji">📚</span>Built-in in modern JS (ES2017+), portable across browsers &amp; Node.js.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

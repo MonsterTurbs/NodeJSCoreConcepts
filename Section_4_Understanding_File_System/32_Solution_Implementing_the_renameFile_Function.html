@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Beginner-Friendly Study Notes – “Rename File” Command in Node.js</title>
+  <style>
+    /* Base styles */
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+
+    /* Container for cards */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr; /* One card per row */
+      gap: 20px;
+    }
+
+    /* Individual card styles */
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+
+    /* Print-friendly adjustments */
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Beginner-Friendly Study Notes: “Rename File” Command</h1>
+
+  <div class="container">
+
+    <!-- Card 1: What Is fs.rename? -->
+    <div class="card">
+      <h2>🔄 What Is <code>fs.rename</code>?</h2>
+      <ul>
+        <li><span class="emoji">❓</span><strong><code>fs.rename(oldPath, newPath)</code></strong> is a Node.js Promise-based function from <code>fs/promises</code> that renames (or moves) a file.</li>
+        <li><span class="emoji">📂</span>If you give it two paths, it changes the file’s name from <code>oldPath</code> to <code>newPath</code>.</li>
+        <li><span class="emoji">🚚</span>You can also “move” a file into another folder by specifying a folder path in <code>newPath</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Basic Usage of fs.rename -->
+    <div class="card">
+      <h2>🛠️ Step: Basic Rename Syntax</h2>
+      <ul>
+        <li><span class="emoji">📋</span>Use <code>await fs.rename(oldPath, newPath)</code> inside an <code>async</code> function.</li>
+        <li><span class="emoji">🖋️</span>For example:
+          <pre><code>async function renameFile(oldPath, newPath) {
+  await fs.rename(oldPath, newPath);
+  console.log(`✅ File renamed from ${oldPath} to ${newPath}`);
+}</code></pre>
+        </li>
+        <li><span class="emoji">🚀</span>That changes the file’s name or location in one step.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Handling Errors with try/catch -->
+    <div class="card">
+      <h2>⚠️ Step: Use <code>try…catch</code> for Errors</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>If <code>oldPath</code> doesn’t exist or <code>newPath</code> is invalid, <code>fs.rename</code> throws an error.</li>
+        <li><span class="emoji">🛡️</span>Wrap the call in <code>try…catch</code> to handle those errors gracefully:</li>
+        <li>
+          <pre><code>async function renameFile(oldPath, newPath) {
+  try {
+    await fs.rename(oldPath, newPath);
+    console.log(`✅ File renamed from ${oldPath} to ${newPath}`);
+  } catch (e) {
+    if (e.code === 'ENOENT') {
+      console.log(`⚠️ No file or directory at this path: ${oldPath}`);
+    } else {
+      console.error(`❌ Error renaming file: ${oldPath} → ${newPath}`, e);
+    }
+  }
+}</code></pre>
+        </li>
+        <li><span class="emoji">👍</span>This way, if the source file is missing or the destination folder doesn’t exist, you log a friendly message instead of crashing.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Renaming vs. Moving -->
+    <div class="card">
+      <h2>📂 Renaming vs. Moving Files</h2>
+      <ul>
+        <li><span class="emoji">📌</span>If <code>newPath</code> is in the same folder but with a different name, you’re simply renaming.</li>
+        <li><span class="emoji">🚚</span>If <code>newPath</code> contains a different directory (for example, <code>'dir/newname.txt'</code>), you’re moving the file into that folder.</li>
+        <li><span class="emoji">❗️</span>If the folder in <code>newPath</code> does not exist, <code>fs.rename</code> throws an <code>ENOENT</code> error. You must create that folder first or catch and report the error.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Example – Renaming a Local File -->
+    <div class="card">
+      <h2>✏️ Example: Rename in Current Folder</h2>
+      <ul>
+        <li><span class="emoji">📝</span>Assume you have <code>file.txt</code> in your app’s folder and want to rename it to <code>file-renamed.txt</code>:</li>
+        <li>
+          <pre><code>// In your main handler after reading command.txt:
+await renameFile('file.txt', 'file-renamed.txt');
+// Logs “✅ File renamed from file.txt to file-renamed.txt”</code></pre>
+        </li>
+        <li><span class="emoji">🎉</span>After running this, check your folder: <code>file.txt</code> no longer exists, and <code>file-renamed.txt</code> is there.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Example – Moving to a Subfolder -->
+    <div class="card">
+      <h2>🚀 Example: Move to a Different Folder</h2>
+      <ul>
+        <li><span class="emoji">📂</span>Create (or ensure) a folder named <code>dir</code> in your project:</li>
+        <li><span class="emoji">➡️</span>Then rename (move) <code>file-renamed.txt</code> into that folder:</li>
+        <li>
+          <pre><code>await renameFile('file-renamed.txt', 'dir/file-renamed.txt');
+// Logs “✅ File renamed from file-renamed.txt to dir/file-renamed.txt”</code></pre>
+        </li>
+        <li><span class="emoji">👍</span>If <code>dir</code> doesn’t exist, you’d see “⚠️ No file or directory at this path: file-renamed.txt” or “destination doesn’t exist.”</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Common Errors and Messages -->
+    <div class="card">
+      <h2>❗️ Common Errors & Friendly Messages</h2>
+      <ul>
+        <li><span class="emoji">🔍</span><code>ENOENT</code>: Means “Error NO ENTry” (no file or directory). You catch this to say “No file at this path to rename.”</li>
+        <li><span class="emoji">✨</span>If <code>newPath</code> parent folder is missing, <code>fs.rename</code> also throws <code>ENOENT</code>. Your message could be “Destination folder doesn’t exist.”</li>
+        <li><span class="emoji">🔒</span>Any other error (permissions, invalid characters) you catch and log as “Error renaming file” with the error object for debugging.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Putting It All Together -->
+    <div class="card">
+      <h2>🔗 Putting It All Together</h2>
+      <ul>
+        <li><span class="emoji">📋</span>Here’s the final <code>renameFile</code> function:
+
+<pre><code>const fs = require('fs/promises');
+
+async function renameFile(oldPath, newPath) {
+  try {
+    await fs.rename(oldPath, newPath);
+    console.log(`✅ File renamed from ${oldPath} to ${newPath}`);
+  } catch (e) {
+    if (e.code === 'ENOENT') {
+      console.log(`⚠️ No file or directory at this path: ${oldPath} (or destination folder missing)`);
+    } else {
+      console.error(`❌ Error renaming file: ${oldPath} → ${newPath}`, e);
+    }
+  }
+}</code></pre>
+        </li>
+        <li><span class="emoji">🎉</span>Use this in your main watcher logic when you detect “rename a file” command, passing the two paths you extracted.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Why This Matters for Beginners -->
+    <div class="card">
+      <h2>💡 Why This Matters</h2>
+      <ul>
+        <li><span class="emoji">📚</span>You learn how to call a Promise-based filesystem function (<code>fs.rename</code>) and handle asynchronous code in Node.js using <code>async/await</code>.</li>
+        <li><span class="emoji">🛡️</span>Error handling with <code>try…catch</code> teaches you to write robust code that won’t crash when files or folders are missing.</li>
+        <li><span class="emoji">🚀</span>Moving files between folders introduces the concept of file paths, absolute vs. relative, and the importance of ensuring target folders exist.</li>
+      </ul>
+    </div>
+
+    <!-- Card 10: What’s Next? -->
+    <div class="card">
+      <h2>🚀 What’s Next?</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>In the next lesson, you’ll learn how to append text into a file (“add to file” command) using <code>fs.appendFile</code> or <code>fs.open</code> with write flags.</li>
+        <li><span class="emoji">🎯</span>Keep practicing by writing different rename commands in <code>command.txt</code> and verifying that files rename or move correctly.</li>
+        <li><span class="emoji">🎉</span>Congratulations on mastering the “rename file” step in your Node.js File Commander App!</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

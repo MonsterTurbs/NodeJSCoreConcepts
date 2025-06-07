@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🍪 HTTP Cookies – Beginner Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f0f4f7;
+      margin: 0; padding: 20px; color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #34495e;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #e67e22;
+    }
+    .card ul { padding-left: 1.2em; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    pre { background: #f4f4f4; padding: 8px; border-radius: 4px; overflow-x: auto; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🍪 HTTP Cookies – Beginner Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>📬 What Are Cookies?</h2>
+      <ul>
+        <li><span class="emoji">📦</span>Small pieces of data servers ask browsers to save.</li>
+        <li><span class="emoji">🔗</span>Browsers then include them automatically in every request.</li>
+        <li><span class="emoji">🌐</span>Used to track sessions, preferences, shopping carts…</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>✉️ Sending a Cookie</h2>
+      <ul>
+        <li><span class="emoji">➡️</span>Server sets header in **response**:
+          <pre>Set-Cookie: token=ABC123;</pre>
+        </li>
+        <li><span class="emoji">⚙️</span>One cookie per header—send multiple headers for multiple cookies.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>💾 Browser Saves It</h2>
+      <ul>
+        <li><span class="emoji">💿</span>Browser stores cookies on disk by default.</li>
+        <li><span class="emoji">🗂️</span>Available even after tab or computer restart.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📥 Returning Cookies</h2>
+      <ul>
+        <li><span class="emoji">🔁</span>Browser sends back in **request** header:
+          <pre>Cookie: token=ABC123; cartId=XYZ789</pre>
+        </li>
+        <li><span class="emoji">⚠️</span>All cookies go in one header, separated by `; `.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>⚙️ Cookie Attributes</h2>
+      <ul>
+        <li><span class="emoji">⏰</span><strong>Expires/Max-Age</strong>: when cookie dies.</li>
+        <li><span class="emoji">🔒</span><strong>HttpOnly</strong>: not accessible to JavaScript.</li>
+        <li><span class="emoji">🔐</span><strong>Secure</strong>: send only over HTTPS.</li>
+        <li><span class="emoji">🛣️</span><strong>Path</strong>: restrict which URLs include it.</li>
+        <li><span class="emoji">🌍</span><strong>Domain</strong>: restrict to specific domains/subdomains.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🚧 Performance & Security</h2>
+      <ul>
+        <li><span class="emoji">📈</span>Cookies sent with every request—keep size small!</li>
+        <li><span class="emoji">🔍</span>Don’t store sensitive data directly—store a token only.</li>
+        <li><span class="emoji">🔄</span>On logout, send back Set-Cookie with past expiry to delete.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔗 More Info</h2>
+      <ul>
+        <li><span class="emoji">📚</span>Read full spec & attributes on MDN:</li>
+<pre>https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies</pre>
+        <li><span class="emoji">💡</span>Alternatives: use <strong>localStorage</strong> or <strong>sessionStorage</strong> for JS-managed data.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

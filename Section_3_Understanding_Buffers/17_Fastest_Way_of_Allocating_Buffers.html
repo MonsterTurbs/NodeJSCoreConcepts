@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Buffer Allocation Methods – Study Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    code {
+      background-color: #e6fffa;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    pre code {
+      display: block;
+      padding: 12px;
+      overflow-x: auto;
+      background-color: #edf2f7;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Buffer Allocation Methods – Study Notes</h1>
+  <div class="container">
+
+    <!-- Card 1: Why We Talk About Buffers -->
+    <div class="card">
+      <h2>💡 What Is a Buffer?</h2>
+      <ul>
+        <li><span class="emoji">📦</span>A buffer is like a box of memory bytes.</li>
+        <li><span class="emoji">🔢</span>We ask Node.js for a buffer of a certain size (in bytes).</li>
+        <li><span class="emoji">🔁</span>That memory might hold old data until we fill it.</li>
+        <li><span class="emoji">🛠️</span>We use methods like <code>Buffer.alloc()</code> or <code>Buffer.allocUnsafe()</code> to get that memory.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Buffer.alloc() -->
+    <div class="card">
+      <h2>⚙️ <code>Buffer.alloc(size)</code></h2>
+      <ul>
+        <li><span class="emoji">🧹</span><code>Buffer.alloc(n)</code> reserves <em>n</em> bytes and <strong>zeros them out</strong>.</li>
+        <li><span class="emoji">⏳</span>Zeroing takes time because Node writes 0 into every byte.</li>
+        <li><span class="emoji">👍</span>Safe: no old data remains, so no risk of leaking private info.</li>
+        <li><span class="emoji">👀</span>Example:
+          <pre><code>const buf = Buffer.alloc(10000);
+// All 10 000 bytes are set to 0</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Buffer.allocUnsafe() -->
+    <div class="card">
+      <h2>⚡ <code>Buffer.allocUnsafe(size)</code></h2>
+      <ul>
+        <li><span class="emoji">🚀</span><code>allocUnsafe(n)</code> grabs n bytes without clearing them first.</li>
+        <li><span class="emoji">⏩</span>Faster because it <strong>skips zeroing</strong>.</li>
+        <li><span class="emoji">⚠️</span>Unsafe: memory may contain <strong>leftover data</strong> (old bits). Could be sensitive!</li>
+        <li><span class="emoji">🔄</span>If you use it, <strong>immediately fill</strong> the buffer yourself:</li>
+          <pre><code>const buf = Buffer.allocUnsafe(5000);
+buf.fill(0); // now it’s all zeros</code></pre>
+        <li><span class="emoji">🔍</span>Check for old data (in decimal or binary) to see if anything was there:</li>
+          <pre><code>for (let i = 0; i &lt; buf.length; i++) {
+  if (buf[i] !== 0) {
+    console.log("Byte", i, "contains old data:", buf[i].toString(2));
+  }
+}</code></pre>
+      </ul>
+    </div>
+
+    <!-- Card 4: Why “Unsafe” Can Leak Secrets -->
+    <div class="card">
+      <h2>🔒 Danger: Old Data May Be Sensitive</h2>
+      <ul>
+        <li><span class="emoji">🙈</span>Old bytes might include passwords, API keys, or user info.</li>
+        <li><span class="emoji">🎯</span>A hacker who reads your buffer could see those secrets.</li>
+        <li><span class="emoji">✅</span>Always fill the entire <code>allocUnsafe</code> buffer <strong>before</strong> using it for anything else.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Buffer.allocUnsafeSlow() -->
+    <div class="card">
+      <h2>🐢 <code>Buffer.allocUnsafeSlow(size)</code></h2>
+      <ul>
+        <li><span class="emoji">🕳️</span>This also skips zeroing, but <strong>does not</strong> tap into Node’s internal “buffer pool.”</li>
+        <li><span class="emoji">📡</span>Useful if you want a one-time big buffer that won’t “poison” the pool.</li>
+        <li><span class="emoji">⚙️</span>It’s slightly slower than <code>allocUnsafe</code>, but still faster than <code>alloc</code>.</li>
+        <li><span class="emoji">🔧</span>Example:
+          <pre><code>const bufSlow = Buffer.allocUnsafeSlow(10000);
+bufSlow.fill(0xff); // fill with 0xff later</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Node’s Buffer Pool -->
+    <div class="card">
+      <h2>🏊 Node’s <code>buffer</code> “Pool”</h2>
+      <ul>
+        <li><span class="emoji">🧩</span>Node pre-allocates an <strong>8 KiB</strong> chunk of memory called the <code>buffer</code> pool.</li>
+        <li><span class="emoji">📐</span>If you call <code>allocUnsafe(n)</code> and <em>n ≤ poolSize / 2</em>, Node takes a slice from that pool (fast!).</li>
+        <li><span class="emoji">✂️</span>Otherwise, Node allocates fresh memory outside the pool.</li>
+        <li><span class="emoji">🔎</span>Check <code>Buffer.poolSize</code> (8 × 1024 = 8192 bytes) in your code:
+          <pre><code>console.log(Buffer.poolSize); // usually 8192</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 7: How “>> 1” Means Divide by 2 -->
+    <div class="card">
+      <h2>➗ Bit-Shift <code>&gt;&gt; 1</code> Means Divide by 2</h2>
+      <ul>
+        <li><span class="emoji">🔢</span>The operator <code>&gt;&gt; 1</code> shifts bits right by one place.</li>
+        <li><span class="emoji">⚙️</span>Shifting right by one bit is like dividing by 2 and taking the floor.</li>
+        <li><span class="emoji">🔍</span>Example (in binary):
+          <pre><code>  0011_1100  (60 decimal)
+&gt;&gt; 1  →  0001_1110  (30 decimal)
+&gt;&gt; 1  →  0000_1111  (15 decimal)</code></pre>
+        </li>
+        <li><span class="emoji">💡</span>In code, <code>Buffer.poolSize &gt;&gt; 1</code> yields half the pool size (4096 bytes).</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: When to Use Each Method -->
+    <div class="card">
+      <h2>🗂️ Choosing the Right Method</h2>
+      <ul>
+        <li><span class="emoji">✅</span><strong>Safety First:</strong> If you need a clean (zeroed) buffer, use <code>Buffer.alloc(size)</code>.</li>
+        <li><span class="emoji">🏎️</span><strong>Speed Without Reuse:</strong> Use <code>Buffer.allocUnsafe(size)</code> if you will immediately <em>fill</em> it completely.</li>
+        <li><span class="emoji">🐢</span><strong>Single Big Buffer:</strong> Use <code>Buffer.allocUnsafeSlow(size)</code> if you need one large buffer and won’t touch Node’s pool.</li>
+        <li><span class="emoji">🔗</span><strong>Buffer.from / concat:</strong> They use <code>allocUnsafe</code> internally and automatically size + fill, so they’re fast and safe.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Examples -->
+    <div class="card">
+      <h2>🔨 Code Examples</h2>
+      <ul>
+        <li><span class="emoji">🔵</span><code>alloc</code> – zeroed buffer:
+          <pre><code>const a = Buffer.alloc(5000);
+// 5000 bytes, all set to 0</code></pre>
+        </li>
+        <li><span class="emoji">🟢</span><code>allocUnsafe</code> – pool &amp; no zero:
+          <pre><code>const b = Buffer.allocUnsafe(5000);
+b.fill(0); // quickly overwrite all bytes</code></pre>
+        </li>
+        <li><span class="emoji">🔴</span><code>allocUnsafeSlow</code> – no zero, no pool:
+          <pre><code>const c = Buffer.allocUnsafeSlow(5000);
+// slice from old memory; must fill manually
+c.fill(0xff);</code></pre>
+        </li>
+        <li><span class="emoji">🔄</span><code>from</code> – auto-sizing &amp; fill:
+          <pre><code>const d = Buffer.from([0x10, 0x20, 0x30]);
+// Creates a buffer of length 3 with those bytes.</code></pre>
+        </li>
+        <li><span class="emoji">🔗</span><code>concat</code> – fast join:
+          <pre><code>const buf1 = Buffer.from("Hello ");
+const buf2 = Buffer.from("World");
+const e = Buffer.concat([buf1, buf2]);
+// "Hello World" in one buffer</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 10: Summary & Warnings -->
+    <div class="card">
+      <h2>✅ Summary &amp; Cautions</h2>
+      <ul>
+        <li><span class="emoji">📦</span><code>Buffer.alloc</code> = safe (all zeros) but slower.</li>
+        <li><span class="emoji">⚠️</span><code>Buffer.allocUnsafe</code> = very fast but <strong>must</strong> fill immediately to avoid old data leaks.</li>
+        <li><span class="emoji">🐢</span><code>Buffer.allocUnsafeSlow</code> = skip pool, skip zero, good for “one-off” large buffers.</li>
+        <li><span class="emoji">📊</span>Buffers &lt; <code>Buffer.poolSize &gt;&gt; 1</code> use Node’s 8 KiB pool for extra speed.</li>
+        <li><span class="emoji">🔒</span>Never leave an <code>allocUnsafe</code> buffer uninitialized—old data might be sensitive!</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

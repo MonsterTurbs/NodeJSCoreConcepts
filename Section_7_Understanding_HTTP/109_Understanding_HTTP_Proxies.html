@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🔀 Proxies &amp; Load Balancing – Beginner Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f0f4f7;
+      margin: 0; padding: 20px; color: #333;
+    }
+    h1 { text-align: center; color: #2c3e50; margin-bottom: 20px; }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2980b9;
+    }
+    .card ul { padding-left: 1.2em; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    pre { background: #f5f5f5; padding: 8px; overflow-x: auto; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔀 Proxies &amp; Load Balancing – Beginner Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>🛡️ What Is a Proxy?</h2>
+      <ul>
+        <li><span class="emoji">🔄</span>A “middleman” server sits between clients and your real servers.</li>
+        <li><span class="emoji">📥</span>Clients send requests to the proxy’s address.</li>
+        <li><span class="emoji">📤</span>Proxy forwards each request to one of your backend servers and returns its response.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>⚖️ Why Use Load Balancing?</h2>
+      <ul>
+        <li><span class="emoji">🚀</span>Distribute traffic across multiple servers (scale out).</li>
+        <li><span class="emoji">🔄</span>If one server fails, others handle requests (higher availability).</li>
+        <li><span class="emoji">💪</span>Reduces load on each machine → better performance.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🌍 Real-World Clients</h2>
+      <ul>
+        <li><span class="emoji">💻</span>Web browsers, mobile apps, IoT devices (e.g., smart fridge).</li>
+        <li><span class="emoji">📱</span>All talk HTTP(S) to your proxy, no matter where they are.</li>
+        <li><span class="emoji">🛰️</span>Proxy routes them to servers close by, hiding your infrastructure.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔢 Simple Round-Robin Example</h2>
+      <pre>
+// list of backend servers
+const backends = [
+  { host:'127.0.0.1', port:9001 },
+  { host:'127.0.0.1', port:9002 }
+];
+let idx = 0;
+
+// inside proxy request handler
+const target = backends[idx];
+idx = (idx + 1) % backends.length;
+// forward req to target, then pipe response back to client
+      </pre>
+      <ul>
+        <li><span class="emoji">➡️</span>1st request → server 0</li>
+        <li><span class="emoji">➡️</span>2nd request → server 1</li>
+        <li><span class="emoji">↩️</span>3rd request → back to server 0</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔧 Proxy Use-Cases</h2>
+      <ul>
+        <li><span class="emoji">🚫</span>Block malicious traffic.</li>
+        <li><span class="emoji">🔐</span>Handle TLS/HTTPS at proxy—keep backend simple.</li>
+        <li><span class="emoji">♻️</span>Modify headers, add caching, inject rate limits.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📈 Scaling &amp; Statelessness</h2>
+      <ul>
+        <li><span class="emoji">📊</span>HTTP is “stateless”: each request independent.</li>
+        <li><span class="emoji">🤝</span>With proxies you can add sessions or tokens (next topic) to remember users.</li>
+        <li><span class="emoji">🚀</span>Add hundreds of servers by just listing them in your proxy config.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

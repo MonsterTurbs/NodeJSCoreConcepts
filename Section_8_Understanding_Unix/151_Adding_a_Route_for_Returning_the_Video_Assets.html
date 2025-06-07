@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🎬 Get Video Assets – Study Notes</title>
+  <style>
+    body {
+      margin: 0; padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .card p, .card ul {
+      margin: 0.5em 0;
+      line-height: 1.4;
+    }
+    .card code {
+      background: #e3ebf0;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎬 Get Video Assets – Study Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ Purpose</h2>
+      <p>Serve video-related files (thumbnail, original video, audio, resized) via one route:</p>
+      <p><code>GET /api/videos/assets?videoId=&lt;id&gt;&amp;type=&lt;kind&gt;</code> 📁</p>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ Read Request Params 📥</h2>
+      <pre><code>
+const videoId = req.params.get('videoId');
+const type    = req.params.get('type');
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ Load DB &amp; Find Video 🔍</h2>
+      <pre><code>
+db.update();
+const video = db.videos.find(v => v.id === videoId);
+if (!video) return handleError(404, 'Video not found');
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ Pick File &amp; MIME Type 🎞️</h2>
+      <p>Use a <code>switch(type)</code>:</p>
+      <ul>
+        <li><strong>thumbnail:</strong> <code>storage/&lt;videoId&gt;/thumbnail.jpg</code>, <code>image/jpeg</code></li>
+        <li><strong>original:</strong> <code>storage/&lt;videoId&gt;/original.&lt;ext&gt;</code>, <code>video/mp4</code></li>
+        <li><strong>audio:</strong>    <code>storage/&lt;videoId&gt;/audio.aac</code>,   <code>audio/aac</code></li>
+        <li><strong>resize:</strong>   <code>storage/&lt;videoId&gt;/&lt;width&gt;x&lt;height&gt;.&lt;ext&gt;</code>, <code>video/mp4</code></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ Set Headers &amp; Stream 📡</h2>
+      <pre><code>
+const stats = await file.stats();            // get file size
+res.setHeader('Content-Type', mimeType);
+res.setHeader('Content-Length', stats.size);
+if (type !== 'thumbnail') {
+  res.setHeader('Content-Disposition',
+    'attachment; filename=' + downloadName);
+}
+await pipeline(
+  file.createReadStream(),
+  res
+);
+file.close();                                // free system resources
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Error &amp; Edge Cases 🚨</h2>
+      <ul>
+        <li>Wrap <code>await pipeline</code> in <code>try/catch</code> to avoid crashes on client cancel</li>
+        <li>Validate <code>type</code> &amp; handle missing files</li>
+        <li>Always <code>file.close()</code> to prevent resource leaks</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Testing 🔧</h2>
+      <ol>
+        <li>Visit <code>/api/videos/assets?videoId=&lt;id&gt;&amp;type=thumbnail</code> → see image</li>
+        <li>Type=original → triggers video download</li>
+        <li>Type=audio → download .aac</li>
+        <li>Type=resize → download resized video</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>✅ Summary</h2>
+      <p>One smart route serves multiple file-types. Key steps:</p>
+      <ul>
+        <li>Read &amp; validate query params</li>
+        <li>Lookup video in DB</li>
+        <li>Locate correct file &amp; MIME</li>
+        <li>Set <code>Content-Type</code>, <code>Content-Length</code>, <code>Content-Disposition</code></li>
+        <li>Stream via <code>pipeline()</code> &amp; close file</li>
+      </ul>
+      <p>🎉 You're all set to serve any video asset!</p>
+    </div>
+
+  </div>
+</body>
+</html>

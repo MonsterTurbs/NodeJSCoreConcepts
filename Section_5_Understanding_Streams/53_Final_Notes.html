@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📝 Study Notes – Streams Summary & Object Mode</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji { margin-right: 6px; }
+    pre {
+      background-color: #eef2f7;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    @media print {
+      body { background-color: #fff; color: #000; }
+      .card { box-shadow: none; margin-bottom: 20px; }
+      pre { background-color: transparent; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Streams Recap & Object Mode</h1>
+  <div class="container">
+
+    <!-- Card 1: Streams Recap -->
+    <div class="card">
+      <h2>🔄 Streams Quick Recap</h2>
+      <ul>
+        <li><span class="emoji">📥</span>Streams let you process data piece by piece, not all at once.</li>
+        <li><span class="emoji">📤</span>Types: <strong>Readable</strong>, <strong>Writable</strong>, <strong>Duplex</strong>, <strong>Transform</strong>.</li>
+        <li><span class="emoji">⚙️</span>Key methods: <code>_read()</code>, <code>_write()</code>, <code>_transform()</code>, <code>_construct()</code>, <code>_destroy()</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Object Mode Intro -->
+    <div class="card">
+      <h2>📦 What Is Object Mode?</h2>
+      <ul>
+        <li><span class="emoji">🔧</span>Object mode streams move JavaScript objects instead of binary buffers.</li>
+        <li><span class="emoji">📊</span>Useful for large datasets like big JSON arrays or database records.</li>
+        <li><span class="emoji">⚠️</span>Standard streams handle <code>Buffer</code> data; object mode handles any JS value.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Enabling Object Mode -->
+    <div class="card">
+      <h2>🔛 Enabling Object Mode</h2>
+      <ul>
+        <li><span class="emoji">⚙️</span>When creating a stream, set <code>objectMode: true</code> in options:</li>
+        <pre><code>new Readable({ objectMode: true, ... })
+new Transform({ objectMode: true, ... })</code></pre>
+        <li><span class="emoji">📈</span>HighWaterMark changes: default is <code>16</code> objects (not bytes).</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Implementing Object Mode -->
+    <div class="card">
+      <h2>🛠️ Example: Stream of Objects</h2>
+      <pre><code>const { Readable } = require('stream');
+
+class ObjectStream extends Readable {
+  constructor(items) {
+    super({ objectMode: true });
+    this.items = items;
+    this.index = 0;
+  }
+
+  _read() {
+    if (this.index < this.items.length) {
+      this.push(this.items[this.index++]);
+    } else {
+      this.push(null);
+    }
+  }
+}
+
+// Usage:
+const objs = [ {id:1}, {id:2}, {id:3} ];
+const objStream = new ObjectStream(objs);
+objStream.on('data', obj => console.log(obj));
+objStream.on('end', () => console.log('Done!'));
+</code></pre>
+    </div>
+
+    <!-- Card 5: Key Points & Tips -->
+    <div class="card">
+      <h2>📌 Key Points & Tips</h2>
+      <ul>
+        <li><span class="emoji">✔️</span>Object mode streams behave just like normal streams but handle JS values.</li>
+        <li><span class="emoji">🔄</span>You can pipe object streams into <code>Transform</code> streams that modify objects.</li>
+        <li><span class="emoji">🚀</span>Great for processing database rows, API responses, or any large lists.</li>
+        <li><span class="emoji">📚</span>Always check event names: <code>'data'</code>, <code>'end'</code>, <code>'error'</code>.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

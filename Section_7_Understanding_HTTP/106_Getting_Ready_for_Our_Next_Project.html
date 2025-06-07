@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🚀 Project Setup: Poster App – Beginner Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f5f8fa;
+      margin: 0; padding: 20px; color: #333;
+    }
+    h1 { text-align: center; color: #34495e; }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #e67e22;
+    }
+    .card ul { padding-left: 1.2em; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 Poster App: Beginner Setup Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>📁 Create New Project “poster”</h2>
+      <ul>
+        <li><span class="emoji">🌱</span>Make a folder named <code>poster</code> inside your <code>http</code> directory.</li>
+        <li><span class="emoji">📂</span>Inside <code>poster</code>, create <code>public</code> (for front-end files) and <code>server.js</code>.</li>
+        <li><span class="emoji">🔧</span>We'll power backend with our <em>butter.js</em> framework.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🛠️ Move & Require “butter.js”</h2>
+      <ul>
+        <li><span class="emoji">✂️</span>Drag your <code>butter.js</code> into the <code>http</code> root (next to <code>poster</code>).</li>
+        <li><span class="emoji">🔗</span>In <code>poster/server.js</code>, import it with:
+          <pre>const butter = require('../butter');</pre>
+        </li>
+        <li><span class="emoji">💡</span>Later you’ll publish it on npm—then just <code>require('butter')</code>.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📥 Add Front-End into <code>public</code></h2>
+      <ul>
+        <li><span class="emoji">📦</span>Download **poster-front-end.zip** from the video resources.</li>
+        <li><span class="emoji">📂</span>Unzip and copy **index.html**, **styles.css**, **script.js** into <code>poster/public</code>.</li>
+        <li><span class="emoji">📂</span>Your folder now looks like:
+          <pre>
+poster/
+├─ public/
+│  ├ index.html
+│  ├ styles.css
+│  └ script.js
+└ server.js
+          </pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🖥️ About the Front-End Code</h2>
+      <ul>
+        <li><span class="emoji">💻</span>It’s a React app bundled by Webpack—don’t edit <code>script.js</code>.</li>
+        <li><span class="emoji">🎨</span>HTML &amp; CSS live in <code>index.html</code> &amp; <code>styles.css</code>.</li>
+        <li><span class="emoji">🔗</span>API calls marked with <code>// 📡 API CALL</code> use Axios to talk to our backend.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔌 How API Calls Will Work</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>Front-end uses relative URLs (e.g. <code>/login</code>), so browser calls our server’s origin.</li>
+        <li><span class="emoji">📡</span>Axios sends GET/POST to endpoints we’ll define in <code>server.js</code>.</li>
+        <li><span class="emoji">🔄</span>Responses (JSON data) will drive login, post-creation, &amp; feed display.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🚀 Next Steps</h2>
+      <ul>
+        <li><span class="emoji">▶️</span>Serve these static files via Butter in <code>server.js</code>.</li>
+        <li><span class="emoji">🔨</span>Define API routes: <code>/login</code>, <code>/posts</code>, etc.</li>
+        <li><span class="emoji">⚡</span>Implement authentication + post storage in upcoming videos!</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

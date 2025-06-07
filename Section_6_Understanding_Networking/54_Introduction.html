@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📝 Study Notes – Networking with Node.js</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background-color: #fff; color: #000; }
+      .card { box-shadow: none; margin-bottom: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Networking with Node.js</h1>
+  <div class="container">
+
+    <!-- Card 1: What Is Networking -->
+    <div class="card">
+      <h2>🌐 What Is Networking?</h2>
+      <ul>
+        <li><span class="emoji">🔗</span>Networking means connecting computers to send and receive data.</li>
+        <li><span class="emoji">⚙️</span>Node.js was built to create scalable network applications easily.</li>
+        <li><span class="emoji">💡</span>Concepts apply across languages: Go, Java, Python, and more.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Key Node.js Modules -->
+    <div class="card">
+      <h2>🛠️ Key Node.js Modules</h2>
+      <ul>
+        <li><span class="emoji">📦</span><strong>net</strong>: For low‑level TCP sockets.</li>
+        <li><span class="emoji">📬</span><strong>dgram</strong>: For UDP datagrams.</li>
+        <li><span class="emoji">🆔</span><strong>dns</strong>: For DNS lookups.</li>
+        <li><span class="emoji">🔧</span>Also use <code>readline</code>, <code>process</code>, and <code>path</code> for CLI UI.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Chat Application Demo -->
+    <div class="card">
+      <h2>💬 Chat App Demo</h2>
+      <ul>
+        <li><span class="emoji">🚀</span>Server (`server.js`) listens for TCP connections.</li>
+        <li><span class="emoji">👥</span>Clients (`client.js`) connect, receive an ID, and send messages.</li>
+        <li><span class="emoji">🔄</span>Messages go from client → server → all clients, enabling real‑time chat.</li>
+        <li><span class="emoji">🌍</span>Clients and server can be anywhere in the world via the internet.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: File Uploader Demo -->
+    <div class="card">
+      <h2>📤 Uploader App Demo</h2>
+      <ul>
+        <li><span class="emoji">📁</span>Client (`client.js`) reads a file and streams it to the server.</li>
+        <li><span class="emoji">💾</span>Server (`server.js`) receives data and writes to <code>storage/</code> folder.</li>
+        <li><span class="emoji">🔢</span>Shows upload progress percentage in the console.</li>
+        <li><span class="emoji">✅</span>Uploaded file appears intact in the storage directory.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Networking Fundamentals -->
+    <div class="card">
+      <h2>🔍 Networking Fundamentals</h2>
+      <ul>
+        <li><span class="emoji">🔌</span><strong>TCP</strong>: Reliable, connection‑oriented transport.</li>
+        <li><span class="emoji">💨</span><strong>UDP</strong>: Fast, connectionless datagrams.</li>
+        <li><span class="emoji">🌐</span>Protocols (HTTP, FTP, SSH) build on TCP/UDP.</li>
+        <li><span class="emoji">🎯</span>Understanding sockets and streams is key.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Deployment Overview -->
+    <div class="card">
+      <h2>🚀 Deployment</h2>
+      <ul>
+        <li><span class="emoji">☁️</span>Use a public server (AWS, DigitalOcean, GCP) with a public IP.</li>
+        <li><span class="emoji">⚙️</span>Copy your app files and run <code>node server.js</code> on that server.</li>
+        <li><span class="emoji">🌍</span>Global clients connect via the server’s IP address and port.</li>
+        <li><span class="emoji">🔒</span>Optional: Use firewalls and TLS for security.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

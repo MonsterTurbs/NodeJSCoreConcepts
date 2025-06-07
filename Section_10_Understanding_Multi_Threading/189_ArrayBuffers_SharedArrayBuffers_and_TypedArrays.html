@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🔢 ArrayBuffers & Typed Arrays: Study Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0; padding: 20px; color: #333;
+    }
+    h1 {
+      text-align: center; color: #264653; margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff; border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px; transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0; color: #2a9d8f;
+    }
+    .card ul { padding-left: 20px; }
+    .card li { margin-bottom: 8px; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔢 ArrayBuffers & Typed Arrays</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>📦 Raw Binary: ArrayBuffer</h2>
+      <ul>
+        <li><span class="emoji">🧩</span><strong>ArrayBuffer</strong> is pure bytes—no interpretation.</li>
+        <li><span class="emoji">⚠️</span>Cannot read/write directly; must use a <em>view</em>.</li>
+        <li><span class="emoji">🆕</span>Allocate: <code>new ArrayBuffer(bytes)</code>.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔭 Views: Typed Arrays</h2>
+      <ul>
+        <li><span class="emoji">🔢</span><strong>TypedArray</strong> (e.g. <code>Uint8Array</code>, <code>Int16Array</code>) view raw data.</li>
+        <li><span class="emoji">📏</span>Element size fixed: <code>Uint8Array</code> = 1 byte, <code>Int16Array</code> = 2 bytes, etc.</li>
+        <li><span class="emoji">👁️‍🗨️</span>Wrap buffer: <code>new Uint8Array(arrayBuffer)</code>.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🧱 Node.js Buffer</h2>
+      <ul>
+        <li><span class="emoji">⚙️</span>Built on <code>Uint8Array</code>; adds methods (<code>slice</code>, <code>concat</code>).</li>
+        <li><span class="emoji">💨</span>Uses an 8 KB internal <em>pool</em> for fast allocations.</li>
+        <li><span class="emoji">⚗️</span>Allocate vs from:
+          <ul>
+            <li><code>Buffer.alloc(n)</code> → new memory.</li>
+            <li><code>Buffer.from(str)</code> → encodes string.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔄 Endianness</h2>
+      <ul>
+        <li><span class="emoji">🔀</span><strong>Big-endian:</strong> most-significant byte first.</li>
+        <li><span class="emoji">↔️</span><strong>Little-endian:</strong> least-significant byte first.</li>
+        <li><span class="emoji">⚠️</span>Must match when sharing across systems/languages.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>💡 When to Use</h2>
+      <ul>
+        <li><span class="emoji">🎨</span>Ideal for binary data (images, network packets, shared memory).</li>
+        <li><span class="emoji">🔧</span>Use <code>Buffer</code> in Node.js for convenience.</li>
+        <li><span class="emoji">📚</span>Use TypedArrays in browser or when fixed element size needed.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>📤 File Upload Route – Beginner-Friendly Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f5f8fa;
+      margin: 0; padding: 20px; color: #333;
+    }
+    h1 { text-align: center; color: #2c3e50; }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #e67e22;
+    }
+    .card ul { padding-left: 1.2em; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    pre {
+      background: #f4f4f4;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code { background: #eef; padding: 2px 4px; border-radius: 4px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📤 File Upload Route – Beginner-Friendly Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>📂 Create Storage Folder</h2>
+      <ul>
+        <li><span class="emoji">🗄️</span>Make a new directory in your project, e.g. <code>storage/</code>.</li>
+        <li><span class="emoji">📁</span>Uploaded files will be saved here.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🚀 Define Upload Route</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>In <code>server.js</code>, add:
+          <pre>if (req.method==='PUT' && req.url==='/uploads') { … }</pre>
+        </li>
+        <li><span class="emoji">✏️</span>Use <code>PUT</code> since upload is idempotent (same file gets overwritten).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>⚙️ Open & Stream to File</h2>
+      <ul>
+        <li><span class="emoji">📂</span>Create (or overwrite) target file:
+          <pre>
+const fh = await fs.open('./storage/uploaded-file.jpg','w');
+          </pre>
+        </li>
+        <li><span class="emoji">📈</span>Make a writable stream:
+          <pre>const ws = fh.createWriteStream();</pre>
+        </li>
+        <li><span class="emoji">🚰</span>Pipe incoming request body into file:
+          <pre>req.pipe(ws);</pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>✅ Finish & Respond</h2>
+      <ul>
+        <li><span class="emoji">🏁</span>Wait for upload to complete:
+          <pre>req.on('end', ()=>{ … });</pre>
+        </li>
+        <li><span class="emoji">📤</span>Send JSON success message:
+          <pre>
+res.setHeader('Content-Type','application/json');
+res.end(JSON.stringify({ message: 'File uploaded!' }));
+          </pre>
+        </li>
+        <li><span class="emoji">🚦</span>Test with Postman:
+          • Method: PUT  
+          • URL: <code>http://localhost:9000/uploads</code>  
+          • Body → “binary” → choose a file  
+          → get <code>{"message":"File uploaded!"}</code>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>💡 Why Streams?</h2>
+      <ul>
+        <li><span class="emoji">⚡</span>Efficiently handles large files.</li>
+        <li><span class="emoji">🧠</span>Only small chunks held in memory at once.</li>
+        <li><span class="emoji">🔄</span>Better performance vs. buffering entire file.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

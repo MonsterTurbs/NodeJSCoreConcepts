@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>🔄 Node.js Thread Pool</title>
+  <style>
+    body { background: #f7fafc; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+    .container { max-width: 700px; margin: auto; }
+    .card { background: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px; margin-bottom: 20px; }
+    h1 { text-align: center; color: #2d3748; }
+    h2 { margin-top: 0; color: #2b6cb0; }
+    ul { padding-left: 1.2em; }
+    li { margin-bottom: 0.8em; line-height: 1.4; }
+    code { background: #e2e8f0; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔄 Node.js Thread Pool</h1>
+    <div class="card">
+      <h2>✨ What It Is</h2>
+      <ul>
+        <li>Node.js uses the <code>libuv</code> thread pool to run certain async operations off the main loop.</li>
+        <li>By default, this pool has <strong>4 threads</strong> (configurable via <code>UV_THREADPOOL_SIZE</code>).</li>
+        <li>It handles tasks like file I/O, DNS lookups, zlib compression, and some <code>crypto</code> functions. 🧵</li>
+      </ul>
+
+      <h2>🚀 Why It Matters</h2>
+      <ul>
+        <li>Offloading heavy work keeps the main thread free for handling incoming requests and callbacks.</li>
+        <li>Allows true parallel execution of blocking operations across multiple CPU cores.</li>
+      </ul>
+
+      <h2>⚙️ How to Tune</h2>
+      <ul>
+        <li>Set the pool size with an environment variable before starting Node.js:
+          <br/><code>UV_THREADPOOL_SIZE=8 node app.js</code> 🔧
+        </li>
+        <li>Beware: too many threads can increase context‐switching overhead and memory use.</li>
+      </ul>
+
+      <h2>💡 Pro Tips</h2>
+      <ul>
+        <li>Prefer pure JavaScript async for non‐blocking I/O; the thread pool is for truly blocking work.</li>
+        <li>Monitor <code>process.resourceUsage()</code> or OS tools to see thread‐pool activity. 📊</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

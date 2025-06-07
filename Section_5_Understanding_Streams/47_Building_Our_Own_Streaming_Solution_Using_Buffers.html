@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Study Notes – Copying Files Without Streams</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr; /* one card per row */
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    pre {
+      background-color: #eef2f7;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Copying Files Without Streams</h1>
+  <div class="container">
+
+    <!-- Card 1: Overview -->
+    <div class="card">
+      <h2>🌟 Overview</h2>
+      <ul>
+        <li><span class="emoji">📂</span>Goal: Copy a large file from “source” to “destination” <strong>without</strong> using Node.js streams.</li>
+        <li><span class="emoji">⚠️</span>Copying in one go (e.g., <code>fs.readFile</code> + <code>fs.writeFile</code>) loads the entire file into memory.</li>
+        <li><span class="emoji">💡</span>When files exceed ~2 GB, <code>fs.readFile</code> fails, and memory usage becomes huge.</li>
+        <li><span class="emoji">🔧</span>This guide shows how to implement a manual “buffered” copy loop that reads &amp; writes in chunks.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Why Not Use readFile/writeFile? -->
+    <div class="card">
+      <h2>❌ Why Not <code>fs.readFile</code> / <code>fs.writeFile</code>?</h2>
+      <ul>
+        <li><span class="emoji">🔍</span><code>fs.readFile()</code> returns a single <code>Buffer</code> containing the entire file <strong>in memory</strong>.</li>
+        <li><span class="emoji">💾</span>If the file is > 2 GB, Node throws “file size > 2 GB” error. Even smaller large files use huge RAM (≈ file size).</li>
+        <li><span class="emoji">🐢</span>Example: Copying a 1 GB file with <code>readFile/writeFile</code> shows ~900 ms copy time but uses ≈1 GB RAM.</li>
+        <li><span class="emoji">⚡</span>Desirable: Keep memory usage low (e.g., 30–50 MB) even for multi-gigabyte files.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Manual “Buffered” Copy Approach -->
+    <div class="card">
+      <h2>🔄 Manual “Buffered” Copy</h2>
+      <ul>
+        <li><span class="emoji">📌</span>Use <code>fs.open</code> to get file handles for source and destination.</li>
+        <li><span class="emoji">📤</span>In a loop:
+          <ol>
+            <li>Read a fixed-size chunk (e.g., 16 KB) from source via <code>fileHandle.read()</code>.</li>
+            <li>If <code>bytesRead</code> is zero → end of file, exit loop.</li>
+            <li>Write exactly <code>bytesRead</code> bytes to destination via <code>fileHandle.write()</code>.</li>
+            <li>Repeat until entire file is processed.</li>
+          </ol>
+        </li>
+        <li><span class="emoji">📉</span>Memory usage stays low (≈ size of one chunk) instead of file size.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Handling Partial Buffers -->
+    <div class="card">
+      <h2>🛠️ Handling Partial Buffers</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>Last read often fills less than the full chunk size → leftover zeros in buffer.</li>
+        <li><span class="emoji">🧹</span>Solution:
+          <ol>
+            <li>After <code>read()</code>, check <code>bytesRead</code> vs. <code>buffer.length</code>.</li>
+            <li>If unequal:
+              <ul>
+                <li>Find index of first zero: <code>buffer.indexOf(0)</code>.</li>
+                <li>Create a new buffer of that “actual” size: <code>Buffer.alloc(actualSize)</code>.</li>
+                <li>Copy only those “actualSize” bytes: <code>buffer.copy(newBuffer, 0, 0, actualSize)</code>.</li>
+                <li>Write <code>newBuffer</code> instead of the full fixed buffer.</li>
+              </ul>
+            </li>
+            <li>Otherwise, write full fixed-size buffer.</li>
+          </ol>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Code Example – Buffered Copy -->
+    <div class="card">
+      <h2>💻 Code Example</h2>
+      <pre><code>const fs = require('fs/promises');
+
+(async () =&gt; {
+  // 1. Open source &amp; destination
+  const srcHandle  = await fs.open('text-gigantic.txt', 'r');
+  const dstHandle  = await fs.open('text-copy.txt',   'w');
+
+  // 2. Prepare a fixed-size buffer (e.g., 16 KB)
+  const CHUNK_SIZE = 16 * 1024; // 16 384 bytes
+  const buffer = Buffer.alloc(CHUNK_SIZE);
+
+  let bytesRead = -1;
+  while (bytesRead !== 0) {
+    // 3. Read a chunk from source
+    const { bytesRead: n, buffer: buf } = await srcHandle.read(buffer, 0, CHUNK_SIZE, null);
+    bytesRead = n;
+
+    if (bytesRead === 0) break; // end of file
+
+    // 4. If last chunk < CHUNK_SIZE, trim zeros
+    let toWrite = buf;
+    if (bytesRead &lt; CHUNK_SIZE) {
+      const cutOff = buf.indexOf(0); // find first zero byte
+      if (cutOff &gt; -1) {
+        const newBuf = Buffer.alloc(cutOff);
+        buf.copy(newBuf, 0, 0, cutOff);
+        toWrite = newBuf;
+      }
+    }
+
+    // 5. Write exactly 'bytesRead' bytes (or trimmed buffer) to destination
+    await dstHandle.write(toWrite, 0, toWrite.length, null);
+  }
+
+  // 6. Close file handles
+  await srcHandle.close();
+  await dstHandle.close();
+  console.log('✅ Copy completed!');
+})();</code></pre>
+    </div>
+
+    <!-- Card 6: Performance Comparison -->
+    <div class="card">
+      <h2>📊 Performance Comparison</h2>
+      <ul>
+        <li><span class="emoji">⚡</span>**Method A (readFile/writeFile):**</li>
+        <ul>
+          <li>✔️ Copy 1 GB in ~900 ms</li>
+          <li>❌ Uses ≈1 GB memory (unusable > 2 GB, OOM errors)</li>
+        </ul>
+        <li><span class="emoji">🔄</span>**Method B (Manual buffered loop):**</li>
+        <ul>
+          <li>✔️ Copy 1 GB in ~2 s</li>
+          <li>✔️ Uses ≈ 30–40 MB memory (just one 16 KB chunk at a time)</li>
+          <li>✔️ Can handle very large files (10 GB, 100 GB…) without OOM</li>
+        </ul>
+        <li><span class="emoji">💡</span>Tradeoff: Slightly slower, but extremely memory‐efficient.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Key Takeaways -->
+    <div class="card">
+      <h2>📌 Key Takeaways</h2>
+      <ul>
+        <li><span class="emoji">✅</span>Use <code>fs.readFile</code> only for small files (&lt; 50 MB). Otherwise risk high memory use or errors.</li>
+        <li><span class="emoji">🔨</span>Manual buffered copy (16 KB chunks) keeps RAM low, copying gigabytes effortlessly.</li>
+        <li><span class="emoji">🚫</span>Avoid loading entire file into memory; read &amp; write in loops of fixed‐size buffers.</li>
+        <li><span class="emoji">📚</span>Understanding buffers (byte arrays) and <code>fs.FileHandle.read()</code> / <code>.write()</code> is essential.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

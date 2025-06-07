@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mac Setup Study Notes – Beginner Friendly</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f7;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #1abc9c;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>👩‍💻 Mac Setup: Beginner-Friendly Study Notes</h1>
+  <div class="container">
+    <!-- Card 1: Welcome & Guide -->
+    <div class="card">
+      <h2>👋 Welcome & Guide</h2>
+      <ul>
+        <li><span class="emoji">😊</span>This video shows how to prepare your <strong>Mac</strong> for the NodeJS course.</li>
+        <li><span class="emoji">⏭️</span>You can skip sections you already know. A Table of Contents appears in the video—use it to jump ahead.</li>
+        <li><span class="emoji">📥</span>Download the PDF of installation commands from the Resources so you don’t have to type everything.</li>
+        <li><span class="emoji">❗</span>Don’t bookmark or add permanent notes in the video—content may change when updated.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Terminal Basics (iTerm2) -->
+    <div class="card">
+      <h2>💻 Terminal Basics (iTerm2)</h2>
+      <ul>
+        <li><span class="emoji">🐚</span>We use the Terminal a lot. The built-in “Terminal” app works, but many prefer <strong>iTerm2</strong>.</li>
+        <li><span class="emoji">📥</span>To install iTerm2:  
+          <ol>
+            <li>Open Safari → search “download iTerm2” → go to iTerm2.com → click “Downloads” → download .zip.</li>
+            <li>Open Downloads folder → drag <code>iTerm.app</code> into <code>/Applications</code>.</li>
+            <li>Open iTerm2 from Applications → click “Open” if macOS warns you.</li>
+          </ol>
+        </li>
+        <li><span class="emoji">⚙️</span>In iTerm2 Preferences (<code>⌘ ,</code>):  
+          <ul>
+            <li>Under <strong>General &gt; Working Directory</strong>, set “Reuse previous session’s directory” so new tabs open where you left off.</li>
+            <li>Under <strong>Appearance &gt; Color Presets</strong>, pick a theme you like (e.g., Solarized Dark).</li>
+            <li>Under <strong>Keys</strong>, note useful shortcuts:  
+              <ul>
+                <li><span class="emoji">⌘ 1</span>, <span class="emoji">⌘ 2</span>, <span class="emoji">⌘ 3</span> to switch tabs quickly.</li>
+                <li><span class="emoji">Ctrl A</span> goes to start of line; <span class="emoji">Ctrl E</span> goes to end of line.</li>
+              </ul>
+            </li>
+            <li><span class="emoji">📋</span>To copy text: just select it—iTerm auto-copies. Paste with <code>⌘ V</code>.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔍</span>Find your CPU architecture: run <code>uname -a</code>.  
+          <ul>
+            <li>If the result contains <em>arm64</em>, you have an Apple Silicon Mac.</li>
+            <li>If it shows <em>x86_64</em>, you have an Intel-based Mac.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📌</span>Right-click iTerm2 icon &gt; Options &gt; “Keep in Dock” for easy access.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Developer Tools (Xcode CLI) -->
+    <div class="card">
+      <h2>🔧 Install Command Line Tools</h2>
+      <ul>
+        <li><span class="emoji">🛠️</span>macOS requires “Command Line Developer Tools” (Git, GCC, Python, etc.) for many packages.</li>
+        <li><span class="emoji">⌨️</span>To install: in Terminal, run:  
+          <code>xcode-select --install</code> → when a popup appears, click “Install” → agree to terms.</li>
+        <li><span class="emoji">✅</span>After a few minutes, tools are ready. Verify by running <code>python3 --version</code> or <code>gcc --version</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Homebrew -->
+    <div class="card">
+      <h2>🍺 Install Homebrew</h2>
+      <ul>
+        <li><span class="emoji">🏠</span>Homebrew is a package manager for macOS that simplifies installing apps.</li>
+        <li><span class="emoji">⌨️</span>Check if Homebrew is installed: run <code>brew -v</code>.  
+          <ul>
+            <li>If a version appears, Homebrew is already installed → skip this step.</li>
+            <li>If you see “command not found,” install it.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">⚡</span>To install, copy the Homebrew command from the PDF or Homebrew website:  
+          <code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code> → press Enter → enter your password → wait.</li>
+        <li><span class="emoji">📜</span>If Terminal warns “brew is not in your PATH,” run the two commands it suggests (add lines to <code>~/.zprofile</code> or <code>~/.zshrc</code>).</li>
+        <li><span class="emoji">✅</span>After installing, run <code>brew update</code> to ensure formulas are current.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: NVM & NodeJS -->
+    <div class="card">
+      <h2>🌟 Install NVM & NodeJS</h2>
+      <ul>
+        <li><span class="emoji">🌀</span><strong>NVM</strong> (Node Version Manager) lets you install and switch between multiple NodeJS versions easily.</li>
+        <li><span class="emoji">⌨️</span>To install NVM via Homebrew:  
+          <code>brew install nvm</code></li>
+        <li><span class="emoji">📝</span>After that, add these lines to your <code>~/.zshrc</code> (or <code>~/.bash_profile</code> if using bash):  
+          <pre style="background:#f4f4f4; padding:8px;">  
+export NVM_DIR="$HOME/.nvm"  
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  
+          </pre>
+        </li>
+        <li><span class="emoji">📂</span>Create the <code>~/.nvm</code> folder if not auto-created:  
+          <code>mkdir ~/.nvm</code></li>
+        <li><span class="emoji">🔄</span>Restart Terminal or open a new tab, then verify with <code>nvm -v</code>.</li>
+        <li><span class="emoji">🚀</span>Install NodeJS LTS (recommended):  
+          <code>nvm install 20</code> → this grabs latest 20.x.y LTS.  
+          <code>nvm use 20</code> → sets NodeJS v20 as active.</li>
+        <li><span class="emoji">📦</span>Verify NodeJS & npm:  
+          <code>node -v</code> and <code>npm -v</code> should show versions (e.g., v20.x.y and npm 10.x.y).</li>
+        <li><span class="emoji">⚠️</span>If you prefer a global installer instead, you can download the NodeJS macOS installer from <a href="https://nodejs.org" target="_blank">nodejs.org</a> (ARM64 for Apple Silicon or x64 for Intel), but NVM is easier for switching versions.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Postman -->
+    <div class="card">
+      <h2>🧪 Install Postman</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>Postman is used to test HTTP APIs. We’ll use it in the HTTP section.</li>
+        <li><span class="emoji">🔍</span>To install:  
+          <ol>
+            <li>In your browser, search “Download Postman” → go to <a href="https://www.postman.com/downloads/" target="_blank">postman.com/downloads</a>.</li>
+            <li>Choose the Mac version matching your CPU (Apple Silicon or Intel). Download the .zip/.dmg.</li>
+            <li>Open the downloaded file → drag <code>Postman.app</code> into <code>/Applications</code>.</li>
+            <li>Open Postman from Applications. If prompted, click “Open.”</li>
+          </ol>
+        </li>
+        <li><span class="emoji">✅</span>Verify by typing any URL in Postman’s request bar and clicking “Send”—you’ll get a response if online.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Wireshark -->
+    <div class="card">
+      <h2>📡 Install Wireshark</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>Wireshark captures network packets to show exactly what data travels through your network card.</li>
+        <li><span class="emoji">🔍</span>To install:  
+          <ol>
+            <li>Search “Download Wireshark” → go to <a href="https://www.wireshark.org/download.html" target="_blank">wireshark.org/download</a>.</li>
+            <li>Choose the macOS installer for your CPU (ARM64 or Intel). Download the .dmg.</li>
+            <li>Open the .dmg → drag <code>Wireshark.app</code> into <code>/Applications</code>.</li>
+          </ol>
+        </li>
+        <li><span class="emoji">🔒</span>On first launch, it may show “Permission to capture packets denied.”  
+          <ul>
+            <li>Open the Wireshark .dmg again and run “Install ChmodBPF.”</li>
+            <li>Follow prompts → enter your password to grant permission.</li>
+            <li>Quit and reopen Wireshark → now you can capture packets.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">▶️</span>To test: double-click your main network interface (e.g., “en0” or “Ethernet”) to start capturing. Then perform any web request (e.g., in Safari/Chrome). Stop capture to view packets.</li>
+        <li><span class="emoji">❕</span>Later, you can disable packet highlighting or auto-scroll if it’s confusing—use the toolbar icons.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Activity Monitor -->
+    <div class="card">
+      <h2>📊 Activity Monitor</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>Activity Monitor shows all running processes and resource usage (CPU, memory, disk, network).</li>
+        <li><span class="emoji">▶️</span>Open it via Spotlight (<code>⌘ Space</code> → type “Activity Monitor” → Enter).</li>
+        <li><span class="emoji">👀</span>Tabs to check:  
+          <ul>
+            <li><strong>CPU</strong> – shows overall CPU load and per-process usage.</li>
+            <li><strong>Memory</strong> – shows how much RAM each process uses.</li>
+            <li><strong>Network</strong> – shows data sent/received per process.</li>
+            <li><strong>Disk</strong> – shows read/write per process.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🕵️‍♂️</span>To see your Node process: open Terminal → run <code>node</code> (starts REPL) or run your script (<code>node app.js</code>) → look for “node” in Activity Monitor. You’ll see its CPU, memory, and other stats.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Programmer Calculator -->
+    <div class="card">
+      <h2>🔢 Programmer Calculator</h2>
+      <ul>
+        <li><span class="emoji">🧮</span>macOS Calculator has a “Programmer” mode to convert numbers between different bases (binary, hex, octal, decimal).</li>
+        <li><span class="emoji">▶️</span>Open via Spotlight (<code>⌘ Space</code> → type “Calculator” → Enter). Then choose <strong>View &gt; Programmer</strong>.</li>
+        <li><span class="emoji">✨</span>You can enter:  
+          <ul>
+            <li>A decimal number (e.g., “12”) to see its hex (0xC), octal (014), and binary (1100).</li>
+            <li>A hex number (e.g., “0xF”) to see decimal (15), octal (017), and binary (1111).</li>
+            <li>A binary sequence (e.g., “1010”) to see decimal (10), hex (0xA), and octal (012).</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📘</span>We’ll use this in the Buffers section to understand how raw bytes map to text and numbers.</li>
+      </ul>
+    </div>
+
+    <!-- Card 10: Testing a Simple Node App -->
+    <div class="card">
+      <h2>🚀 Testing a Simple NodeJS App</h2>
+      <ul>
+        <li><span class="emoji">📂</span>Open Terminal and go to Desktop: <code>cd ~/Desktop</code>.</li>
+        <li><span class="emoji">📄</span>Create a text file:  
+          <code>touch text.txt</code> → open in VS Code: <code>code text.txt</code> → type <em>This text is coming from Node.</em> → save and close.</li>
+        <li><span class="emoji">🆕</span>Create Node app file:  
+          <code>touch app.js</code> → open in VS Code: <code>code app.js</code>.</li>
+        <li><span class="emoji">💻</span>In <code>app.js</code>, copy/paste this code:  
+          <pre style="background:#f4f4f4; padding:8px;">  
+const http = require('http');  
+const fs = require('fs');  
+
+const server = http.createServer();  
+server.on('request', (req, res) => {  
+  const data = fs.readFileSync('text.txt');  
+  res.setHeader('Content-Type', 'text/plain');  
+  res.end(data);  
+});  
+
+server.listen(4080, '127.0.0.1', () => {  
+  console.log('Server running at http://' + server.address().address + ':' + server.address().port);  
+});  
+          </pre>
+        </li>
+        <li><span class="emoji">▶️</span>In Terminal:  
+          <code>node app.js</code> → see “Server running at http://127.0.0.1:4080”.</li>
+        <li><span class="emoji">🌐</span>Open Postman → set method to GET → URL <code>http://127.0.0.1:4080</code> → click “Send” → response should show “This text is coming from Node.”</li>
+        <li><span class="emoji">📡</span>Open Wireshark → double-click “Loopback” to capture → in Postman click “Send” → stop Wireshark → look for HTTP packets from 127.0.0.1.  
+          <ul>
+            <li>Click one packet with protocol “HTTP” → scroll down to see the plain-text response.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">✅</span>If Postman returns the text and Wireshark shows packets, your Mac is fully set up for the course!</li>
+        <li><span class="emoji">🎉</span>Congratulations! You’re ready to follow along with the lessons.</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

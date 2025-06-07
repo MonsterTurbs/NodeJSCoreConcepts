@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Beginner-Friendly Hashing Study Notes 📚</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      padding: 15px;
+    }
+    .card h2 {
+      margin-top: 0;
+    }
+    .card p {
+      line-height: 1.5;
+    }
+    .emoji {
+      font-size: 1.2em;
+      margin-right: 8px;
+    }
+    pre {
+      background: #eee;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">🔍</span>What Is Hashing?</h2>
+    <p>A hash function takes any size of data (“message”) and crunches it into a fixed‐size output called a <strong>hash</strong> or <strong>digest</strong>. For example, no matter if you hash one word or a big video, the result is always 256 bits long (for SHA-256).</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🛡️</span>Why Do We Hash?</h2>
+    <ul>
+      <li><strong>Integrity</strong>: Detect if data was changed in transit 🔄</li>
+      <li><strong>Authentication</strong>: Verify someone’s identity (e.g. password checks) ✅</li>
+      <li><strong>Key Derivation</strong>: Turn a simple password into a strong AES key 🔑</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">⚙️</span>Basic Hash Example in JavaScript</h2>
+    <pre>
+const crypto = require('crypto');
+
+// Create a SHA-256 hasher
+const hasher = crypto.createHash('sha256');
+
+// Add our message
+hasher.update('Hello, world! 🌎');
+
+// Get the 256-bit digest as hex
+const digest = hasher.digest('hex');
+
+console.log(digest);
+    </pre>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📋</span>Popular Hash Algorithms</h2>
+    <ul>
+      <li><strong>✅ SHA-256</strong> – 256-bit output (very widely used)</li>
+      <li><strong>✅ SHA-512</strong> – 512-bit output (extra security)</li>
+      <li><strong>⚠️ MD5</strong> and <strong>⚠️ SHA-1</strong> – broken, don’t use!</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔒</span>What Makes a Hash “Secure”?</h2>
+    <ol>
+      <li><strong>Preimage resistance</strong>: Cannot reverse hash → original data 🔐</li>
+      <li><strong>2nd preimage resistance</strong>: Cannot find a 2nd input matching same hash 🔑</li>
+      <li><strong>Collision resistance</strong>: Cannot find any two inputs with same hash ⚔️</li>
+      <li><strong>Avalanche effect</strong>: Tiny input change → completely different hash ❄️</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🌐</span>Hashing in the Real World</h2>
+    <ul>
+      <li><strong>Passwords:</strong> Store salted hashes instead of plain text 🔑</li>
+      <li><strong>File checks:</strong> Verify downloads with `sha256sum file` 📂</li>
+      <li><strong>Cryptocurrencies:</strong> Bitcoin miners compute trillions of SHA-256 ⛏️</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📚</span>Next Steps</h2>
+    <p>In the next section, we’ll implement SHA-256 from scratch in Node.js to see exactly how the math works! 🎓</p>
+  </div>
+
+</body>
+</html>

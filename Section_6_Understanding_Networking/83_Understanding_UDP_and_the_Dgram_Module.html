@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UDP Basics – Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.5;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .emoji {
+      font-size: 1.3em;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">📨</span>What is UDP?</h2>
+    <p>UDP stands for <strong>User Datagram Protocol</strong>. It lives in the transport layer (Layer 4) alongside TCP.  
+    Unlike TCP, UDP is <em>connectionless</em>—it just <strong>sends packets</strong> without setting up or tearing down a session.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🚫🔁</span>Connectionless &amp; Unreliable</h2>
+    <p>Because it doesn’t track connections or acknowledgements, packets may arrive <strong>out of order</strong> or be <strong>lost</strong>.  
+    You must add your own checks if you need guaranteed delivery or ordering.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">⚙️</span>Using Node.js <code>dgram</code></h2>
+    <pre><code>const dgram = require('dgram');
+    
+// Receiver
+const server = dgram.createSocket('udp4');
+server.on('message', (msg, rinfo) =&gt; {
+  console.log(`Received "${msg}" from ${rinfo.address}:${rinfo.port}`);
+});
+server.bind(8000, '127.0.0.1');
+
+// Sender
+const client = dgram.createSocket('udp4');
+const message = Buffer.from('Hello, UDP!');
+client.send(message, 8000, '127.0.0.1', err =&gt; {
+  if (err) console.error(err);
+  client.close();
+});</code></pre>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">💨</span>When to Use UDP</h2>
+    <ul>
+      <li>Real‐time streaming (video, voice) where speed matters more than perfect accuracy.</li>
+      <li>Online gaming—small packet losses are acceptable.</li>
+      <li>Custom high-speed protocols (e.g. QUIC/WebRTC).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📏</span>Packet Size &amp; Tuning</h2>
+    <p>Default UDP packets max out around <strong>64 KB</strong>.  
+    In Node you can increase the send buffer:</p>
+    <pre><code>
+const sock = dgram.createSocket({
+  type: 'udp4',
+  sendBufferSize: 128 * 1024  // 128 KB
+});
+    </code></pre>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">⚖️</span>TCP vs. UDP</h2>
+    <p><strong>TCP</strong> ⇒ reliable, ordered, connection-oriented, larger headers.<br>
+    <strong>UDP</strong> ⇒ faster, simpler, connection-less, smaller headers.</p>
+  </div>
+
+</body>
+</html>

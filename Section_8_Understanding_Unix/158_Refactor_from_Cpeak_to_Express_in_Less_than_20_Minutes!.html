@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🎓 Video App: Express Refactor – Study Notes</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f9fafb; color:#333; }
+    h1 { text-align:center; margin-bottom:1em; }
+    .container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      max-width:700px;
+      margin:auto;
+    }
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      padding:16px;
+      transition:transform .2s;
+    }
+    .card:hover { transform:translateY(-2px); }
+    .card h2 { margin-top:0; color:#1f4e79; }
+    pre {
+      background:#eef2f5;
+      padding:8px;
+      overflow-x:auto;
+      border-radius:4px;
+      margin:0;
+    }
+    @media print {
+      body { background:#fff; }
+      .card { box-shadow:none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎓 Refactoring to Express</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ Smooth Express Switch 🚀</h2>
+      <p>Refactored Kpig to Express in ~20 min—same routes/controllers, just replaced <code>kpig()</code> with <code>express()</code>!</p>
+      <p>🎉 It “just worked” with minimal changes.</p>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ Key Changes 🔑</h2>
+      <ul>
+        <li><strong>Init:</strong> <code>const app = express();</code></li>
+        <li><strong>Body parsing:</strong> still use <code>app.use(express.json())</code>, no body-parser.</li>
+        <li><strong>Static files:</strong> <code>app.use(express.static(absolutePath))</code></li>
+        <li><strong>Middleware:</strong> <code>app.use(myMiddleware)</code> vs. Kpig’s <code>server.beforeEach</code>.</li>
+        <li><strong>Error handler:</strong> same signature (<code>err, req, res, next</code>).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ Route Definitions 🛣️</h2>
+      <pre><code>// Kpig
+server.get('/api/upload', uploadController);
+
+// Express
+app.get('/api/upload', uploadController);</code></pre>
+      <p>Only difference: <code>server.route</code> → <code>app.METHOD</code>.</p>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ URL &amp; Query Params 🔍</h2>
+      <ul>
+        <li>Kpig: <code>req.params.get('videoId')</code> for query</li>
+        <li>Express: <code>req.query.videoId</code> or <code>req.params.videoId</code> for URL params</li>
+      </ul>
+      <p>Express supports “:/param” routes out of the box.</p>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ Cluster Mode &amp; Express 🤝</h2>
+      <p>Your existing <code>cluster.js</code> &amp; <code>JobQueue</code> stayed unchanged—Express plays nicely in cluster mode!</p>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Absolute Paths 📂</h2>
+      <p>Express <code>res.sendFile()</code> needs an absolute path—use <code>path.join(__dirname, '...')</code>.</p>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Next Steps &amp; Enhancements 🔭</h2>
+      <ul>
+        <li>Add support for URL-params routes (<code>/:id</code>).</li>
+        <li>Per-route middleware (<code>app.use('/api', auth)</code>).</li>
+        <li>Extend Kpig to match these features for full parity.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

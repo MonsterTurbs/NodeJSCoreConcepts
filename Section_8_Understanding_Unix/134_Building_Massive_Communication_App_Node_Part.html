@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🚀 Massive Communication Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      margin: 0; padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2b6cb0;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c5282;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    pre {
+      background: #edf2f7;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code {
+      background: #e2e8f0;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 Massive Communication Study Notes</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>📦 Project Overview</h2>
+      <p>We’ll build a “massive communication” system:</p>
+      <ul>
+        <li>🔹 Read huge file (kilobytes→gigabytes) via streams</li>
+        <li>🔹 Spawn a second process (e.g. a C program)</li>
+        <li>🔹 Pass data via <code>stdout</code>→<code>stdin</code></li>
+        <li>🔹 Process &amp; write to a new file</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>🌲 Data Flow Diagram</h2>
+      <ul>
+        <li><strong>Source File</strong> → Node.js app reads with streams</li>
+        <li>Node.js pipes data to <strong>Formatter Process</strong></li>
+        <li>Formatter adds <code>$</code> &amp; commas → writes <strong>dest.txt</strong></li>
+      </ul>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>⚙️ Node.js Setup</h2>
+      <pre><code>const { spawn } = require('child_process');
+const fs = require('fs');
+</code></pre>
+      <p>Use <code>fs.createReadStream</code> &amp; <code>spawn()</code>.</p>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>🛠 Spawning Formatter</h2>
+      <pre><code>const fmt = spawn('number_formatter', [
+  'dest.txt',   // output file
+  '$',          // prefix each number
+  ','           // thousands separator
+]);</code></pre>
+      <p>Pass arguments: destination, prefix, separator.</p>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>🔄 Streaming Data</h2>
+      <pre><code>fs.createReadStream('source.txt')
+  .pipe(fmt.stdin);
+</code></pre>
+      <p>Pipes source file into formatter’s <code>stdin</code>.</p>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2>📣 Logging &amp; Exit</h2>
+      <pre><code>fmt.stdout.on('data', d =&gt; console.log('OUT:', d.toString()));
+fmt.stderr.on('data', d =&gt; console.error('ERR:', d.toString()));
+fmt.on('close', code =&gt; {
+  if (code === 0) console.log('✅ Success!');
+  else console.error('❌ Error code', code);
+});</code></pre>
+      <p>Monitor <code>stdout</code>, <code>stderr</code>, and exit code.</p>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card">
+      <h2>💡 Why Streams?</h2>
+      <ul>
+        <li>Handle gigabytes without high memory use</li>
+        <li>Backpressure &amp; flow control</li>
+        <li>Chain processes efficiently</li>
+      </ul>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="card">
+      <h2>🎯 Your Challenge</h2>
+      <p>Implement the formatter in any language:</p>
+      <ul>
+        <li>Read numbers separated by spaces from <code>stdin</code></li>
+        <li>Format each: add <code>$</code> &amp; commas every 3 digits</li>
+        <li>Write to <code>stdout</code></li>
+      </ul>
+      <p>Test on a multi-GB file—memory stays low!</p>
+    </div>
+
+  </div>
+</body>
+</html>

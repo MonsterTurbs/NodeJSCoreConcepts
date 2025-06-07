@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🛠️ Adding Middleware to Butter</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #eef2f5;
+      margin: 0; padding: 20px; color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #34495e;
+      margin-bottom: 24px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #e67e22;
+    }
+    .card ul { padding-left: 1.2em; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    pre { background: #f4f4f4; padding: 8px; border-radius: 4px; overflow-x: auto; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🛠️ Adding Middleware to Butter</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>🔍 What Is Middleware?</h2>
+      <ul>
+        <li><span class="emoji">🔄</span>Functions that run <em>before</em> your route handler.</li>
+        <li><span class="emoji">🚦</span>Can perform tasks like auth, JSON parsing, CORS, logging…</li>
+        <li><span class="emoji">➡️</span>Call `next()` when done so the next middleware or route runs.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📜 Declaring Middleware</h2>
+      <ul>
+        <li><span class="emoji">✏️</span>In your app code:
+          <pre>
+// register three middlewares
+server.beforeEach((req,res,next) => {
+  console.log("1st middleware")
+  setTimeout(() => next(),2000)
+})
+server.beforeEach((req,res,next) =&gt; {
+  console.log("2nd middleware")
+  setTimeout(() =&gt; next(),2000)
+})
+server.beforeEach((req,res,next) =&gt; {
+  console.log("3rd middleware")
+  setTimeout(() =&gt; next(),2000)
+})
+          </pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>⚙️ Framework Changes: Store & Run</h2>
+      <ul>
+        <li><span class="emoji">📂</span>Add in constructor:
+          <pre>this.middleware = [];</pre>
+        </li>
+        <li><span class="emoji">➕</span>`beforeEach(fn)` pushes to array:
+          <pre>this.middleware.push(fn)</pre>
+        </li>
+        <li><span class="emoji">🏃</span>Invoke all before route:
+<pre>
+runMiddleware(req,res, list, i=0){
+  if(i===list.length) {
+    // all done → call route
+    this.routes[req.method+req.url](req,res)
+  } else {
+    list[i](req,res,()=> runMiddleware(req,res,list,i+1))
+  }
+}
+</pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔁 Using Recursion</h2>
+      <ul>
+        <li><span class="emoji">🔄</span>Define a function that re-calls itself with `i+1`.</li>
+        <li><span class="emoji">⛔</span>Exit when `i === middleware.length` → then run route.</li>
+        <li><span class="emoji">💡</span>Automatically handles any number of middlewares!</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🚀 Final Flow</h2>
+      <ul>
+        <li><span class="emoji">1️⃣</span>Incoming request → `runMiddleware(req,res,middleware,0)`</li>
+        <li><span class="emoji">2️⃣</span>Each middleware runs `fn(req,res,next)` in order</li>
+        <li><span class="emoji">3️⃣</span>After all, your route handler runs!</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

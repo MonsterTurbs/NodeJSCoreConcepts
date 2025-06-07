@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🌐 HTTP Status Codes – Beginner Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f8fa;
+      margin: 0; padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #1abc9c;
+    }
+    .card ul {
+      padding-left: 1em;
+      line-height: 1.5;
+    }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🌐 HTTP Status Codes – Beginner Notes</h1>
+  <div class="container">
+
+    <!-- Intro Card -->
+    <div class="card">
+      <h2>❓ What Are Status Codes?</h2>
+      <ul>
+        <li><span class="emoji">📩</span>When you send an HTTP request, the server replies with a <strong>status code</strong>.</li>
+        <li><span class="emoji">🔢</span>It’s just a number (100–599) that says “what happened” to your request.</li>
+        <li><span class="emoji">📝</span>Only responses have codes—requests do not.</li>
+      </ul>
+    </div>
+
+    <!-- Ranges Card -->
+    <div class="card">
+      <h2>📊 Code Ranges</h2>
+      <ul>
+        <li><span class="emoji">ℹ️</span><strong>100–199</strong>: Informational (just telling you “got it, keep going”)</li>
+        <li><span class="emoji">✅</span><strong>200–299</strong>: Success (your request worked!)</li>
+        <li><span class="emoji">↪️</span><strong>300–399</strong>: Redirection (please try another URL)</li>
+        <li><span class="emoji">⚠️</span><strong>400–499</strong>: Client Error (you did something wrong)</li>
+        <li><span class="emoji">❌</span><strong>500–599</strong>: Server Error (our server failed)</li>
+      </ul>
+    </div>
+
+    <!-- Success Codes Card -->
+    <div class="card">
+      <h2>✅ 200 Range: Success</h2>
+      <ul>
+        <li><span class="emoji">200</span><strong>OK</strong> – General success.</li>
+        <li><span class="emoji">201</span><strong>Created</strong> – New item was made.</li>
+        <li><span class="emoji">204</span><strong>No Content</strong> – Worked but nothing to return.</li>
+      </ul>
+    </div>
+
+    <!-- Redirect Codes Card -->
+    <div class="card">
+      <h2>↪️ 300 Range: Redirects</h2>
+      <ul>
+        <li><span class="emoji">301</span><strong>Moved Permanently</strong> – Resource moved; update your link.</li>
+        <li><span class="emoji">302</span><strong>Found</strong> – Temporary redirect.</li>
+        <li><span class="emoji">307</span><strong>Temporary Redirect</strong> – Method stays same.</li>
+      </ul>
+    </div>
+
+    <!-- Client Error Card -->
+    <div class="card">
+      <h2>⚠️ 400 Range: Client Errors</h2>
+      <ul>
+        <li><span class="emoji">400</span><strong>Bad Request</strong> – Request was malformed.</li>
+        <li><span class="emoji">401</span><strong>Unauthorized</strong> – Need to log in.</li>
+        <li><span class="emoji">403</span><strong>Forbidden</strong> – You’re not allowed.</li>
+        <li><span class="emoji">404</span><strong>Not Found</strong> – URL doesn’t exist.</li>
+        <li><span class="emoji">405</span><strong>Method Not Allowed</strong> – Wrong HTTP method used.</li>
+      </ul>
+    </div>
+
+    <!-- Server Error Card -->
+    <div class="card">
+      <h2>❌ 500 Range: Server Errors</h2>
+      <ul>
+        <li><span class="emoji">500</span><strong>Internal Server Error</strong> – Something broke on our end.</li>
+        <li><span class="emoji">502</span><strong>Bad Gateway</strong> – Upstream server failed.</li>
+        <li><span class="emoji">503</span><strong>Service Unavailable</strong> – Server is overloaded or down.</li>
+      </ul>
+    </div>
+
+    <!-- Why Use the Right Code -->
+    <div class="card">
+      <h2>🎯 Why Pick the Right Code?</h2>
+      <ul>
+        <li><span class="emoji">🛠️</span>Makes debugging easier—team members instantly know what went wrong.</li>
+        <li><span class="emoji">🔍</span>Browsers & tools react differently (e.g. caching, redirects).</li>
+        <li><span class="emoji">🔒</span>Security: don’t reveal too much (e.g. hide “exists” vs. “not found”).</li>
+      </ul>
+    </div>
+
+    <!-- References Card -->
+    <div class="card">
+      <h2>📚 Learn More</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>Mozilla MDN: Search “HTTP status codes”</li>
+        <li><span class="emoji">🔗</span>IANA Registry: https://www.iana.org/assignments/http-status-codes</li>
+        <li><span class="emoji">📖</span>RFC 9110 Section 15 for full official list</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

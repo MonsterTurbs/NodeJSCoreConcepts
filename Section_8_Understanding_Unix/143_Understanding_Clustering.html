@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>⚙️ Node.js Clustering Explained</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f8fafd;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin: 0 0 0.5em;
+      font-size: 1.2em;
+      color: #2c3e50;
+    }
+    .card p, .card ul, .card ol {
+      margin: 0.5em 0;
+      line-height: 1.4;
+    }
+    .card code {
+      background: #eef3f7;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    @media print {
+      body { background: white; color: black; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>⚙️ Node.js Clustering Explained</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ What Is Clustering? 🤔</h2>
+      <p>Clustering runs your Node.js app multiple times (processes) so you can use <strong>all CPU cores</strong> instead of just one.</p>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ Why Cluster? 🚀</h2>
+      <ul>
+        <li>💪 Utilise full CPU power (e.g. 8 cores → 8 worker processes)</li>
+        <li>🔧 Handle heavy tasks without freezing the server</li>
+        <li>🔄 If one worker crashes, the master can restart it</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ CPU Count in Node.js 🖥️</h2>
+      <pre><code>const os = require('os');
+console.log(os.cpus().length);           // List of core objects
+console.log(os.availableParallelism());  // Number of cores</code></pre>
+      <p>Use <code>os.cpus()</code> or <code>os.availableParallelism()</code> to know how many workers to spawn.</p>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ Master &amp; Workers 🎭</h2>
+      <ul>
+        <li>👑 <strong>Master</strong> process: forks workers, monitors them</li>
+        <li>🤖 <strong>Worker</strong> processes: run your app logic</li>
+        <li>🔁 Master can respawn workers if they exit</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ How Fork Works 🔄</h2>
+      <ol>
+        <li>Master calls <code>cluster.fork()</code></li>
+        <li>Node spawns a new process running the same code</li>
+        <li>New worker gets its own CPU core and memory</li>
+        <li>Repeat to match number of cores</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Diagram Overview 📊</h2>
+      <p>
+        Hardware → Kernel → Master → Worker 1 (Core A)<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Worker 2 (Core B)<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;… up to number of cores
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Blocking vs. Non-Blocking ⚠️</h2>
+      <p>
+        A CPU-heavy loop (e.g., counting to millions) will block a single process for seconds, making the server unresponsive to other requests.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>8️⃣ Clustering Solves Blocking 💡</h2>
+      <p>With clustering, if one worker is busy, other workers can still handle new incoming requests—no freezing! 🛡️</p>
+    </div>
+
+    <div class="card">
+      <h2>9️⃣ Next Steps 🛠️</h2>
+      <ul>
+        <li>Learn the <code>cluster</code> module API</li>
+        <li>Implement a master script that forks <code>os.cpus().length</code> workers</li>
+        <li>Optionally implement a restart-on-exit strategy</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

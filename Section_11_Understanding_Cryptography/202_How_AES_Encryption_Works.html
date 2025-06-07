@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🔒 Deep Dive: AES Symmetric Encryption</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f7fa; margin: 0; padding: 20px; color: #333; }
+    h1 { text-align: center; color: #2d3e50; }
+    main { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 800px; margin: 0 auto; }
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 16px; }
+    .card h2 { margin-top: 0; color: #1a242f; }
+    .card ul, .card p { margin: 8px 0; padding-left: 20px; }
+    code { background: #eef1f5; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔒 AES Encryption Explained</h1>
+  <main>
+    <section class="card">
+      <h2><span class="emoji">✨</span>What is AES?</h2>
+      <p>AES (Advanced Encryption Standard) is the most common symmetric cipher—used everywhere from HTTPS to messaging apps.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🌐</span>Everyday Uses</h2>
+      <ul>
+        <li>End-to-end chat encryption (WhatsApp, iMessage).</li>
+        <li>HTTPS web traffic (banks, websites).</li>
+        <li>Disk encryption (FileVault, BitLocker).</li>
+        <li>VPNs, SSH, password managers, IoT devices.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">📦</span>Block & Key Sizes</h2>
+      <ul>
+        <li>Operates on 128-bit blocks (16 bytes).</li>
+        <li>Key lengths: 128, 192, or 256 bits.</li>
+        <li>Number of rounds: 10 (128-bit key), 12 (192), or 14 (256).</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔄</span>Core Steps per Block</h2>
+      <ol>
+        <li><strong>AddRoundKey:</strong> XOR block with round-specific key.</li>
+        <li><strong>SubBytes:</strong> Replace each byte via a lookup table.</li>
+        <li><strong>ShiftRows:</strong> Rotate each row of the 4×4 byte matrix.</li>
+        <li><strong>MixColumns:</strong> Mix bytes in each column (skip on last round).</li>
+        <li><strong>Repeat:</strong> Perform steps 2–4 for each round, then final AddRoundKey.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔑</span>Round Keys (Key Schedule)</h2>
+      <p>The original key is expanded into multiple 128-bit round keys—one for each encryption round.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">⚠️</span>ECB Mode Warning</h2>
+      <p>ECB simply concatenates encrypted blocks—identical plaintext blocks yield identical ciphertext. This reveals patterns, so use other modes (CBC, GCM) for real security.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔧</span>Node.js Example</h2>
+      <p>Use <code>crypto.createCipheriv('aes-128-ecb', key, null)</code> and <code>cipher.update()</code>/<code>cipher.final()</code> to encrypt bytes in JavaScript.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔍</span>Learn More</h2>
+      <p>Check the NIST AES specification (2001) for the full math details—SubBytes S-box, row shifts, column mixing, and key expansion algorithms.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🚀</span>Up Next</h2>
+      <p>In the next lesson, we’ll explore AES modes like CBC and GCM to make encryption safe and practical for streams of data.</p>
+    </section>
+  </main>
+</body>
+</html>

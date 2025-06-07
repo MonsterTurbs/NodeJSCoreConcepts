@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hexadecimal Numbers – Beginner-Friendly Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7fafc;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2b6cb0;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #2b6cb0;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    code {
+      background-color: #ebf8ff;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔷 Hexadecimal Numbers – Beginner-Friendly Notes</h1>
+  <div class="container">
+
+    <!-- Card 1: What is Hexadecimal? -->
+    <div class="card">
+      <h2>🔢 What Is Hexadecimal?</h2>
+      <ul>
+        <li><span class="emoji">🔍</span><strong>Hexadecimal</strong> is a <strong>base 16</strong> number system.</li>
+        <li><span class="emoji">🔢</span>“Base 16” means we use 16 symbols: <code>0–9</code> plus <code>A–F</code> (where A=10, B=11, …, F=15).</li>
+        <li><span class="emoji">💡</span>We prefix hex numbers with an indicator like <code>0x</code> (e.g. <code>0x456</code>) so we know they’re hex.</li>
+        <li><span class="emoji">❓</span>Why learn hex?
+          <ul>
+            <li>Hex is a compact way to write binary (4 bits per hex digit).</li>
+            <li>Easier to read memory addresses, color codes, and file contents than long strings of 0s and 1s.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Hex Digits & Symbols -->
+    <div class="card">
+      <h2>🔠 Hex Digits &amp; Their Values</h2>
+      <ul>
+        <li><span class="emoji">🔟</span>Digits <code>0–9</code> represent values 0–9.</li>
+        <li><span class="emoji">🔠</span>Letters <code>A–F</code> represent values 10–15:
+          <ul>
+            <li><code>A = 10</code></li>
+            <li><code>B = 11</code></li>
+            <li><code>C = 12</code></li>
+            <li><code>D = 13</code></li>
+            <li><code>E = 14</code></li>
+            <li><code>F = 15</code></li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔄</span>Hex is <strong>case-insensitive</strong>: <code>0xAa</code> equals <code>0xAA</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Converting Hex to Decimal -->
+    <div class="card">
+      <h2>🧮 Hex → Decimal Conversion</h2>
+      <ul>
+        <li><span class="emoji">📐</span>To convert a hex number, multiply each hex digit by <code>16ⁿ</code>, where <code>n</code> is its index (0 at rightmost).</li>
+        <li>Example: <code>0x456</code>
+          <ul>
+            <li>Rightmost <code>6</code> × 16⁰ = 6 × 1 = 6</li>
+            <li><code>5</code> × 16¹ = 5 × 16 = 80</li>
+            <li><code>4</code> × 16² = 4 × 256 = 1024</li>
+            <li>Sum = 6 + 80 + 1024 = <strong>1110₁₀</strong></li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔍</span>So, <code>0x456</code> in hex = <code>1110₁₀</code> in decimal.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Example with Letters -->
+    <div class="card">
+      <h2>🔢 Hex → Decimal with A–F</h2>
+      <ul>
+        <li><span class="emoji">🔠</span>Example: <code>0xFA3C</code>
+          <ul>
+            <li>Rightmost <code>C</code> (12) × 16⁰ = 12 × 1 = 12</li>
+            <li><code>3</code> × 16¹ = 3 × 16 = 48</li>
+            <li><code>A</code> (10) × 16² = 10 × 256 = 2560</li>
+            <li><code>F</code> (15) × 16³ = 15 × 4096 = 61440</li>
+            <li>Sum = 12 + 48 + 2560 + 61440 = <strong>64060₁₀</strong></li>
+          </ul>
+        </li>
+        <li><span class="emoji">📊</span>So, <code>0xFA3C</code> = <code>64060</code> in decimal.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Hex vs. Decimal vs. Binary Lengths -->
+    <div class="card">
+      <h2>📏 Comparing Lengths</h2>
+      <ul>
+        <li><span class="emoji">🔢</span>Hex <code>0xFFFFFF</code> is 6 hex chars.</li>
+        <li><span class="emoji">🔠</span>Decimal equivalent <code>16777215</code> is 8 decimal chars.</li>
+        <li><span class="emoji">💻</span>Binary equivalent <code>11111111 11111111 11111111</code> is 24 bits (24 chars).</li>
+        <li><span class="emoji">✨</span>Hex condenses 24 binary bits into 6 hex digits—much easier to read!</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Hex ↔ Binary Simplified -->
+    <div class="card">
+      <h2>🔄 Quick Hex ↔ Binary Conversion</h2>
+      <ul>
+        <li><span class="emoji">🗒️</span>Each hex digit = exactly 4 binary bits (nibble).</li>
+        <li><span class="emoji">🛠️</span>Use a simple lookup table for 0–F:
+          <ul>
+            <li><code>0 → 0000</code></li>
+            <li><code>1 → 0001</code></li>
+            <li>… up to …</li>
+            <li><code>9 → 1001</code></li>
+            <li><code>A → 1010</code></li>
+            <li><code>B → 1011</code></li>
+            <li><code>C → 1100</code></li>
+            <li><code>D → 1101</code></li>
+            <li><code>E → 1110</code></li>
+            <li><code>F → 1111</code></li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔄</span>Example: <strong>Hex 5F</strong> → <code>5 = 0101</code>, <code>F = 1111</code> → Binary <code>01011111</code>.</li>
+        <li><span class="emoji">🔄</span>To convert binary <code>1011 0110</code> → split into nibbles: <code>1011 = B</code>, <code>0110 = 6</code> → Hex <code>B6</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Real-World Uses of Hex -->
+    <div class="card">
+      <h2>🌐 Real-World Uses of Hex</h2>
+      <ul>
+        <li><span class="emoji">🎨</span><strong>Color Codes (CSS/HTML):</strong> <code>#FF5733</code> (shorter than 24 binary bits).</li>
+        <li><span class="emoji">🌐</span><strong>URLs &amp; Encoding:</strong> Non-ASCII characters become <code>%20</code>, <code>%E2%9C%93</code>, etc.</li>
+        <li><span class="emoji">🔡</span><strong>Unicode Code Points:</strong> Represent characters like <code>&amp;#x2764;</code> for ❤️.</li>
+        <li><span class="emoji">🖥️</span><strong>Memory Addresses:</strong> Commonly shown as <code>0x7FFFB2A4</code> in debuggers.</li>
+        <li><span class="emoji">📂</span><strong>Binary Files:</strong> Hex dumps let you inspect file contents (e.g. codecs, executables).</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Why Hex Matters for Engineers -->
+    <div class="card">
+      <h2>🚀 Why Hex Matters for Engineers</h2>
+      <ul>
+        <li><span class="emoji">🧩</span>Hex is a bridge between humans and machine: easier to read than raw binary.</li>
+        <li><span class="emoji">⚙️</span>In back-end work (networking, encryption, file I/O), you’ll often inspect raw data in hex.</li>
+        <li><span class="emoji">📚</span>Knowing hex (and binary) is a fundamental skill—software courses teach it early on.</li>
+        <li><span class="emoji">✨</span>Hex never becomes outdated—it’s been around for decades and still underpins modern computing.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Summary & Next Steps -->
+    <div class="card">
+      <h2>📋 Summary &amp; Next Steps</h2>
+      <ul>
+        <li><span class="emoji">✔️</span><strong>Hex = Base 16.</strong> Uses symbols <code>0–9</code> and <code>A–F</code>.</li>
+        <li><span class="emoji">✔️</span><strong>Conversion:</strong> Each hex digit → 4 binary bits → easier to read raw data.</li>
+        <li><span class="emoji">✔️</span><strong>Key Formulas:</strong>
+          <ul>
+            <li>Hex → Decimal: digit × 16ⁿ (index from right starting at 0), sum them.</li>
+            <li>Hex → Binary: replace each hex digit with its 4-bit binary equivalent.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">▶️</span>Next, we’ll use our programmer’s calculator to practice converting between hex, binary, and decimal.</li>
+        <li><span class="emoji">🎉</span>Once you’re comfortable, we’ll move on to <strong>character encodings</strong> and then <strong>Buffers</strong> in Node.js!</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>📝 Beginner Notes: Unix File Permissions</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f0f4f8;
+      margin: 0; padding: 24px; color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2a6f97;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #1e3a5f;
+    }
+    .emoji { margin-right: 6px; }
+    code {
+      background: #eef;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-size: 0.95em;
+    }
+    pre {
+      background: #eef;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 Unix File Permissions</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2><span class="emoji">📄</span>1. What Are Permissions?</h2>
+      <ul>
+        <li><strong>Read</strong> (<code>r</code>): Can view the file’s contents</li>
+        <li><strong>Write</strong> (<code>w</code>): Can modify or delete the file</li>
+        <li><strong>Execute</strong> (<code>x</code>): Can run the file as a program or script</li>
+      </ul>
+      <p>Each file has these permissions for three categories:</p>
+      <ol>
+        <li><strong>User</strong> (file owner)</li>
+        <li><strong>Group</strong> (owner’s group)</li>
+        <li><strong>Other</strong> (everyone else)</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🔍</span>2. Checking Permissions</h2>
+      <p>Use <code>ls -l</code> to list files with permissions:</p>
+      <pre><code>-rwxr--r--  1 alice staff  123 Feb 10  file.sh
+│││││││││
+││││││││└─ others: r-- (read only)
+│││││││└── group: r-- (read only)
+│││││└──── user: rwx (read, write, execute)
+│└───────── “-”: regular file (not a directory)
+└────────── d: directory</code></pre>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">⚙️</span>3. Changing Permissions</h2>
+      <p>Use <code>chmod</code> to adjust permissions. Examples:</p>
+      <ul>
+        <li><code>chmod u+x file.sh</code> — give owner execute rights</li>
+        <li><code>chmod u-rw file.sh</code> — remove owner’s read &amp; write</li>
+        <li><code>chmod ug+rw file.txt</code> — add read &amp; write for owner &amp; group</li>
+      </ul>
+      <p><strong>Syntax:</strong> <code>chmod [who][+-=][rwx] <em>filename</em></code></p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">👤</span>4. Ownership</h2>
+      <p>Every file has an <strong>owner</strong> and a <strong>group</strong>.</p>
+      <p>Check owner &amp; group with <code>ls -l</code>, columns after permissions:</p>
+      <pre><code>-rwxr--r--  1 alice staff      123 Feb 10  file.sh
+│        └─ owner  └─ group</code></pre>
+      <p>See your username with <code>whoami</code>. Switch to root (superuser) with <code>sudo</code>.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🚀</span>5. Executing Files</h2>
+      <p>A file must be <code>x</code> (executable) to run directly:</p>
+      <pre><code>./script.sh      # works if 'script.sh' has u+x
+script.sh         # permission denied if no 'x'</code></pre>
+      <p>Or invoke with a shell:</p>
+      <pre><code>bash script.sh
+zsh script.sh</code></pre>
+    </div>
+
+  </div>
+</body>
+</html>

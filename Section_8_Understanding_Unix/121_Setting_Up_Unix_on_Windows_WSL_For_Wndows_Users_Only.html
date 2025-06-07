@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>💻 Setup Unix on Windows – Beginner Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f7fafc;
+      margin: 0; padding: 24px; color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      color: #2c5282;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #3182ce;
+    }
+    .card pre {
+      background: #edf2f7;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>💻 Setting Up Unix on Windows</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2><span class="emoji">⚙️</span>Install WSL (Ubuntu)</h2>
+      <p>Run in PowerShell as admin:</p>
+      <pre>wsl --install</pre>
+      <p>Reboot when prompted, then choose a UNIX username and password.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🐧</span>Launch Ubuntu Terminal</h2>
+      <ul>
+        <li>Open Windows Terminal, click “+” and pick “Ubuntu”.</li>
+        <li>Make Ubuntu your default profile in Settings → Profiles → Default.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🗂️</span>Access Windows Files</h2>
+      <p>Your Windows C: drive is at <code>/mnt/c/</code>. To jump to Desktop:</p>
+      <pre>cd /mnt/c/Users/YourName/Desktop</pre>
+      <p><em>Tip:</em> Add a shortcut in <code>~/.bashrc</code> so you can <code>des</code> to go there.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🌐</span>Install Node.js via NVM</h2>
+      <ol>
+        <li>Download NVM:  
+          <pre>curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash  
+source ~/.nvm/nvm.sh</pre>
+        </li>
+        <li>Install Node v20:  
+          <pre>nvm install 20</pre>
+        </li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🔧</span>Developer Essentials</h2>
+      <ul>
+        <li>Global nodemon: <code>npm install -g nodemon</code></li>
+        <li>Build tools &amp; C compiler:  
+          <pre>sudo apt update  
+sudo apt install build-essential</pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🚀</span>Test Your Setup</h2>
+      <p>Run a simple Node server on WSL and access on Windows:</p>
+      <pre>node app.js  # listens on localhost:4080</pre>
+      <p>Visit <code>http://localhost:4080</code> in Windows browser.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">📂</span>Persist Last Directory</h2>
+      <p>Add to <code>~/.bashrc</code> to remember your last folder across tabs:</p>
+      <pre>
+# restore last working directory
+function __save_cwd { pwd > ~/.last_cwd; }
+function __restore_cwd { [ -f ~/.last_cwd ] && cd "$(cat ~/.last_cwd)"; }
+PROMPT_COMMAND="__save_cwd; $__restore_cwd"
+      </pre>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">📊</span>Monitor Processes</h2>
+      <ul>
+        <li><code>top</code> — live system monitor</li>
+        <li><code>ps -aux</code> — snapshot of running processes</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🐚 Bash Piping &amp; Redirection</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f0f4f8;
+      color: #2d3748;
+      margin: 0; padding: 24px;
+    }
+    h1 {
+      text-align: center;
+      color: #2b6cb0;
+    }
+    .container {
+      max-width: 720px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #3182ce;
+    }
+    pre {
+      background: #edf2f7;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code {
+      background: #e2e8f0;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🐾 Bash: Piping &amp; Redirection</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>🔗 Pipe (|)</h2>
+      <p>Take <code>stdout</code> of <em>cmd1</em> and feed it as <code>stdin</code> to <em>cmd2</em>:</p>
+      <pre><code>cmd1 | cmd2</code></pre>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>📦 Chain Processes</h2>
+      <p>You can keep chaining:</p>
+      <pre><code>echo "hello" | tr '[:lower:]' '[:upper:]' | grep HELLO</code></pre>
+      <p>→ converts to uppercase, then filters “HELLO”.</p>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>📥 &amp; 📤 Redirect Streams</h2>
+      <ul>
+        <li><code>&gt; file.txt</code> → overwrite <code>stdout</code> to file</li>
+        <li><code>2&gt; err.txt</code> → overwrite <code>stderr</code> to file</li>
+        <li><code>&gt;&gt; file.txt</code> → append <code>stdout</code></li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>📂 Input Redirection</h2>
+      <p>Use a file as <code>stdin</code>:</p>
+      <pre><code>myprogram &lt; input.txt</code></pre>
+      <p>Equivalent to piping <code>cat input.txt | myprogram</code>.</p>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>🚫 Discard Output</h2>
+      <p>Send unwanted output to “trash”:</p>
+      <pre><code>cmd &gt;/dev/null      # throw away stdout
+cmd 2&gt;/dev/null    # throw away stderr</code></pre>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2>🔢 File Descriptors</h2>
+      <ul>
+        <li><code>0</code> = <code>stdin</code></li>
+        <li><code>1</code> = <code>stdout</code></li>
+        <li><code>2</code> = <code>stderr</code></li>
+      </ul>
+      <p>You can redirect FD by number: <code>2&gt; err.log</code>.</p>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card">
+      <h2>📑 Example: Echo → Node → Uppercase</h2>
+      <pre><code>echo "hi world" | node script.js | tr '[:lower:]' '[:upper:]'</code></pre>
+      <p>● <code>echo</code> outs text → <code>node</code> reads stdin → <code>tr</code> uppercases.</p>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="card">
+      <h2>🎯 Why It’s Useful</h2>
+      <ul>
+        <li>🔧 Build small tools and glue them.</li>
+        <li>💾 Save or filter exactly the streams you need.</li>
+        <li>🚀 Automate workflows in one-liners.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Uploader App – Beginner-Friendly Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.4;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.3em;
+    }
+    .emoji { font-size: 1.2em; margin-right: 6px; }
+    ul { padding-left: 20px; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">📁</span>Project Setup</h2>
+    <ul>
+      <li>Create folder <code>uploader/</code> inside your networking project</li>
+      <li>Inside, make two files:
+        <ul>
+          <li><code>server.js</code> (the upload server)</li>
+          <li><code>client.js</code> (reads & sends a file)</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🖥️</span>server.js: Listen for Uploads</h2>
+    <ul>
+      <li>Import modules:
+        <code>const net = require('net')</code>,
+        <code>const fs = require('fs/promises')</code>
+      </li>
+      <li>Create TCP server:
+        <pre>const server = net.createServer(socket =&gt; { … })</pre>
+      </li>
+      <li>On client <code>connection</code>:
+        <ul>
+          <li>Open a writeable file in <code>uploader/storage/</code>, e.g. <code>test.txt</code></li>
+          <li>Create a writable stream from the file handle</li>
+          <li>When socket emits <code>data</code>, write those bytes to the file stream</li>
+          <li>On socket <code>end</code>, close file and socket</li>
+        </ul>
+      </li>
+      <li>Start listening:
+        <pre>server.listen(5050, '::', () =&gt; {
+  console.log('Uploader server on [::]:5050');
+});</pre>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📤</span>client.js: Send a File</h2>
+    <ul>
+      <li>Import <code>net</code> and <code>fs/promises</code></li>
+      <li>Create TCP connection to <code>::1</code> on port <code>5050</code>:
+        <pre>const socket = net.createConnection({ host:'::1', port:5050 }, async() =&gt; { … })</pre>
+      </li>
+      <li>Inside callback:
+        <ul>
+          <li>Open your source file (e.g. <code>text.txt</code>) for reading</li>
+          <li>Create a readable stream from the file handle</li>
+          <li>On stream <code>data</code>, <code>socket.write(data)</code></li>
+          <li>On stream <code>end</code>, <code>socket.end()</code> to close connection</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">✅</span>Test &amp; Verify</h2>
+    <ul>
+      <li>Run server: <code>node server.js</code></li>
+      <li>Run client: <code>node client.js</code></li>
+      <li>Check <code>uploader/storage/test.txt</code>—it matches original file byte-for-byte</li>
+      <li>Server logs connection start/end</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">⚠️</span>Next Up: Backpressure</h2>
+    <p>So far we read &amp; write freely. <strong>Backpressure</strong> (flow control) is needed for large files—covered next!</p>
+  </div>
+
+</body>
+</html>

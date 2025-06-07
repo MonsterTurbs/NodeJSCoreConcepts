@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Intro to Command Line – Beginner-Friendly Study Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f7;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #1abc9c;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>💻 Introduction to Command Line – Beginner-Friendly Notes</h1>
+  <div class="container">
+    <!-- Card 1: Overview -->
+    <div class="card">
+      <h2>👋 Welcome & Overview</h2>
+      <ul>
+        <li><span class="emoji">😊</span>This video is a simple introduction to the command line (CLI).</li>
+        <li><span class="emoji">⏭️</span>If you already know these basics, feel free to skip!</li>
+        <li><span class="emoji">📜</span>Topics covered:
+          <ul>
+            <li>What is a Prompt?</li>
+            <li>What is the Command Line vs. Terminal vs. GUI?</li>
+            <li>Basic commands: <code>cd</code>, <code>pwd</code>, <code>ls</code>, <code>mkdir</code>, <code>touch</code>, <code>rm</code>, <code>mv</code>, <code>cat</code>, etc.</li>
+            <li>Why learn CLI as a backend developer?</li>
+            <li>Quick look at piping & redirection</li>
+          </ul>
+        </li>
+        <li><span class="emoji">✨</span>By the end, you’ll understand why CLI is super powerful—even if it feels odd at first.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Key Terms -->
+    <div class="card">
+      <h2>📖 Key Terms</h2>
+      <ul>
+        <li><span class="emoji">⌨️</span><strong>Prompt</strong>: The text the terminal shows before you type a command.  
+          <ul>
+            <li>Example: <code>user@machine:~/folder$</code></li>
+            <li>Shows info like current directory, username, or Git branch.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">💬</span><strong>Command Line</strong>: The line where you type commands (e.g., <code>ls -la</code>).</li>
+        <li><span class="emoji">🖥️</span><strong>Terminal</strong>: The application that runs the command line (e.g., iTerm2, GNOME Terminal).</li>
+        <li><span class="emoji">🖱️</span><strong>GUI (Graphical User Interface)</strong>: The graphical windows and icons you click—like Finder or File Explorer.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Why CLI Matters -->
+    <div class="card">
+      <h2>🚀 Why Use the Command Line?</h2>
+      <ul>
+        <li><span class="emoji">⚡</span><strong>Speed & Automation</strong>:  
+          <ul>
+            <li>Do tasks (like creating many files) in one command instead of many clicks.</li>
+            <li>Example: Create 50 files at once with a loop instead of manually clicking 50 times.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔧</span><strong>Server Management</strong>:  
+          <ul>
+            <li>Many servers have no GUI—everything is done via SSH and CLI.</li>
+            <li>Deploying, updating, and debugging on remote machines all happen in a terminal.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🧩</span><strong>Powerful Toolchain</strong>:  
+          <ul>
+            <li>Combine (“pipe”) tools: output of one command becomes input to another.</li>
+            <li>Example: <code>man ascii \| head -n 43 \| tail -n 16 &gt; ascii.txt</code> (grab specific lines from manual and save to a file).</li>
+          </ul>
+        </li>
+        <li><span class="emoji">💼</span>Essential skill for backend developers—worth mastering early!</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Navigating Directories -->
+    <div class="card">
+      <h2>📂 Navigating Directories</h2>
+      <ul>
+        <li><span class="emoji">📍</span><code>pwd</code> → “print working directory”: shows your current folder path.</li>
+        <li><span class="emoji">➡️</span><code>cd &lt;folder&gt;</code> → “change directory”: move into a subfolder.  
+          <ul>
+            <li>e.g., <code>cd Testing</code> jumps into “Testing” folder.</li>
+            <li><code>cd ..</code> → go up one level.</li>
+            <li><code>cd ~</code> or just <code>cd</code> → back to home folder.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📋</span><code>ls</code> → “list”: shows files/folders in the current directory.  
+          <ul>
+            <li><code>ls *.html</code> → lists only files ending in “.html”.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📥</span><code>mkdir &lt;name&gt;</code> → “make directory”: create a new folder.  
+          <ul>
+            <li>e.g., <code>mkdir HTML</code> makes an “HTML” folder.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Working with Files -->
+    <div class="card">
+      <h2>📄 Working with Files</h2>
+      <ul>
+        <li><span class="emoji">✋</span><code>touch &lt;filename&gt;</code> → create an empty file.  
+          <ul>
+            <li>e.g., <code>touch index.html</code> makes “index.html”.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📝</span><code>cat &lt;filename&gt;</code> → display file contents.  
+          <ul>
+            <li>e.g., <code>cat text.txt</code> shows text inside “text.txt”.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">✏️</span>Edit files:  
+          <ul>
+            <li><code>vim &lt;filename&gt;</code> → powerful text editor (press <code>i</code> to insert, <code>Esc :wq</code> to save & quit).</li>
+            <li><code>nano &lt;filename&gt;</code> → simpler editor (Ctrl+O to save, Ctrl+X to exit).</li>
+          </ul>
+        </li>
+        <li><span class="emoji">✂️</span><code>rm &lt;filename&gt;</code> → delete a file.  
+          <ul>
+            <li>Be very careful—file is gone! (e.g., <code>rm old.txt</code> deletes “old.txt”).</li>
+            <li>To delete a directory and its contents: <code>rm -rf &lt;folder&gt;</code> (dangerous—don’t use carelessly!).</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔀</span><code>mv &lt;source&gt; &lt;destination&gt;</code> → move or rename.  
+          <ul>
+            <li>e.g., <code>mv index.html HTML/index.html</code> moves file into “HTML” folder.</li>
+            <li>e.g., <code>mv old.txt new.txt</code> renames “old.txt” to “new.txt”.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Variables & History -->
+    <div class="card">
+      <h2>🔧 Variables & Command History</h2>
+      <ul>
+        <li><span class="emoji">🔢</span>Set a variable: <code>NAME="Joe"</code> (no spaces around =).  
+          <ul>
+            <li>Refer to it with <code>$NAME</code>. e.g., <code>echo $NAME</code> prints “Joe”.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📑</span>See your last command: press ↑ (Up arrow) to cycle through history.</li>
+        <li><span class="emoji">🔍</span>Search manual pages: <code>man &lt;command&gt;</code> (e.g., <code>man ls</code> shows how “ls” works).</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Piping & Redirection -->
+    <div class="card">
+      <h2>➰ Piping & Redirection</h2>
+      <ul>
+        <li><span class="emoji">➡️</span><strong>Pipes (|)</strong>: send output of one command into another.  
+          <ul>
+            <li>Example: <code>man ascii \| head -n 43 \| tail -n 16</code> → show specific lines from “man ascii”.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">💾</span><strong>Redirect ( &gt; )</strong>: save output to a file.  
+          <ul>
+            <li>Example: <code>echo "Hello" &gt; hello.txt</code> writes “Hello” into hello.txt.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">➕</span><strong>Append ( &gt;&gt; )</strong>: add output to end of a file.  
+          <ul>
+            <li>Example: <code>echo "Line 2" &gt;&gt; hello.txt</code> appends “Line 2” to hello.txt.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Handy Tips -->
+    <div class="card">
+      <h2>🌟 Handy Tips</h2>
+      <ul>
+        <li><span class="emoji">🔄</span><code>Ctrl + A</code> → jump to start of line; <code>Ctrl + E</code> → jump to end of line.</li>
+        <li><span class="emoji">📋</span>Copy/Paste: <code>Ctrl + Shift + C</code> to copy, <code>Ctrl + Shift + V</code> to paste.</li>
+        <li><span class="emoji">❌</span><code>Ctrl + C</code> → stop a running command or clear partial input.</li>
+        <li><span class="emoji">📂</span><code>Ctrl + L</code> → clear the screen.</li>
+        <li><span class="emoji">🖱️</span>You can drag & drop file paths into the terminal to insert their path automatically.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Recap & Next Steps -->
+    <div class="card">
+      <h2>🎓 Recap & Next Steps</h2>
+      <ul>
+        <li><span class="emoji">✅</span>You now know the difference between <strong>Prompt</strong>, <strong>Command Line</strong>, <strong>Terminal</strong>, and <strong>GUI</strong>.</li>
+        <li><span class="emoji">🔑</span>Key commands: <code>pwd</code>, <code>cd</code>, <code>ls</code>, <code>mkdir</code>, <code>touch</code>, <code>rm</code>, <code>mv</code>, <code>cat</code>, <code>man</code>.</li>
+        <li><span class="emoji">⚡</span>Try creating, listing, renaming, and deleting files/folders in your home directory to practice.</li>
+        <li><span class="emoji">👓</span>Next: We’ll dive deeper into piping, redirection, and scripting in the “Child Processes & Process Object” section.</li>
+        <li><span class="emoji">🚀</span>Keep practicing—mastering the CLI will supercharge your backend workflow!</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

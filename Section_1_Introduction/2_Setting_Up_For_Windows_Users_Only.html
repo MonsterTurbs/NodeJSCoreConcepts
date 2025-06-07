@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NodeJS Setup Study Notes – Beginner Friendly</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f7;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #1abc9c;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔧 NodeJS Setup: Beginner-Friendly Study Notes</h1>
+  <div class="container">
+    <!-- Card 1: Introduction & Guide -->
+    <div class="card">
+      <h2>👋 Welcome & Guide</h2>
+      <ul>
+        <li><span class="emoji">😊</span>This setup video is for <strong>Windows users only</strong>. Mac/Linux users can watch their own setup videos.</li>
+        <li><span class="emoji">📑</span>A “Table of Contents” runs alongside the video—use it to skip sections you already know.</li>
+        <li><span class="emoji">⏭️</span>If you already have an app (e.g., Postman, browser, code editor), skip that section.</li>
+        <li><span class="emoji">❗</span>Do not bookmark or add permanent notes to the video—contents may change over time.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Terminal Basics -->
+    <div class="card">
+      <h2>💻 Terminal (Command Line)</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>Press <strong>Start → All Apps → Windows Terminal</strong> to open the recommended terminal app.</li>
+        <li><span class="emoji">🖥️</span>Other Windows options: <em>PowerShell</em> or <em>Command Prompt</em>, but Terminal is preferred (supports tabs).</li>
+        <li><span class="emoji">📌</span>Pin Windows Terminal to your taskbar for quick access.</li>
+        <li><span class="emoji">🔧</span>Zoom in/out: <code>Ctrl</code> + <code>+</code> / <code>–</code>.  
+            Create new tab: click “+” or use <code>Ctrl + Shift + T</code>.</li>
+        <li><span class="emoji">ℹ️</span>Run <code>systeminfo</code> to see Windows version (“Windows 11 Pro”) and CPU architecture (e.g., “ARM64” or “x64”). Remember your CPU type for later downloads.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Browser Setup -->
+    <div class="card">
+      <h2>🌐 Web Browser</h2>
+      <ul>
+        <li><span class="emoji">🌟</span>Windows default: <strong>Microsoft Edge</strong>. You can use it or download <strong>Google Chrome</strong> (or Firefox) for testing HTTP apps.</li>
+        <li><span class="emoji">🔧</span>To install Chrome:  
+          <ol>
+            <li>Search “Download Google Chrome” → go to official site → click “Download Chrome” → run installer.</li>
+            <li>Optionally set Chrome as default:  
+              <em>Settings → Apps → Default Apps → Google Chrome → Set Default</em>.</li>
+          </ol>
+        </li>
+        <li><span class="emoji">🔍</span>Open DevTools:  
+          <em>Right-click → Inspect</em> or <code>Ctrl + Shift + I</code>.  
+          Use the <strong>Network</strong> tab to view HTTP requests/responses (essential in later HTTP section).</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Code Editor (VS Code) -->
+    <div class="card">
+      <h2>📝 Code Editor</h2>
+      <ul>
+        <li><span class="emoji">💻</span>Recommended: <strong>Visual Studio Code</strong>. If you have another editor (e.g., Atom, Sublime), feel free to skip.</li>
+        <li><span class="emoji">🔍</span>To install VS Code:  
+          <ol>
+            <li>Search “Download Visual Studio Code” → go to code.visualstudio.com.</li>
+            <li>Select <strong>Windows (ARM64)</strong> or <strong>Windows (x64)</strong> based on your CPU.</li>
+            <li>Run installer → accept defaults → finish.</li>
+          </ol>
+        </li>
+        <li><span class="emoji">🎨</span>Configure Theme & Icons:  
+          <ol>
+            <li>Open Extensions: <code>Ctrl + Shift + X</code>.</li>
+            <li>Install <strong>Material Theme</strong> and <strong>Material Icon Theme</strong>.</li>
+            <li>Switch theme: <code>Ctrl + K</code>, <code>Ctrl + T</code> → choose a Material dark/light variant.</li>
+          </ol>
+        </li>
+        <li><span class="emoji">⚙️</span>Enable “Format on Save” (requires Prettier extension):  
+          <ol>
+            <li>Install <strong>Prettier Code Formatter</strong> via Extensions (<code>Ctrl + Shift + X</code>).</li>
+            <li>Open Settings: <code>Ctrl + ,</code> → search “Format on Save” → check box.</li>
+            <li>Configure default formatter:  
+              <code>Ctrl + Shift + P</code> → “Format Document With…” → “Configure Default Formatter” → choose Prettier.</li>
+          </ol>
+        </li>
+        <li><span class="emoji">🔗</span>Use VS Code from terminal:  
+          <code>code &lt;folder-name&gt;</code> opens that folder in VS Code (verify “code” is on PATH).</li>
+        <li><span class="emoji">🎯</span>Hide extras:  
+          <ol>
+            <li>Activity Bar: <em>View → Appearance → uncheck “Activity Bar”</em>.</li>
+            <li>Mini Map: <em>View → Appearance → uncheck “Mini Map”</em>.</li>
+            <li>Toggle Side Bar: <code>Ctrl + B</code> to show/hide Explorer.</li>
+            <li>Switch Panels:  
+              Explorer (<code>Ctrl + Shift + E</code>), Search (<code>Ctrl + Shift + F</code>), Extensions (<code>Ctrl + Shift + X</code>).</li>
+          </ol>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Installing NodeJS -->
+    <div class="card">
+      <h2>📦 Installing NodeJS</h2>
+      <ul>
+        <li><span class="emoji">🔑</span>Windows: There’s no official NVM for Windows ARM64, but you can install NodeJS directly or use “nvm-windows” if on x64.</li>
+        <li><span class="emoji">🔗</span>To install NodeJS natively:  
+          <ol>
+            <li>Go to <a href="https://nodejs.org" target="_blank">nodejs.org → Downloads → Windows</a>.</li>
+            <li>Choose <strong>Windows Installer (ARM64)</strong> if on ARM64, or <strong>Windows Installer (x64)</strong> if on x64.</li>
+            <li>Run installer → accept defaults → finish.</li>
+            <li>Restart terminal → run <code>node -v</code> and <code>npm -v</code> to verify installation.</li>
+          </ol>
+        </li>
+        <li><span class="emoji">⚙️</span>If on x64 you can also use <strong>nvm-windows</strong> (NVM clone):  
+          <ol>
+            <li>Install “nvm-windows” from its GitHub releases → unzip/run installer.</li>
+            <li>Restart terminal → run <code>nvm install 20.9.0 </code> (or latest LTS) → <code>nvm use 20.9.0</code>.</li>
+            <li>Then confirm with <code>node -v</code> and <code>npm -v</code>.</li>
+          </ol>
+        </li>
+        <li><span class="emoji">⚠️</span>If on ARM64 and you use nvm-windows, NodeJS will run under emulation (slower). Better to install native ARM64 binary directly.</li>
+        <li><span class="emoji">🔥</span>Always pick the <strong>LTS</strong> version for stability (e.g., 20.x). “Current” is only for experimenting with new features.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Installing Postman -->
+    <div class="card">
+      <h2>🧪 Installing Postman</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>Visit <a href="https://www.postman.com/downloads/" target="_blank">postman.com/downloads</a>.</li>
+        <li><span class="emoji">⬇️</span>Download the Windows installer (x64 or ARM64). Installer is self-contained (no extra prompts).</li>
+        <li><span class="emoji">🚀</span>Run the downloaded file → automatic installation → open Postman.</li>
+        <li><span class="emoji">🔍</span>Use Postman to test HTTP APIs later in the course (set method, URL, send request, inspect response).</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Installing Wireshark -->
+    <div class="card">
+      <h2>📡 Installing Wireshark</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>Visit <a href="https://www.wireshark.org/download.html" target="_blank">wireshark.org/download</a>.</li>
+        <li><span class="emoji">💾</span>Choose the installer for your CPU:  
+          <ul>
+            <li><span class="emoji">🔹</span>x64: download stable .x64 installer.</li>
+            <li><span class="emoji">🔹</span>ARM64: if stable ARM64 isn’t available, scroll to “Automated Builds” → select ARM64 (experimental but works).</li>
+          </ul>
+        </li>
+        <li><span class="emoji">⚙️</span>Run installer → accept defaults → ensure <strong>Npcap</strong> is checked (required for packet capture).</li>
+        <li><span class="emoji">🔍</span>Open Wireshark → double-click your network interface (e.g., “Ethernet”) to start capturing packets.</li>
+        <li><span class="emoji">📊</span>Perform a web request (e.g., in Postman) → stop capture → you’ll see HTTP packets you generated. (Details make more sense later in Networking section.)</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Task Manager & Programmer Calculator -->
+    <div class="card">
+      <h2>🛠️ Task Manager & Programmer Calculator</h2>
+      <ul>
+        <li><span class="emoji">📋</span><strong>Task Manager</strong>:  
+          <ul>
+            <li><span class="emoji">▶️</span>Open: Right-click Taskbar → Task Manager or search “Task Manager.”</li>
+            <li><span class="emoji">📈</span>View CPU, memory, disk, network usage of all processes.</li>
+            <li><span class="emoji">🔎</span>Under “Details” tab, find <em>node.exe</em> to monitor NodeJS process CPU/memory usage.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔢</span><strong>Programmer Calculator</strong>:  
+          <ul>
+            <li><span class="emoji">▶️</span>Open Windows Calculator → switch to “Programmer” mode (☰ → Programmer).</li>
+            <li><span class="emoji">✨</span>Convert numbers between different bases:  
+              <ul>
+                <li><span class="emoji">🔟</span>Decimal ↔ Binary ↔ Hexadecimal ↔ Octal</li>
+                <li>Example: Enter “5” → see binary “0101” and hex “0x5”.</li>
+                <li>Later in Buffers section, use this to understand bytes and encodings.</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Testing a Simple Node App -->
+    <div class="card">
+      <h2>🚀 Testing a Simple NodeJS App</h2>
+      <ul>
+        <li><span class="emoji">📂</span>Create a working folder on Desktop (e.g., <code>MyNodeTest</code>).</li>
+        <li><span class="emoji">📄</span>In your terminal:  
+          <code>cd Desktop &amp;&amp; mkdir MyNodeTest &amp;&amp; cd MyNodeTest</code>.</li>
+        <li><span class="emoji">📝</span>Create a text file:  
+          <code>New-Item text.txt</code> → open it in VS Code: <code>code text.txt</code> → enter content like “This text is coming from Node.” → save.</li>
+        <li><span class="emoji">🆕</span>Create Node app file:  
+          <code>New-Item app.js</code> → open in VS Code: <code>code app.js</code>.</li>
+        <li><span class="emoji">🔧</span>In <strong>app.js</strong>, copy/paste this code:  
+          <pre style="background:#f4f4f4; padding:8px;">  
+const http = require('http');  
+const fs = require('fs');  
+
+const server = http.createServer();  
+server.on('request', (req, res) => {  
+  const result = fs.readFileSync('text.txt');  
+  res.setHeader('Content-Type', 'text/plain');  
+  res.end(result);  
+});  
+
+server.listen(4080, '127.0.0.1', () => {  
+  console.log('Server running at http://' + server.address().address + ':' + server.address().port);  
+});  
+          </pre></li>
+        <li><span class="emoji">▶️</span>Back in terminal:  
+          <code>node app.js</code> → see “Server running at http://127.0.0.1:4080”.</li>
+        <li><span class="emoji">🌐</span>Open Postman → GET http://127.0.0.1:4080 → click “Send” → response = “This text is coming from Node.”</li>
+        <li><span class="emoji">📡</span>Open Wireshark → select “Loopback” → click “Start Capture” → send request in Postman → stop Wireshark → verify HTTP packets (look for protocol HTTP and source 127.0.0.1).</li>
+        <li><span class="emoji">✅</span>If you see the expected response in Postman, your setup is complete and works correctly!</li>
+        <li><span class="emoji">🎉</span>Congratulations—you’re ready to move on with the course!</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

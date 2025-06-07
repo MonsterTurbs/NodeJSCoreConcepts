@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🔐 Mutual Exclusion: Beginner-Friendly Study Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0; padding: 20px; color: #333;
+    }
+    h1 {
+      text-align: center; color: #2a9d8f; margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff; border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px; transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0; color: #264653;
+    }
+    .card ul { padding-left: 20px; }
+    .card li { margin-bottom: 8px; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 Mutual Exclusion: Beginner-Friendly Notes</h1>
+  <div class="container">
+
+    <!-- Card 1: What Is Mutual Exclusion? -->
+    <div class="card">
+      <h2>🤝 What Is Mutual Exclusion?</h2>
+      <ul>
+        <li><span class="emoji">🔒</span>If one thread enters a <strong>critical section</strong> (shared code/resource), no other thread may enter it at the same time.</li>
+        <li><span class="emoji">⚠️</span>Prevents <strong>race conditions</strong> when multiple threads read/write the same data.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Spinlock Algorithm -->
+    <div class="card">
+      <h2>🔄 Spinlock</h2>
+      <ul>
+        <li><span class="emoji">⏳</span>Use a shared flag (<strong>lock</strong>) initialized to <code>0</code>.</li>
+        <li><span class="emoji">↪️</span>When entering critical section:
+          <pre><code>while (atomicCompareExchange(lock, 0, 1) === 1) { /* spin */ }</code></pre>
+        </li>
+        <li><span class="emoji">⏏️</span>On exit:
+          <pre><code>atomicStore(lock, 0);</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Spinlock Drawbacks -->
+    <div class="card">
+      <h2>⚡ Spinlock Drawbacks</h2>
+      <ul>
+        <li><span class="emoji">🔥</span><strong>100% CPU usage</strong> while spinning—wastes cycles.</li>
+        <li><span class="emoji">🚫</span>Not ideal when critical sections run longer or many threads wait.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Semaphore with Wait/Notify -->
+    <div class="card">
+      <h2>🛠️ Semaphore (Suspend/Resume)</h2>
+      <ul>
+        <li><span class="emoji">😴</span>Threads call <code>Atomics.wait(typedArray, idx, 1)</code> to sleep when locked.</li>
+        <li><span class="emoji">🔔</span>Lock release uses <code>Atomics.notify(typedArray, idx, 1)</code> to wake one waiter.</li>
+        <li><span class="emoji">💡</span>Combines atomic test+set with suspend/resume to save CPU.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: C vs JavaScript -->
+    <div class="card">
+      <h2>💻 C vs JavaScript</h2>
+      <ul>
+        <li><span class="emoji">📜</span>In C: use <code>pthread_mutex_lock</code> / <code>pthread_mutex_unlock</code> or <code>sem_wait</code> / <code>sem_post</code>.</li>
+        <li><span class="emoji">🔗</span>In JS: build locks on <code>SharedArrayBuffer</code> + <code>Atomics</code>.</li>
+        <li><span class="emoji">🤖</span>Concepts are universal—once you know one, you adapt to any language.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

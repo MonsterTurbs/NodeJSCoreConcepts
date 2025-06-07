@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>🐛 Debug & Batch Thread Tasks</title>
+  <style>
+    body { background: #f0f2f5; font-family: Arial, sans-serif; margin: 20px; }
+    .card { background: #fff; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 20px; padding: 20px; max-width: 600px; }
+    h1 { text-align: center; color: #333; }
+    h2 { color: #007acc; margin-top: 0; }
+    ul { margin: 0; padding-left: 1.2em; }
+    li { margin-bottom: 0.6em; }
+    code { background: #eef; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🔍 Debug & Batch Thread Pool</h1>
+    <h2>❗ The Crash Problem</h2>
+    <ul>
+      <li>Spawning many tasks at once fills <code>scheduledTasks</code> array ⇒ huge memory use 💥</li>
+      <li>Main thread blocked adding tasks, never frees up <code>idleThreads</code> so no workers run 🤯</li>
+    </ul>
+    <h2>🐞 How to Debug</h2>
+    <ul>
+      <li>Use VS Code launch.json or <code>npm run start</code> debug script 🛠️</li>
+      <li>Set a breakpoint in the loop (e.g. <code>if (i === 20000) break;</code>) and “Step Into” 🔎</li>
+      <li>Inspect <code>scheduledTasks.length</code> and <code>idleThreads.length</code> to see pool state 👀</li>
+    </ul>
+    <h2>⚙️ Batching Solution</h2>
+    <ul>
+      <li>Break huge loop into chunks (batches) of N tasks at a time 📦</li>
+      <li>After scheduling each batch, wait for those N tasks to finish before next batch ⏸️</li>
+      <li>Track <code>batchTaskCount</code>; when it hits 0, increment batch index & schedule next chunk 🔁</li>
+      <li>Result: memory stays low, event loop stays responsive, no crash ✔️</li>
+    </ul>
+    <h2>💡 Key Takeaway</h2>
+    <ul>
+      <li>Never flood thread pool at once—use batching to keep main thread and pool healthy 👍</li>
+      <li>Debugging with breakpoints reveals hidden queue/blocking issues 🐛</li>
+    </ul>
+  </div>
+</body>
+</html>

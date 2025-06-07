@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🔗 Massive Communication App: C Part</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #34495e;
+    }
+    pre {
+      background: #ecf0f1;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: monospace;
+    }
+    code {
+      background: #dfe6e9;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔗 Massive Communication App: C Part</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>🚀 Goal Overview</h2>
+      <ul>
+        <li>Build <code>number_formatter.c</code> to read numbers from stdin, format them, and write to a file.</li>
+        <li>Integrate with Node.js: <code>app.js</code> reads a source file and pipes its data into the C program.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>📥 Reading One Character</h2>
+      <p>Use <code>fgetc()</code> to grab one byte from stdin:</p>
+      <pre><code>int c = fgetc(stdin);</code></pre>
+      <ul>
+        <li>Returns the character (as an <code>int</code>!) or <code>EOF</code>.</li>
+        <li>Loop to keep reading:</li>
+      </ul>
+      <pre><code>while (c != EOF) {
+  // process c
+  c = fgetc(stdin);
+}</code></pre>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>⌨️ End-Of-File (EOF)</h2>
+      <ul>
+        <li><code>EOF</code> signals “no more data”.</li>
+        <li>In terminal press <strong>Ctrl +D</strong> to send EOF.</li>
+        <li>C auto-flushes open streams before exiting <code>main()</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>📝 Redirecting & Buffering</h2>
+      <p>Write output to a file:</p>
+      <pre><code>FILE *out = fopen("dest.txt", "w");
+fprintf(out, "%c", c);
+fflush(out);  // optional manual flush
+fclose(out);</code></pre>
+      <ul>
+        <li>Without <code>fflush()</code>, C buffers writes for efficiency.</li>
+        <li>Manually <code>fflush()</code> forces write-to-disk immediately.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>🔄 Node ↔ C Piping</h2>
+      <p><code>app.js</code>:</p>
+      <pre><code>const { spawn } = require('child_process');
+const rs = fs.createReadStream('source.txt');
+const fmt = spawn('./number_formatter', ['dest.txt', '$', ',']);
+rs.pipe(fmt.stdin);
+fmt.on('close', code => {
+  console.log('Done with code', code);
+});</code></pre>
+      <ul>
+        <li>Piping <code>rs.pipe(fmt.stdin)</code> streams data directly into the C process.</li>
+        <li>Low-memory & high-throughput: Node reads, C processes & writes.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2>🔢 Parsing Digits</h2>
+      <ul>
+        <li>Allocate buffer for one number: <code>char *num = malloc(10*sizeof(char));</code></li>
+        <li>On digit (<code>c!=' '</code>):<br/>
+          &nbsp;&nbsp;- <code>num[idx++] = c;</code> — accumulate<br/>
+        </li>
+        <li>On space &amp; <code>idx>0</code>:<br/>
+          &nbsp;&nbsp;- <code>num[idx]='\0';</code> — terminate C-string<br/>
+          &nbsp;&nbsp;- format and <code>fprintf(out, "%s\n", num);</code><br/>
+          &nbsp;&nbsp;- <code>free(num); num = malloc(...); idx=0;</code>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card">
+      <h2>💾 Memory Management</h2>
+      <ul>
+        <li><code>malloc()</code> allocates heap memory. <code>free()</code> must release it.</li>
+        <li>Leaking <code>malloc</code>ed memory → ever-growing RAM use &amp; crash.</li>
+        <li>C gives you power &amp; responsibility; Node’s V8 GC handles most JS allocations.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="card">
+      <h2>🎨 Formatting Numbers</h2>
+      <ul>
+        <li>Call a helper: <code>char* out = format_number(num, '$', ',');</code></li>
+        <li>Function returns a new <code>malloc</code>ed string with commas &amp; prefix.</li>
+        <li>Remember to <code>free(out)</code> after <code>fprintf()</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9 -->
+    <div class="card">
+      <h2>⚡ Performance &amp; Scaling</h2>
+      <ul>
+        <li>✓ Stream-based: handles gigabytes in constant memory.</li>
+        <li>✓ C process uses 100% CPU, Node.io ~5%; low-latency &amp; high-throughput.</li>
+        <li>✓ Works with huge files (10 GB+) without crashing.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

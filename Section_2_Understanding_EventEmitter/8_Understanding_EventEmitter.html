@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EventEmitter – Beginner-Friendly Study Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #1abc9c;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    code {
+      background-color: #eef;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📣 Understanding EventEmitter in Node.js – Study Notes</h1>
+  <div class="container">
+
+    <!-- Card 1: Introduction -->
+    <div class="card">
+      <h2>👋 Introduction</h2>
+      <ul>
+        <li><span class="emoji">✨</span>Node.js provides a built-in object called <code>EventEmitter</code>.</li>
+        <li><span class="emoji">❓</span>We’ll learn what it is, why it’s used, and how to work with it in simple terms.</li>
+        <li><span class="emoji">🚀</span>No heavy C++ or libuv details—just plain JavaScript to manage events.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Including EventEmitter -->
+    <div class="card">
+      <h2>📦 Including <code>EventEmitter</code></h2>
+      <ul>
+        <li><span class="emoji">📝</span>To use it, simply write:
+          <pre><code>const EventEmitter = require('events');</code></pre>
+        </li>
+        <li><span class="emoji">🧩</span>This gives access to the <code>EventEmitter</code> class and its methods.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Basic Class Inheritance -->
+    <div class="card">
+      <h2>🏗️ Extending <code>EventEmitter</code></h2>
+      <ul>
+        <li><span class="emoji">🔧</span>Use ES6 <code>class</code> syntax to create your own emitter:
+          <pre><code>class MyEmitter extends EventEmitter {}</code></pre>
+        </li>
+        <li><span class="emoji">✨</span>Now <code>MyEmitter</code> has all event methods like <code>.on()</code> and <code>.emit()</code>.</li>
+        <li><span class="emoji">💡</span>Equivalent to older prototype-based inheritance, but cleaner with <code>class</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Creating and Using an Instance -->
+    <div class="card">
+      <h2>🆕 Creating an Emitter Instance</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>Instantiate your emitter:
+          <pre><code>const myEmitter = new MyEmitter();</code></pre>
+        </li>
+        <li><span class="emoji">🎯</span>You can now register event listeners and emit events on <code>myEmitter</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Adding Listeners with <code>.on()</code> -->
+    <div class="card">
+      <h2>👂 Listening for Events (<code>.on()</code>)</h2>
+      <ul>
+        <li><span class="emoji">🖐️</span>Register a listener for an event named “foo”:
+          <pre><code>myEmitter.on('foo', () => {
+  console.log('Event "foo" occurred!'); 
+});</code></pre>
+        </li>
+        <li><span class="emoji">🔄</span>Each time you <code>emit('foo')</code>, the callback runs.</li>
+        <li><span class="emoji">🔢</span>You can add multiple listeners on the same event; they’re invoked in order.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Emitting Events with <code>.emit()</code> -->
+    <div class="card">
+      <h2>📣 Triggering Events (<code>.emit()</code>)</h2>
+      <ul>
+        <li><span class="emoji">🚀</span>Fire or “emit” the event:
+          <pre><code>myEmitter.emit('foo');</code></pre>
+        </li>
+        <li><span class="emoji">📋</span>If listeners exist for “foo,” they run immediately (synchronously).</li>
+        <li><span class="emoji">➕</span>You can also pass arguments:
+          <pre><code>myEmitter.emit('foo', 'hello', 123);</code></pre>
+        </li>
+        <li><span class="emoji">📢</span>Listeners receive those arguments in their callback:
+          <pre><code>myEmitter.on('foo', (msg, num) => {
+  console.log(msg, num); // logs: hello 123
+});</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 7: “Once” vs “On” -->
+    <div class="card">
+      <h2>⏱️ One-Time Listeners (<code>.once()</code>)</h2>
+      <ul>
+        <li><span class="emoji">1️⃣</span><code>.once()</code> acts like <code>.on()</code> but removes listener after first execution:</li>
+          <pre><code>myEmitter.once('bar', () => {
+  console.log('This runs only once!');
+});
+myEmitter.emit('bar');
+myEmitter.emit('bar'); // second time does nothing</code></pre>
+        <li><span class="emoji">🔄</span>The listener is automatically deleted after it runs once.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Internal Structure of Listeners -->
+    <div class="card">
+      <h2>🔍 How Listeners Are Stored</h2>
+      <ul>
+        <li><span class="emoji">📦</span>Under the hood, <code>EventEmitter</code> keeps a map (object) of event names to arrays of listeners.</li>
+        <li><span class="emoji">🔗</span>Example representation:
+          <pre><code>{
+  foo: [listener1, listener2],
+  bar: [listenerA]
+}</code></pre>
+        </li>
+        <li><span class="emoji">➡️</span>When you call <code>.on('foo', fn)</code>, it pushes <code>fn</code> into the <code>foo</code> array.</li>
+        <li><span class="emoji">🔁</span>When you call <code>.emit('foo')</code>, it loops through that array and calls each function.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Removing Listeners (<code>.removeListener()</code>) -->
+    <div class="card">
+      <h2>❌ Removing Listeners</h2>
+      <ul>
+        <li><span class="emoji">🧹</span>Use <code>.removeListener(eventName, listenerFn)</code> to delete a specific listener:</li>
+          <pre><code>function greet() {
+  console.log('Hello!');
+}
+myEmitter.on('foo', greet);
+myEmitter.removeListener('foo', greet);</code></pre>
+        <li><span class="emoji">⚠️</span>If the listener is not found, nothing changes.</li>
+        <li><span class="emoji">🗑️</span>After removal, <code>.emit('foo')</code> will not invoke that listener.</li>
+      </ul>
+    </div>
+
+    <!-- Card 10: Listener Count & Limits -->
+    <div class="card">
+      <h2>🔢 Checking Listeners</h2>
+      <ul>
+        <li><span class="emoji">🧐</span><code>.listenerCount(eventName)</code> returns how many listeners an event has:
+          <pre><code>console.log(myEmitter.listenerCount('foo'));</code></pre>
+        </li>
+        <li><span class="emoji">⚙️</span>You can also set a maximum number of listeners to catch memory leaks:
+          <pre><code>myEmitter.setMaxListeners(10);</code></pre>
+        </li>
+        <li><span class="emoji">🚦</span>If you add more than 10 by default, Node warns you about a “possible memory leak.”</li>
+      </ul>
+    </div>
+
+    <!-- Card 11: Inheritance & Using Methods -->
+    <div class="card">
+      <h2>🌳 Inheriting in Older Syntax</h2>
+      <ul>
+        <li><span class="emoji">📜</span>Instead of <code>class</code>, older code might do:
+          <pre><code>function MyEmitter() {
+  EventEmitter.call(this);
+}
+MyEmitter.prototype = Object.create(EventEmitter.prototype);
+MyEmitter.prototype.constructor = MyEmitter;</code></pre>
+        </li>
+        <li><span class="emoji">🔄</span>Then instantiate with <code>new MyEmitter()</code>—works the same as ES6 class.</li>
+      </ul>
+    </div>
+
+    <!-- Card 12: Common Use Cases -->
+    <div class="card">
+      <h2>💡 Common Uses of <code>EventEmitter</code></h2>
+      <ul>
+        <li><span class="emoji">🌐</span><strong>HTTP Servers:</strong> <code>http.Server</code> inherits from <code>EventEmitter</code>. Use <code>server.on('request', ...)</code>.</li>
+        <li><span class="emoji">📂</span><strong>Filesystem:</strong> <code>fs</code> streams (e.g., <code>fs.createReadStream()</code>) emit events like “data” and “end.”</li>
+        <li><span class="emoji">🔧</span><strong>Custom Modules:</strong> Create your own modules that fire events (e.g., when a long task completes).</li>
+        <li><span class="emoji">⚙️</span><strong>Third-Party Packages:</strong> Many npm packages expose an <code>EventEmitter</code> API (e.g., <code>readline</code>, <code>stream</code>).</li>
+      </ul>
+    </div>
+
+    <!-- Card 13: Viewing Node’s Built-In Implementation -->
+    <div class="card">
+      <h2>🔍 Built-In Source Code</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>View Node’s own <code>events.js</code> on GitHub: <a href="https://github.com/nodejs/node/blob/master/lib/events.js">nodejs/node/lib/events.js</a></li>
+        <li><span class="emoji">📂</span>It’s ~1000 lines of JavaScript—mostly extra error checks and edge-case handling.</li>
+        <li><span class="emoji">⚙️</span>Core methods (<code>on</code>, <code>emit</code>, <code>once</code>, etc.) do exactly what our custom example does—store listeners in arrays and invoke them.</li>
+      </ul>
+    </div>
+
+    <!-- Card 14: Custom Implementation Example -->
+    <div class="card">
+      <h2>🛠️ Custom EventEmitter (Simplified)</h2>
+      <ul>
+        <li><span class="emoji">✍️</span>Example code (simplified) to build your own emitter:
+          <pre><code>class SimpleEmitter {
+  constructor() {
+    this.events = {}; 
+  }
+  on(eventName, listener) {
+    if (!this.events[eventName]) {
+      this.events[eventName] = [];
+    }
+    this.events[eventName].push(listener);
+  }
+  emit(eventName, ...args) {
+    const listeners = this.events[eventName] || [];
+    for (const fn of listeners) {
+      fn(...args);
+    }
+  }
+  once(eventName, listener) {
+    const wrapped = (...args) => {
+      listener(...args);
+      this.removeListener(eventName, wrapped);
+    };
+    this.on(eventName, wrapped);
+  }
+  removeListener(eventName, listener) {
+    const arr = this.events[eventName] || [];
+    this.events[eventName] = arr.filter(fn => fn !== listener);
+  }
+}</code></pre>
+        </li>
+        <li><span class="emoji">🔧</span>Create instances with <code>new SimpleEmitter()</code>—works like <code>EventEmitter</code>.</li>
+        <li><span class="emoji">🌱</span>Good exercise to reinforce how events, listeners, and arrays tie together!</li>
+      </ul>
+    </div>
+
+    <!-- Card 15: Summary & Best Practices -->
+    <div class="card">
+      <h2>📚 Summary & Best Practices</h2>
+      <ul>
+        <li><span class="emoji">🔑</span><strong>EventEmitter Pattern:</strong> Register listeners with <code>.on()</code> or <code>.once()</code>, trigger with <code>.emit()</code>.</li>
+        <li><span class="emoji">🧹</span>Always remove listeners you no longer need (<code>.removeListener()</code>) to avoid memory leaks.</li>
+        <li><span class="emoji">⚠️</span>Be cautious: Emitting events synchronously means listeners run immediately—don’t block heavy work inside listeners.</li>
+        <li><span class="emoji">💡</span>Use <code>.listenerCount()</code> and <code>.setMaxListeners()</code> to keep track of events and prevent warnings.</li>
+        <li><span class="emoji">🚀</span>Built-in Node modules (like <code>http</code>, <code>stream</code>, <code>readline</code>) leverage EventEmitter—understanding it helps use these APIs effectively.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

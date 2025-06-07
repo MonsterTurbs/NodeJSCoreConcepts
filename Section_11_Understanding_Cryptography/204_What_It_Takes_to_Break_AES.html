@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🔓 Breaking AES Encryption</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #fcfcfc; margin: 0; padding: 20px; color: #333; }
+    h1 { text-align: center; color: #2c3e50; }
+    main { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 800px; margin: auto; }
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 16px; }
+    .card h2 { margin-top: 0; color: #1a222f; }
+    .card ul, .card p { margin: 8px 0; padding-left: 20px; }
+    code { background: #eef1f5; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔓 How Hard is it to Break AES?</h1>
+  <main>
+    <section class="card">
+      <h2><span class="emoji">🕵️‍♂️</span>Attacker’s Challenge</h2>
+      <p>Without the secret key, AES ciphertext looks like random gibberish. To guess a missing 4 bits, try 2⁴=16 keys.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">⌛</span>Brute Force Basics</h2>
+      <ul>
+        <li>Try all key combos until plaintext makes sense (detect HTTP headers, meaningful data).</li>
+        <li>16 tries took ~23 ms on a laptop in demo.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">💻</span>Real-World AES-128</h2>
+      <ul>
+        <li>Requires 2¹²⁸ attempts to guarantee finding the key.</li>
+        <li>Even on the world’s fastest supercomputer (El Capitan), two²¹⁶⁻¹ operations ≈ 30 trillion years.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔢</span>Why So Long?</h2>
+      <ul>
+        <li>2^128 ≈ 3.4×10³⁸ possible keys.</li>
+        <li>Each AES encrypt ~1,000 integer steps; supercomputer does ~10¹⁷ ops/sec.</li>
+        <li>Even halving searches (lucky 50%) still impossibly long.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">⚛️</span>Quantum Threat?</h2>
+      <p>Grover’s algorithm on a future quantum computer reduces to √2¹²⁸=2⁶⁴ ~1.8×10¹⁹ tries. Still trillions of years on best hardware.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔐</span>Key Security is Crucial</h2>
+      <ul>
+        <li>AES is mathematically strong—only practical attacks target the key (leaks, bad storage, lost secrets).</li>
+        <li>Keep keys truly random, private, and safe; never share or expose them (GitHub, logs, misconfig).</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">💡</span>Takeaways</h2>
+      <ul>
+        <li>AES-128 is safe for decades; AES-256 adds even more breathing room.</li>
+        <li>Perfect encryption (OTP) is unbreakable, but AES is practically unbreakable if keys stay secret.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

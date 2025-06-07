@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🎥 Installing FFmpeg & FFprobe</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .card p, .card ul {
+      margin: 0.5em 0;
+      line-height: 1.4;
+    }
+    .card code {
+      background: #eef3f7;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    a {
+      color: #1a73e8;
+    }
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎥 Installing FFmpeg & FFprobe</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ What Are FFmpeg & FFprobe?</h2>
+      <p>FFmpeg is a powerful C-based tool for video/audio tasks: extract audio, resize, crop, convert formats… 🎬<br/>
+      FFprobe (part of FFmpeg) inspects media files and shows detailed info. 🔍</p>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ macOS: Download Prebuilt Binaries 🍎</h2>
+      <ul>
+        <li>Go to <a href="https://osxexperts.net/ffmpeg">osxexperts.net/ffmpeg</a></li>
+        <li>Download both “Apple Silicon” &amp; “Intel” zip files for <code>ffmpeg</code> and <code>ffprobe</code>.</li>
+        <li>Unzip to get two executable files.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ Add to PATH 🔧</h2>
+      <p>1. Pick a folder in your <code>$PATH</code> (e.g. <code>/usr/local/bin</code>)<br/>
+      2. Copy executables there:<br/>
+      <code>mv ~/Downloads/ffmpeg /usr/local/bin/</code><br/>
+      <code>mv ~/Downloads/ffprobe /usr/local/bin/</code><br/>
+      3. Reload your shell (<code>source ~/.bashrc</code> or restart).</p>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ Linux &amp; WSL: Simple APT Install 🐧</h2>
+      <p>On Ubuntu or Debian-based:</p>
+      <pre><code>sudo apt update
+sudo apt install ffmpeg</code></pre>
+      <p>This also installs <code>ffprobe</code>. Verify with <code>ffmpeg -version</code>.</p>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ Build from Source (All Platforms) 🏗️</h2>
+      <ol>
+        <li>Install Git &amp; build tools:<br/>
+        <code>sudo apt install git build-essential</code> (Linux)<br/>
+        <code>brew install git</code> (macOS)</li>
+        <li>Clone repo:<br/>
+        <code>git clone https://github.com/FFmpeg/FFmpeg.git</code></li>
+        <li>Configure &amp; compile:<br/>
+        <code>cd FFmpeg
+./configure
+make -j$(nproc)</code></li>
+        <li>Install to <code>/usr/local/bin</code>:<br/>
+        <code>sudo make install</code></li>
+      </ol>
+      <p>Now <code>ffmpeg</code> &amp; <code>ffprobe</code> are in your <code>$PATH</code>.</p>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Uninstall Commands ❌</h2>
+      <ul>
+        <li>APT-install removal:<br/>
+        <code>sudo apt remove ffmpeg</code></li>
+        <li>Homebrew removal (macOS):<br/>
+        <code>brew uninstall ffmpeg</code></li>
+        <li>Source-built removal:<br/>
+        <code>cd FFmpeg
+sudo make uninstall</code></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Need More Help? 📖</h2>
+      <p>FFmpeg’s official build guide:<br/>
+      <a href="https://github.com/FFmpeg/FFmpeg/blob/master/doc/INSTALL.md">INSTALL.md on GitHub</a><br/>
+      Follow OS-specific sections for extra codecs (e.g. H264).</p>
+    </div>
+
+  </div>
+</body>
+</html>

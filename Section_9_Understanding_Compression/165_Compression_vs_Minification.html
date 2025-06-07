@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>✂️ Minification vs Compression – Study Notes</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f9fafb; color:#333; }
+    h1 { text-align:center; margin-bottom:1em; color:#2563eb; }
+    .container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      max-width:720px;
+      margin:auto;
+    }
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      padding:20px;
+    }
+    .card h2 { margin-top:0; color:#065f46; }
+    ul { padding-left:1.2em; }
+    code { background:#eef; padding:2px 4px; border-radius:4px; font-size:0.95em; }
+    @media print { .card { box-shadow:none; } }
+  </style>
+</head>
+<body>
+  <h1>✂️ Minification vs Compression</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>📝 What Is Minification?</h2>
+      <ul>
+        <li>Removes “extra” text in source files (JS/CSS/HTML): comments, whitespace, long names</li>
+        <li>Shortens variable/function names to single letters</li>
+        <li>Result: same code behavior but smaller file size</li>
+        <li>Not altering the binary format—still plain JS/CSS/HTML text 😊</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔍 How It Differs from Compression</h2>
+      <ul>
+        <li><strong>Minification:</strong> strips and renames in source code (text-level)</li>
+        <li><strong>Compression:</strong> encodes binary data (gzip, brotli…) using algorithms like LZ77/Huffman</li>
+        <li>Minified files still readable by JS engine; compressed files need to be decompressed first</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>⚙️ Example Workflow</h2>
+      <ul>
+        <li>Take your JS file → <code>minifyjs.com</code> or build-step tool → get <code>app.min.js</code> (½ size)</li>
+        <li>Then run compression:
+          <pre><code>brotli app.min.js -o app.min.js.br</code></pre>
+          → yields even smaller file (~700 B in demo)
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>✅ Best Practice</h2>
+      <ul>
+        <li>Use <strong>both</strong> minification + compression on web assets</li>
+        <li>Minify to remove useless text, then gzip/brotli to encode efficiently</li>
+        <li>Other size-reducing techniques (resizing, cropping) also differ from compression</li>
+        <li>Minification ≠ lossy compression—no quality/data loss in minification 👍</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

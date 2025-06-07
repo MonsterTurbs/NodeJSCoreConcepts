@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat App Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .card p {
+      margin: 8px 0;
+    }
+    .emoji {
+      font-size: 1.2em;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Card 1 -->
+  <div class="card">
+    <h2><span class="emoji">🚀</span> Endless Improvements</h2>
+    <p>You can keep adding features to your chat app forever—user names, file sharing, reactions, and more!</p>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card">
+    <h2><span class="emoji">🔒</span> Security Risks</h2>
+    <p>All messages travel “plain” over TCP. On a shared network anyone can sniff packets (e.g. with Wireshark) and read your chat. Always encrypt sensitive data! 🌐🔑</p>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="card">
+    <h2><span class="emoji">👤</span> Authentication Needed</h2>
+    <p>Right now anyone can pretend to be any user ID. In real apps you must verify users (e.g. via tokens or passwords) and reject malformed messages.</p>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="card">
+    <h2><span class="emoji">📚</span> Layers of Networking</h2>
+    <p>Your chat protocol sits at the top “Application” layer.  In more detailed models you also have:</p>
+    <ul>
+      <li><strong>Presentation</strong>: how data is formatted (e.g. headers, encryption)</li>
+      <li><strong>Session</strong>: user identity & connection management</li>
+    </ul>
+  </div>
+
+  <!-- Card 5 -->
+  <div class="card">
+    <h2><span class="emoji">☁️</span> Deployment Next!</h2>
+    <p>Up next: deploy your TCP server on a public machine (AWS, DigitalOcean, etc.).  Clients anywhere can connect, but remember to secure your app before going live! 🌍</p>
+  </div>
+
+</body>
+</html>

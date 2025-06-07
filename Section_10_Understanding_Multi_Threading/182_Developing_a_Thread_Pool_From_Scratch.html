@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>🧰 DIY Thread Pool in Node.js</title>
+  <style>
+    body { background: #f0f4f8; font-family: sans-serif; margin: 0; padding: 20px; }
+    .container { max-width: 700px; margin: auto; }
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px; }
+    h1 { text-align: center; color: #2c3e50; }
+    h2 { color: #3498db; margin-top: 0; }
+    ul { padding-left: 1.2em; }
+    li { margin-bottom: 0.8em; }
+    code { background: #ecf0f1; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧰 DIY Thread Pool in Node.js</h1>
+    <div class="card">
+      <h2>🔍 What You'll Build</h2>
+      <ul>
+        <li>A simple “worker pool” to reuse threads instead of spawning per task.</li>
+        <li>Improves performance by avoiding thread‐creation overhead. ⚡</li>
+      </ul>
+
+      <h2>📦 Core Concepts</h2>
+      <ul>
+        <li><strong>Pool Size:</strong> Fixed number of threads ready to run jobs.</li>
+        <li><strong>Job Queue:</strong> Holds incoming tasks when all threads are busy.</li>
+        <li><strong>Worker Threads:</strong> Take tasks from queue, process, then signal completion.</li>
+      </ul>
+
+      <h2>🛠️ Simplified Code Outline</h2>
+      <ul>
+        <li>Create pool:
+          <br/><code>for (let i=0; i<poolSize; i++) new Worker('task.js')</code>
+        </li>
+        <li>Maintain <code>freeWorkers</code> list and <code>taskQueue</code> array.</li>
+        <li>When a job comes:
+          <ul>
+            <li>If <code>freeWorkers.length&gt;0</code>, assign job immediately.</li>
+            <li>Else <code>taskQueue.push(job)</code>.</li>
+          </ul>
+        </li>
+        <li>On worker <code>message</code> (completion):
+          <ul>
+            <li>Return worker to <code>freeWorkers</code>.</li>
+            <li>If <code>taskQueue</code> not empty, dequeue and assign next job.</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h2>💡 Tips</h2>
+      <ul>
+        <li>Use <code>worker.terminate()</code> on shutdown to clean up threads.</li>
+        <li>Monitor queue length &amp; busy threads to tune pool size. 📈</li>
+        <li>Avoid unbounded queue growth—impose max queue length or reject excess tasks. 🚫</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

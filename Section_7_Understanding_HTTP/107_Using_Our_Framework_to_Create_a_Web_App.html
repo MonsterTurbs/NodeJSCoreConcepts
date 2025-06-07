@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🛠️ Serving & API Routes – Beginner Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #eef2f5;
+      margin: 0; padding: 20px; color: #333;
+    }
+    h1 { text-align: center; color: #2c3e50; }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #3498db;
+    }
+    .card ul { padding-left: 1.2em; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🛠️ Serving & API Routes: Beginner Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>🚀 Start Server & Static Routes</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>Pick a port: <code>const port = 8000</code></li>
+        <li><span class="emoji">⚙️</span>Init framework: <code>const server = new butter();</code></li>
+        <li><span class="emoji">▶️</span>Listen: <code>server.listen(port, ()=>console.log(...));</code></li>
+        <li><span class="emoji">📂</span>Define file routes:
+          <pre>server.route('GET','/', (req,res)=>res.sendFile('./public/index.html','text/html'));</pre>
+          Repeat for <code>/styles.css</code> &amp; <code>/script.js</code>.
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔍 Test Static Serve</h2>
+      <ul>
+        <li><span class="emoji">🔎</span>Open <code>http://localhost:8000/</code> → HTML, CSS, JS load OK.</li>
+        <li><span class="emoji">❗</span>Check Network → 404 for <code>/api/posts</code> &amp; <code>/api/user</code>.</li>
+        <li><span class="emoji">📋</span>Front-end Axios tries <code>GET /api/user</code> &amp; <code>GET /api/posts</code>.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>💾 Mock “Database” Data</h2>
+      <ul>
+        <li><span class="emoji">👥</span>Users array:
+          <pre>const users = [
+  {id:1,name:'Liam Brown',username:'liam23',password:'string'},
+  {id:2,name:'Meredith Green',username:'meritt',password:'string'},
+  {id:3,name:'Ben Adams',username:'benpoet',password:'string'}
+];</pre>
+        </li>
+        <li><span class="emoji">📝</span>Posts array:
+          <pre>let posts = [
+  {id:1,title:'Post title',body:'Lorem ipsum…',userId:1}
+];</pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔗 Define <code>GET /api/posts</code></h2>
+      <ul>
+        <li><span class="emoji">📡</span>Add route:
+          <pre>server.route('GET','/api/posts',(req,res)=>{
+  // merge author → see next card
+  res.status(200).json(posts);
+});</pre>
+        </li>
+        <li><span class="emoji">👾</span>Client receives JSON array of posts.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🧬 Merge Author into Posts</h2>
+      <ul>
+        <li><span class="emoji">🔄</span>Map posts, find user:
+          <pre>posts = posts.map(post=> {
+  const user = users.find(u=>u.id===post.userId);
+  post.author = user.name;
+  return post;
+});</pre>
+        </li>
+        <li><span class="emoji">✨</span>Now each post has <code>author</code> for front-end display.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>✅ Test <code>/api/posts</code></h2>
+      <ul>
+        <li><span class="emoji">🔄</span>Refresh browser → no more 404 for posts.</li>
+        <li><span class="emoji">📦</span>Network preview shows:
+          <pre>[
+  {id:1,title:'…',body:'…',userId:1,author:'Liam Brown'}
+]</pre>
+        </li>
+        <li><span class="emoji">🎉</span>Front-end renders title, body &amp; author on page!</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

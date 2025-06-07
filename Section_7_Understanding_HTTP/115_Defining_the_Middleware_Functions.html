@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🧩 Middleware Tasks – Beginner Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f0f3f5;
+      margin: 0; padding: 24px; color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 720px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 18px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #16a085;
+    }
+    .card ul { 
+      padding-left: 1.2em; 
+      line-height: 1.6; 
+    }
+    .emoji { margin-right: 6px; }
+    pre {
+      background: #f4f4f4;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🧩 Key Middleware Tasks</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>📦 JSON-Body Parser</h2>
+      <ul>
+        <li><span class="emoji">📥</span>Check header:  
+          <code>req.headers["content-type"]==='application/json'</code>
+        </li>
+        <li><span class="emoji">🔍</span>Collect chunks:
+          <pre>let body=""; 
+req.on("data", c=> body+=c.toString());</pre>
+        </li>
+        <li><span class="emoji">✅</span>On end: parse &amp; attach:
+          <pre>req.on("end", ()=>{
+  req.body = JSON.parse(body);
+  next();
+});</pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔒 Authentication Guard</h2>
+      <ul>
+        <li><span class="emoji">🚪</span>Protect only these routes:
+          <pre>const routes=["GET /api/user",
+  "PUT /api/user",
+  "POST /api/posts",
+  "DELETE /api/logout"];</pre>
+        </li>
+        <li><span class="emoji">🍪</span>Read token cookie:
+          <pre>if(!req.headers.cookie) 
+  return res.status(401).json({error:"unauthorized"});</pre>
+        </li>
+        <li><span class="emoji">🔑</span>Verify session &amp; set user:
+          <pre>
+const token = req.headers.cookie.split("=")[1];
+const sess  = sessions.find(s=>s.token===token);
+if(!sess) return res.status(401).json({error:"unauthorized"});
+req.userId = sess.userId;
+next();
+          </pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🌐 HTML Fallback</h2>
+      <ul>
+        <li><span class="emoji">🚦</span>For client-side routes (e.g. `/`, `/login`, `/new-post`)</li>
+        <li><span class="emoji">🔄</span>Match GET URLs:
+          <pre>const pages=["/","/login","/new-post"];</pre>
+        </li>
+        <li><span class="emoji">📂</span>Send `index.html`:
+          <pre>if(pages.includes(req.url) &amp;&amp; req.method==='GET'){
+  res.setHeader("Content-Type","text/html");
+  res.sendFile("./public/index.html");
+} else next();</pre>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

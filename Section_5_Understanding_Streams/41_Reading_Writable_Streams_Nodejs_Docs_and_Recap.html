@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Study Notes – Writable Streams API Recap</title>
+  <style>
+    /* Base styles */
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr; /* one card per row */
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Node.js Writable Streams API</h1>
+  <div class="container">
+
+    <!-- Card 1: Overview -->
+    <div class="card">
+      <h2>📖 Overview of Writable Streams</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>A Writable Stream is an object you can send data to, such as writing to a file or sending an HTTP response.</li>
+        <li><span class="emoji">🌐</span>Many Node.js modules use writable streams under the hood: <code>fs.createWriteStream()</code>, HTTP responses, TCP sockets, cryptography, child‐process stdio, and more.</li>
+        <li><span class="emoji">💡</span>After you call <code>stream.end()</code>, no more <code>write()</code> calls are allowed.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Key Events -->
+    <div class="card">
+      <h2>📋 Important Events on Writable Streams</h2>
+      <ul>
+        <li><span class="emoji">🔒</span><strong>‘close’</strong>: Emitted when the stream and its underlying resource (e.g., file descriptor) have closed.  
+          <ul><li>Example: <code>stream.on('close', () => console.log('Stream closed'));</code></li></ul>
+        </li>
+        <li><span class="emoji">💧</span><strong>‘drain’</strong>: Emitted when the internal buffer empties after <code>write()</code> returned <code>false</code>.  
+          <ul><li>Use this to resume writing:  
+            <pre><code>if (!stream.write(chunk)) {
+  stream.once('drain', () => continueWriting());
+}</code></pre>
+          </li></ul>
+        </li>
+        <li><span class="emoji">❗</span><strong>‘error’</strong>: Emitted if the stream or underlying resource errors. Always listen to avoid crashes.  
+          <ul><li>Example: <code>stream.on('error', err => console.error(err));</code></li></ul>
+        </li>
+        <li><span class="emoji">🏁</span><strong>‘finish’</strong>: Emitted after <code>stream.end()</code> is called and all buffered data has been flushed.  
+          <ul><li>Good place to stop timers and close file handles.</li></ul>
+        </li>
+        <li><span class="emoji">🚰</span><strong>‘pipe’</strong>: Emitted when a readable stream is piped into this writable stream. Useful when chaining streams.  
+          <ul><li>Example: <code>readable.pipe(writable).on('pipe', src => console.log('Piped from', src));</code></li></ul>
+        </li>
+        <li><span class="emoji">🛠️</span><strong>‘cork’</strong> & <strong>‘uncork’</strong>:  
+          <ul>
+            <li>Calling <code>stream.cork()</code> buffers all <code>write()</code> calls in memory (no actual writes until <code>uncork()</code>).</li>
+            <li>Then <code>stream.uncork()</code> flushes all buffered data in one go—useful when writing many small chunks rapidly.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">💥</span><strong>‘destroy’</strong>: Immediately destroys the stream, preventing any further I/O.  
+          <ul><li>Example: <code>stream.destroy(new Error('Something broke'));</code></li></ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Essential Methods -->
+    <div class="card">
+      <h2>⚙️ Core Writable Stream Methods</h2>
+      <ul>
+        <li><span class="emoji">✏️</span><strong><code>stream.write(chunk)</code></strong>: Pushes a buffer (or string) into the internal buffer.  
+          <ul>
+            <li>Returns <code>true</code> if <code>writableLength < highWaterMark</code>, meaning it’s safe to continue writing.</li>
+            <li>Returns <code>false</code> if buffer is full, meaning you must wait for <code>'drain'</code> before writing more.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔚</span><strong><code>stream.end([chunk])</code></strong>: Signals that no more data will be written.  
+          <ul>
+            <li>Optionally writes one last <code>chunk</code> before ending.</li>
+            <li>Emits <code>'finish'</code> when all data is flushed.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔄</span><strong><code>stream.cork()</code></strong>: Temporarily buffers all subsequent <code>write()</code> calls in memory.  
+          <ul><li>Useful if you have many small writes and want to flush them in a single operation.</li></ul>
+        </li>
+        <li><span class="emoji">🔔</span><strong><code>stream.uncork()</code></strong>: Flushes all buffered writes at once.  
+          <ul><li>Always call <code>uncork()</code> after you finish grouping writes under a <code>cork()</code>.</li></ul>
+        </li>
+        <li><span class="emoji">🆘</span><strong><code>stream.destroy([error])</code></strong>: Immediately destroys the stream, optionally providing an error.  
+          <ul><li>After <code>destroy()</code>, no more reads or writes can occur.</li></ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Key Properties -->
+    <div class="card">
+      <h2>📊 Important Properties</h2>
+      <ul>
+        <li><span class="emoji">🔢</span><strong><code>stream.writableHighWaterMark</code></strong>: The size (in bytes) of the internal buffer before <code>write()</code> returns <code>false</code>. Defaults to 16 384 bytes (16 KB).</li>
+        <li><span class="emoji">📐</span><strong><code>stream.writableLength</code></strong>: How many bytes are currently buffered and waiting to be written to the underlying resource.  
+          <ul><li>Always keep <code>writableLength < writableHighWaterMark</code> to avoid excessive memory use.</li></ul>
+        </li>
+        <li><span class="emoji">⚡</span><strong><code>stream.writableFinished</code></strong>: <code>true</code> if <code>stream.end()</code> has been called and all buffered data has been flushed; otherwise <code>false</code>.</li>
+        <li><span class="emoji">✔️</span><strong><code>stream.writableEnded</code></strong>: <code>true</code> if <code>end()</code> has been called, regardless of whether all data is flushed yet.  
+          <ul><li>Check <code>writableFinished</code> to confirm flush completion.</li></ul>
+        </li>
+        <li><span class="emoji">🔔</span><strong><code>stream.writableNeedDrain</code></strong>: <code>true</code> if <code>write()</code> returned <code>false</code> (i.e., the buffer is full and you need to wait for <code>'drain'</code>).</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Quick Code Examples -->
+    <div class="card">
+      <h2>💻 Code Snippets & Examples</h2>
+      <ul>
+        <li><span class="emoji">📂</span>Creating a Write Stream to a file:  
+          <pre><code>const fs = require('fs');
+const stream = fs.createWriteStream('output.txt');
+// Write a buffer or string:
+const buf = Buffer.from('Hello, world!', 'utf8');
+if (!stream.write(buf)) {
+  // Buffer is full; wait for 'drain'
+  stream.once('drain', () => {
+    stream.write(buf);
+  });
+}
+stream.end(() => {
+  console.log('All data flushed to file');
+});</code></pre>
+        </li>
+        <li><span class="emoji">🌐</span>Writing an HTTP response (Writable Stream):  
+          <pre><code>const http = require('http');
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.write('First chunk\n');
+  res.write('Second chunk\n');
+  res.end('Done!\n'); // emits 'finish' when all data is sent
+}).listen(3000);</code></pre>
+        </li>
+        <li><span class="emoji">🔧</span>Using <code>cork()</code> & <code>uncork()</code> to batch small writes:  
+          <pre><code>const stream = fs.createWriteStream('batch.txt');
+stream.cork();
+for (let i = 0; i < 1000; i++) {
+  stream.write(`Line ${i}\n`);
+}
+stream.uncork(); // flushes all 1000 lines at once
+stream.end();</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Tips & Best Practices -->
+    <div class="card">
+      <h2>💡 Tips & Best Practices</h2>
+      <ul>
+        <li><span class="emoji">👀</span>Always check <code>write()</code>’s return value. If <code>false</code>, wait for <code>'drain'</code> before writing more.</li>
+        <li><span class="emoji">🚫</span>Never write after calling <code>end()</code>—it will cause an error.</li>
+        <li><span class="emoji">🔍</span>Monitor <code>writableLength</code> and <code>writableHighWaterMark</code> to avoid large memory spikes.</li>
+        <li><span class="emoji">📖</span>Read the official documentation’s descriptions for events and methods; it’s easier than memorizing them.</li>
+        <li><span class="emoji">🎯</span>Use <code>stream.finished()</code> (from <code>'stream'</code> module) to get a Promise that resolves when the stream ends, for cleaner async code.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: What’s Next? -->
+    <div class="card">
+      <h2>➡️ What’s Next?</h2>
+      <ul>
+        <li><span class="emoji">📘</span>Now that Writable Streams are clear, we’ll explore <strong>Readable Streams</strong> (how to pull data chunk-by-chunk).</li>
+        <li><span class="emoji">🔄</span>After that, we’ll build custom <code>Duplex</code> and <code>Transform</code> streams for two-way and data-modifying pipelines.</li>
+        <li><span class="emoji">🎉</span>By combining Readable + Writable + backpressure, you’ll create highly efficient Node.js applications that never overload memory.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🔑 JSON Routes – Beginner Study Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f5f8fa;
+      margin: 0; padding: 20px; color: #333;
+    }
+    h1 { text-align: center; color: #2c3e50; }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #1abc9c;
+    }
+    .card ul { padding-left: 1.2em; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    pre {
+      background: #f4f4f4;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code { background: #eef; padding: 2px 4px; border-radius: 4px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔑 JSON Routes – Beginner Study Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>📦 What Are JSON Routes?</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>We can add API-style endpoints (routes) to send back JSON data.</li>
+        <li><span class="emoji">✉️</span>Each route checks <code>req.method</code> and <code>req.url</code>.</li>
+        <li><span class="emoji">🔄</span>Use <code>res.setHeader('Content-Type','application/json')</code> to declare JSON responses.</li>
+        <li><span class="emoji">🚦</span>Use <code>res.statusCode = …</code> to pick appropriate HTTP status (200, 401, etc.).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔐 POST /login</h2>
+      <ul>
+        <li><span class="emoji">🚀</span>Route signature:
+          <pre>if (req.method==='POST' && req.url==='/login') { … }</pre>
+        </li>
+        <li><span class="emoji">⚙️</span>Set headers & status:
+          <pre>res.setHeader('Content-Type','application/json');  
+res.statusCode = 200;</pre>
+        </li>
+        <li><span class="emoji">📤</span>Send JSON body & end response:
+          <pre>const body = { message: 'Logging in…' };  
+res.end(JSON.stringify(body));</pre>
+        </li>
+        <li><span class="emoji">✅</span>Postman test:  
+          • Method: POST  
+          • URL: <code>http://localhost:9000/login</code>  
+          → get `{"message":"Logging in…"}`</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🛠️ PUT /user</h2>
+      <ul>
+        <li><span class="emoji">✏️</span>Route signature:
+          <pre>if (req.method==='PUT' && req.url==='/user') { … }</pre>
+        </li>
+        <li><span class="emoji">⚙️</span>Set headers & status:
+          <pre>res.setHeader('Content-Type','application/json');  
+res.statusCode = 200;</pre>
+        </li>
+        <li><span class="emoji">📤</span>Send JSON body & end:
+          <pre>const body = { message: 'Updating your info…' };  
+res.end(JSON.stringify(body));</pre>
+        </li>
+        <li><span class="emoji">🔒</span>Example error scenario:
+          <pre>res.statusCode = 401;  
+const body = { message: 'Please log in first' };  
+res.end(JSON.stringify(body));</pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>⏹️ Why Use <code>res.end()</code>?</h2>
+      <ul>
+        <li><span class="emoji">📛</span><code>res.write()</code> only writes data—doesn’t finish the response.</li>
+        <li><span class="emoji">✔️</span><code>res.end()</code> writes (optional) & signals “body complete.”</li>
+        <li><span class="emoji">🔄</span>Without <code>end()</code>, client (Postman/Browser) keeps waiting 🔄</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🚀 Next Steps: DRY Routing</h2>
+      <ul>
+        <li><span class="emoji">🔁</span>Lots of repeated code—checking method, URL, headers, JSON stringify.</li>
+        <li><span class="emoji">🧩</span>We can extract into helpers or build a mini-framework (like Express).</li>
+        <li><span class="emoji">⚡</span>Future videos: create a router utility to simplify adding new JSON & file routes!</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📝 Study Notes – Basic Networking Concepts</title>
+  <style>
+    body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; margin: 0; padding: 20px; color: #2d3748; }
+    h1 { text-align: center; color: #2c5282; margin-bottom: 30px; }
+    .container { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    .card { background-color: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 20px; transition: transform 0.2s; }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .card h2 { font-size: 1.3rem; margin-bottom: 12px; color: #2c5282; }
+    .card ul { list-style: none; padding-left: 0; }
+    .card li { margin-bottom: 10px; line-height: 1.6; }
+    .emoji { margin-right: 6px; }
+    pre { background-color: #eef2f7; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    @media print { body { background-color: #fff; color: #000; } .card { box-shadow: none; margin-bottom: 20px; } pre { background-color: transparent; } }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Basic Networking Concepts</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>🔍 Introduction to Networking</h2>
+      <ul>
+        <li><span class="emoji">💡</span>Networking lets computers share information without moving disks by hand.</li>
+        <li><span class="emoji">⏳</span>Before coding network apps, it helps to know how networks work.</li>
+        <li><span class="emoji">🌐</span>These ideas apply in any programming language.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>📼 Old-School File Sharing</h2>
+      <ul>
+        <li><span class="emoji">💾</span>You used floppy disks or USB sticks to move files between PCs.</li>
+        <li><span class="emoji">🚶‍♂️</span>Save to disk, walk to another computer, then load the file.</li>
+        <li><span class="emoji">✈️</span>To share far away, you might mail or fly the disk.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>🔌 Building a Simple Network</h2>
+      <ul>
+        <li><span class="emoji">📶</span>Ethernet cables carry bits (0s and 1s) between devices.</li>
+        <li><span class="emoji">🔀</span>A network switch forwards data to the correct computer.</li>
+        <li><span class="emoji">⚙️</span>Switches may require simple setup (like logging in to configure).</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>💳 Network Interface &amp; MAC Address</h2>
+      <ul>
+        <li><span class="emoji">🖥️</span>Each computer has a Network Interface Card (NIC) for cable or Wi-Fi.</li>
+        <li><span class="emoji">🔑</span>NIC has a unique MAC address (48-bit ID in hex).</li>
+        <li><span class="emoji">🔒</span>Switches use MAC addresses to know where to send packets.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>📦 Packets &amp; Frames</h2>
+      <ul>
+        <li><span class="emoji">✉️</span>Data is split into packets (called frames on Ethernet).</li>
+        <li><span class="emoji">📝</span>Each packet has:<br>• Source MAC<br>• Destination MAC<br>• Payload (the actual data)</li>
+        <li><span class="emoji">🔄</span>Switch reads destination MAC and sends packet to the right port.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2>🛣️ Routers &amp; IP Addresses</h2>
+      <ul>
+        <li><span class="emoji">📍</span>Routers connect multiple networks (e.g., building to building).</li>
+        <li><span class="emoji">🌍</span>They use IP addresses instead of MACs to route packets.</li>
+        <li><span class="emoji">🏷️</span>An IP address is like a street address: each device gets a unique one.</li>
+        <li><span class="emoji">🔀</span>Routers know which network a device’s IP belongs to and forward data.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card">
+      <h2>☁️ Internet Backbone &amp; ISPs</h2>
+      <ul>
+        <li><span class="emoji">🛠️</span>ISPs (Internet Service Providers) give you access to the global network.</li>
+        <li><span class="emoji">🔌</span>You connect your home or phone via a modem/router supplied by your ISP.</li>
+        <li><span class="emoji">🌐</span>Undersea and land cables form the Internet backbone linking continents.</li>
+        <li><span class="emoji">📲</span>Whether wired, Wi-Fi, or mobile (4G/5G), you get a public IP to send/receive data.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="card">
+      <h2>🧩 Networking Layers</h2>
+      <ul>
+        <li><span class="emoji">1️⃣</span><strong>Physical:</strong> Moves raw bits over cables.</li>
+        <li><span class="emoji">2️⃣</span><strong>Data Link:</strong> Frames data, uses MAC addresses.</li>
+        <li><span class="emoji">3️⃣</span><strong>Network:</strong> Routes packets, uses IP addresses.</li>
+        <li><span class="emoji">4️⃣</span><strong>Transport:</strong> Ensures data arrives (TCP) or sends fast (UDP).</li>
+        <li><span class="emoji">5️⃣</span><strong>Application:</strong> Runs HTTP, SSH, FTP, and your Node.js apps.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9 -->
+    <div class="card">
+      <h2>🔍 Wireshark Filtering Tip</h2>
+      <ul>
+        <li><span class="emoji">🎯</span>Use filters to focus only on your Node.js app traffic.</li>
+        <li><span class="emoji">📍</span><strong>By IP:</strong> <code>ip.addr == 127.0.0.1</code></li>
+        <li><span class="emoji">🔢</span><strong>By Port:</strong> <code>tcp.port == 3099</code></li>
+        <li><span class="emoji">🔗</span><strong>Combine:</strong> <code>ip.addr == 127.0.0.1 && tcp.port == 3099</code></li>
+      </ul>
+      <p>Enter your filter in Wireshark’s filter box and press Enter to activate. Special thanks to Jerome for this tip!</p>
+    </div>
+
+  </div>
+</body>
+</html>

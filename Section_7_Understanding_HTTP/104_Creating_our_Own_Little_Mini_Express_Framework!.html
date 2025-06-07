@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🔧 Build a Mini Framework – Beginner Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f5f8fa;
+      margin: 0; padding: 20px; color: #333;
+    }
+    h1 { text-align: center; color: #34495e; }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #e74c3c;
+    }
+    .card ul { padding-left: 1.2em; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    pre {
+      background: #f4f4f4;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: Consolas, monospace;
+    }
+    code { background: #eef; padding: 2px 4px; border-radius: 4px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔧 Build a Mini “Butter” Framework – Study Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>📋 Why a Framework?</h2>
+      <ul>
+        <li><span class="emoji">✂️</span>We copy-&-pasted route logic many times.</li>
+        <li><span class="emoji">🛠️</span>Better to extract into reusable functions/objects.</li>
+        <li><span class="emoji">🚀</span>Makes code cleaner and easier to add new routes.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🧰 Create the “Butter” Class</h2>
+      <ul>
+        <li><span class="emoji">📦</span>Make a new file: <code>butter.js</code>.</li>
+        <li><span class="emoji">💡</span>Import HTTP & export class:
+          <pre>const http = require('http');
+class Butter { … }
+module.exports = Butter;</pre>
+        </li>
+        <li><span class="emoji">🏗️</span>In constructor, create HTTP server:
+          <pre>constructor(){
+  this.server = http.createServer();
+}</pre>
+        </li>
+    </div>
+
+    <div class="card">
+      <h2>🎧 Listen Method</h2>
+      <ul>
+        <li><span class="emoji">🔌</span>Add inside class:
+          <pre>listen(port, cb){
+  this.server.listen(port, cb);
+}</pre>
+        </li>
+        <li><span class="emoji">✅</span>Usage in <code>server.js</code>:
+          <pre>const app = new Butter();
+app.listen(4060,()=>console.log('Live'));</pre>
+        </li>
+    </div>
+
+    <div class="card">
+      <h2>🛣️ Routing Table</h2>
+      <ul>
+        <li><span class="emoji">🗺️</span>Store routes in an object:
+          <pre>constructor(){
+  this.routes = {};
+  this.server.on('request', this.handle.bind(this));
+}</pre>
+        </li>
+        <li><span class="emoji">➕</span>Define a <code>route</code> method:
+          <pre>route(method, path, cb){
+  this.routes[method+path] = cb;
+}</pre>
+        </li>
+    </div>
+
+    <div class="card">
+      <h2>🔄 Handle Requests</h2>
+      <ul>
+        <li><span class="emoji">🚦</span>On each request, find matching route:
+          <pre>handle(req,res){
+  const key = req.method.toLowerCase()+req.url;
+  const fn = this.routes[key];
+  if(fn) fn(req, res);
+  else {
+    res.statusCode=404;
+    res.end('Not Found');
+  }
+}</pre>
+        </li>
+        <li><span class="emoji">🎉</span>Now <code>app.route('get','/', handler)</code> works!</li>
+    </div>
+
+    <div class="card">
+      <h2>📁 Utility: <code>sendFile</code></h2>
+      <ul>
+        <li><span class="emoji">🍞</span>Attach to response:
+          <pre>res.sendFile = async (path, type)=>{
+  res.setHeader('Content-Type',type);
+  const fh = await fs.open(path,'r');
+  fh.createReadStream().pipe(res);
+};</pre>
+        </li>
+        <li><span class="emoji">✨</span>In your route:
+          <pre>app.route('get','/', (req,res)=>{
+  res.sendFile('./public/index.html','text/html');
+});</pre>
+        </li>
+    </div>
+
+  </div>
+</body>
+</html>

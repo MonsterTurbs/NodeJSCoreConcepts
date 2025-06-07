@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Deploying Your Chat App – Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.4;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .emoji {
+      font-size: 1.2em;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Card 1 -->
+  <div class="card">
+    <h2><span class="emoji">☁️</span>AWS Free Tier</h2>
+    <p>AWS offers a <strong>free tier</strong> for 12 months: 750 hours/month of EC2 (virtual server), 5 GB storage, and more! Great for learning without paying. 💳</p>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card">
+    <h2><span class="emoji">🖥️</span>Launching an EC2 Instance</h2>
+    <ol>
+      <li>Go to <strong>EC2 → Launch Instance</strong>.</li>
+      <li>Choose <strong>Amazon Linux</strong> (or Ubuntu).</li>
+      <li>Select <strong>t2.micro</strong> (1 vCPU, 1 GB RAM) for free tier.</li>
+      <li>Create/download an <strong>SSH key pair</strong> (PEM file) to log in.</li>
+    </ol>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="card">
+    <h2><span class="emoji">📍</span>Regions Matter</h2>
+    <p>AWS is divided into regions (Ohio, California, Singapore…). Choose the region closest to your users for <strong>low latency</strong>. You can route users globally with services like Route 53 and load balancers. 🌐</p>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="card">
+    <h2><span class="emoji">🔑</span>SSH & Key Permissions</h2>
+    <p>Use your PEM key to SSH in:</p>
+    <pre>
+chmod 400 my-key.pem
+ssh -i my-key.pem ec2-user@YOUR_PUBLIC_IP
+    </pre>
+    <p>On Linux/macOS you may need <code>chmod 400</code> to protect the key.</p>
+  </div>
+
+  <!-- Card 5 -->
+  <div class="card">
+    <h2><span class="emoji">🔒</span>Security Groups (Firewall)</h2>
+    <p>A security group is like a firewall:</p>
+    <ul>
+      <li><strong>Inbound rules</strong>: which ports/IPs can connect (e.g. TCP 4020 for your chat app).</li>
+      <li><strong>Outbound rules</strong>: where your server can send traffic.</li>
+    </ul>
+    <p>For testing you might “allow all,” but in production open only needed ports!</p>
+  </div>
+
+  <!-- Card 6 -->
+  <div class="card">
+    <h2><span class="emoji">🚀</span>Deploy & Run Your App</h2>
+    <ol>
+      <li>SSH into your EC2 instance.</li>
+      <li>Install Node.js (via NVM): <code>nvm install 16</code>.</li>
+      <li>Upload your <code>chat-server.js</code> code.</li>
+      <li>Set <code>HOST</code> to the EC2 private IP and <code>PORT</code> you choose.</li>
+      <li>Run: <code>node chat-server.js</code>. Your app is now live at <code>YOUR_PUBLIC_IP:PORT</code>!</li>
+    </ol>
+  </div>
+
+</body>
+</html>

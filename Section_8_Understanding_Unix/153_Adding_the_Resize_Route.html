@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>📐 Video Resize – Study Notes</title>
+  <style>
+    body {
+      margin: 0; padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f0f4f8; color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    }
+    .card h2 {
+      margin-top: 0; color: #2c3e50;
+    }
+    .card pre {
+      background: #eef3f7;
+      padding: 8px;
+      overflow-x: auto;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📐 Video Resize – Study Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ Why Schedule? ⏳</h2>
+      <p>Resizing big videos can take minutes or hours and max out CPU. We’ll schedule one job at a time in next step.</p>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ API Route</h2>
+      <p><strong>POST</strong> <code>/api/video/resize</code></p>
+      <p>Payload JSON: <code>{ videoId, width, height }</code> 📐</p>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ Read &amp; Validate</h2>
+      <pre><code>
+// get data
+const { videoId, width: wStr, height: hStr } = req.body;
+const width  = Number(wStr), height = Number(hStr);
+db.update();
+const video = db.videos.find(v => v.videoId===videoId);
+if (!video) return handleError(404,'Video not found');
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ Mark “Processing” 🔄</h2>
+      <pre><code>
+// add entry: "WIDTHxHEIGHT": { processing:true }
+video.resizes[`${width}x${height}`] = { processing: true };
+const resp = { status:'success', message:'Video is being processed' };
+res.status(200).json(resp);
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ Paths 📂</h2>
+      <pre><code>
+// original file
+const inPath  = `storage/${videoId}/original.${video.extension}`;
+// new resized file
+const outPath = `storage/${videoId}/${width}x${height}.${video.extension}`;
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Spawn FFmpeg 🐚</h2>
+      <pre><code>
+await f.resize(inPath, outPath, width, height);
+// in lib/f.js:
+spawn('ffmpeg', [
+  '-i', inPath,
+  '-vf', `scale=${width}:${height}`,
+  '-c:a','copy',
+  outPath
+])
+.on('close',code=> code===0?resolve():reject(...))
+.on('error',err=>reject(err));
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Finish &amp; Save 💾</h2>
+      <pre><code>
+// on success:
+video.resizes[`${width}x${height}`].processing = false;
+db.save();
+// on error:
+await util.deleteFile(outPath);
+return handleError(e);
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>✅ Recap</h2>
+      <ul>
+        <li>🔎 Read <code>videoId, width, height</code></li>
+        <li>⚙️ Mark job “processing” &amp; respond</li>
+        <li>🛠️ Run FFmpeg to resize</li>
+        <li>✔️ Update <code>processing=false</code> on finish</li>
+        <li>🧹 Clean up on error</li>
+      </ul>
+      <p>▶️ Next: schedule these resizes one at a time!</p>
+    </div>
+
+  </div>
+</body>
+</html>

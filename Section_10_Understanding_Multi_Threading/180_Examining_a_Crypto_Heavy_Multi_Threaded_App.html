@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>🔐 Multithreaded Crypto Demo</title>
+  <style>
+    body { background: #f0f4f8; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+    .container { max-width: 700px; margin: auto; }
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            padding: 20px; margin-bottom: 20px; }
+    h1 { text-align: center; color: #2a4365; }
+    h2 { margin-top: 0; color: #2c5282; }
+    ul { padding-left: 1.2em; }
+    li { margin-bottom: 0.8em; line-height: 1.4; }
+    code { background: #e2e8f0; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Crypto & Worker Threads</h1>
+    <div class="card">
+      <h2>🚀 Demo Overview</h2>
+      <ul>
+        <li>We spawn N worker threads running <code>calc-crypto.js</code>.</li>
+        <li>Each thread generates random numbers using Node’s <code>crypto.randomFillSync()</code>, sums them, and reports back.</li>
+        <li>Main thread aggregates results and logs total time & sum.</li>
+      </ul>
+
+      <h2>❌ Performance Issue</h2>
+      <ul>
+        <li>More threads → slower! 🤯</li>
+        <li>Bottleneck: calling <code>crypto.randomFillSync()</code> millions of times blocks each worker.</li>
+      </ul>
+
+      <h2>🔧 Batch Solution</h2>
+      <ul>
+        <li>Allocate a buffer of size <code>BATCH_SIZE</code> bytes once.</li>
+        <li>Fill it with random data in one call (<code>crypto.randomFillSync(buf)</code>).</li>
+        <li>In each loop, read 16-bit slices from the buffer, and refill when exhausted.</li>
+        <li>Result: threads spend less time in the blocking crypto call → near-linear speedup! 🚄</li>
+      </ul>
+
+      <h2>💡 Key Takeaways</h2>
+      <ul>
+        <li>Not all blocking calls scale in threads—identify bottlenecks with testing.</li>
+        <li>Batch expensive operations when you must call them repeatedly.</li>
+        <li>With batching, adding more threads yields the expected performance gains.</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

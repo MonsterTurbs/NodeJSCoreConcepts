@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Beginner-Friendly Study Notes – Types of Streams in Node.js</title>
+  <style>
+    /* Base styles */
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+
+    /* Container for cards */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr; /* One card per row */
+      gap: 20px;
+    }
+
+    /* Individual card styles */
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+
+    /* Print-friendly adjustments */
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Beginner-Friendly Study Notes: Types of Streams in Node.js</h1>
+
+  <div class="container">
+
+    <!-- Card 1: Writable vs. Readable Streams -->
+    <div class="card">
+      <h2>✏️ Writable Streams vs. 📖 Readable Streams</h2>
+      <ul>
+        <li><span class="emoji">✍️</span><strong>Writable Stream</strong> (writeable): you “write” data into it.  
+          <ul>
+            <li>Example: <code>fs.createWriteStream('output.txt')</code>—you send chunks of data to this stream and it writes them to a file.</li>
+            <li>Used when you want to send data out (e.g., writing a large file, sending a response to a client, or piping to FFmpeg).</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📥</span><strong>Readable Stream</strong>: you “read” data from it.  
+          <ul>
+            <li>Example: <code>fs.createReadStream('input.txt')</code>—you receive chunks of data from this stream and can process them (e.g., log, transform, or pipe to another writable stream).</li>
+            <li>Used when you want to pull data in (e.g., reading a huge file, receiving an HTTP request body, or consuming data from FFmpeg).</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Live Examples of Readable & Writable -->
+    <div class="card">
+      <h2>🔄 Examples in Action</h2>
+      <ul>
+        <li><span class="emoji">🖥️</span><strong>Writing to FFmpeg</strong> is using a Writable Stream:  
+          <ul>
+            <li>You send data (video frames, commands) from Node to FFmpeg through a write stream.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔍</span><strong>Reading from FFmpeg</strong> is using a Readable Stream:  
+          <ul>
+            <li>FFmpeg emits processed data (encoded video chunks) back to Node, and you consume those via a read stream.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🌐</span><strong>HTTP Server</strong>:  
+          <ul>
+            <li>Incoming requests are a Readable Stream (<code>req</code>), you read body chunks via <code>req.on('data', …)</code>.</li>
+            <li>Outgoing responses are a Writable Stream (<code>res</code>), you write chunks via <code>res.write(…)</code> then <code>res.end()</code>.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">💾</span><strong>File System</strong>:  
+          <ul>
+            <li>Reading file: <code>fs.createReadStream()</code> (Readable).</li>
+            <li>Writing file: <code>fs.createWriteStream()</code> (Writable).</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Duplex Streams -->
+    <div class="card">
+      <h2>🔀 Duplex Streams</h2>
+      <ul>
+        <li><span class="emoji">🔄</span>A <strong>Duplex Stream</strong> is both Readable and Writable at once.  
+          <ul>
+            <li>Example: <code>net.Socket</code> for a TCP connection—you can both read incoming network packets and write outgoing packets on the same socket.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">⚙️</span>Under the hood, a Duplex stream has two internal buffers:  
+          <ul>
+            <li>One buffer for data you write to it.</li>
+            <li>Another buffer for data you read from it.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">✨</span>You implement a custom Duplex by extending <code>require('stream').Duplex</code> and defining <code>_read()</code> and <code>_write()</code> methods.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Transform Streams -->
+    <div class="card">
+      <h2>🔄 Transform Streams</h2>
+      <ul>
+        <li><span class="emoji">🔧</span>A <strong>Transform Stream</strong> is a special Duplex that <strong>modifies</strong> data as it passes through.  
+          <ul>
+            <li>Example: You read raw data from a file, transform each chunk (e.g., encrypt or compress), and write the transformed chunk onward.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📦</span>Internally has two buffers (read and write). You implement it by extending <code>require('stream').Transform</code> and defining <code>_transform(chunk, encoding, callback)</code>.</li>
+        <li><span class="emoji">🔑</span>Common uses:  
+          <ul>
+            <li>Data encryption/decryption (XOR, AES, etc.).</li>
+            <li>Compression/decompression (gzip, deflate, etc.).</li>
+            <li>Parsing or line‐splitting (e.g., splitting a CSV file into rows).</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Why Duplex & Transform? -->
+    <div class="card">
+      <h2>💡 Why Use Duplex & Transform?</h2>
+      <ul>
+        <li><span class="emoji">🔄</span>Duplex lets you <strong>read and write</strong> on the same object—ideal for two-way communication (e.g., WebSockets, TCP sockets).</li>
+        <li><span class="emoji">🔄</span>Transform lets you <strong>process data on the fly</strong>—you can encrypt large files chunk by chunk without loading them fully into memory.</li>
+        <li><span class="emoji">⚡</span>Both help keep your app <strong>memory‐efficient</strong> because they handle data piece by piece and avoid huge buffers.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Simple Transform Example (Encryption) -->
+    <div class="card">
+      <h2>🔒 Simple Encrypt/Decrypt Transform</h2>
+      <ul>
+        <li><span class="emoji">🔑</span>Imagine you have raw bytes and you want to encrypt them by XORing each byte with a key:</li>
+          <pre><code>const { Transform } = require('stream');
+
+class EncryptStream extends Transform {
+  constructor(key) {
+    super();
+    this.key = key;
+  }
+  _transform(chunk, encoding, callback) {
+    const out = Buffer.from(chunk.map(byte => byte ^ this.key));
+    this.push(out);
+    callback();
+  }
+}
+
+class DecryptStream extends Transform {
+  constructor(key) {
+    super();
+    this.key = key;
+  }
+  _transform(chunk, encoding, callback) {
+    const out = Buffer.from(chunk.map(byte => byte ^ this.key));
+    this.push(out);
+    callback();
+  }
+}</code></pre>
+        <li><span class="emoji">🚀</span>Using these, you can pipe a large file through <code>new EncryptStream(key)</code> without loading the entire file into memory.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: How Writable Streams Work -->
+    <div class="card">
+      <h2>🔧 Inside a Writable Stream</h2>
+      <ul>
+        <li><span class="emoji">🧰</span>A Writable stream has an <strong>internal buffer</strong> (default 16 384 bytes, called “highWaterMark”).</li>
+        <li><span class="emoji">📥</span>Every time you call <code>stream.write(chunk)</code>, Node pushes that chunk into the buffer.</li>
+        <li><span class="emoji">🚀</span>When the buffer fills (≥ highWaterMark), Node writes the entire buffer in one operation to the underlying resource (e.g., file or network) and then empties the buffer—a process called <strong>draining</strong>.</li>
+        <li><span class="emoji">⚠️</span>If you keep writing faster than it drains, memory will spike. To prevent that, check the boolean return of <code>write()</code>:
+          <ul>
+            <li>If <code>write()</code> returns <code>false</code>, stop writing and wait for the <code>'drain'</code> event before continuing.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 8: How Readable Streams Work -->
+    <div class="card">
+      <h2>📖 Inside a Readable Stream</h2>
+      <ul>
+        <li><span class="emoji">🧠</span>A Readable stream also has an <strong>internal buffer</strong> (16 384 bytes by default).</li>
+        <li><span class="emoji">➕</span>You push data into that buffer by calling <code>stream.push(chunk)</code> (e.g., when implementing a custom <code>Readable</code>).</li>
+        <li><span class="emoji">🔊</span>When the buffer reaches its highWaterMark, the stream emits a <code>'data'</code> event, giving you a chunk to process:</li>
+          <pre><code>readable.on('data', (chunk) => {
+  console.log('Got chunk:', chunk);
+});</code></pre>
+        <li><span class="emoji">🏁</span>When no more data is coming, the stream calls <code>push(null)</code> and emits <code>'end'</code>, signaling you to finish.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Summary & Key Points -->
+    <div class="card">
+      <h2>✅ Key Takeaways</h2>
+      <ul>
+        <li><span class="emoji">📚</span><strong>Writable streams</strong> (e.g., <code>fs.createWriteStream</code>) buffer data until they can write a chunk out to a file or network. Watch for <code>'drain'</code> to avoid memory spikes.</li>
+        <li><span class="emoji">📚</span><strong>Readable streams</strong> (e.g., <code>fs.createReadStream</code>) buffer incoming data and emit <code>'data'</code> when a chunk is ready. They emit <code>'end'</code> when done.</li>
+        <li><span class="emoji">🔄</span><strong>Duplex streams</strong> combine read/write in one object (e.g., sockets, <code>Duplex</code> class).</li>
+        <li><span class="emoji">✂️</span><strong>Transform streams</strong> let you modify each chunk (e.g., encrypt, compress) by extending <code>Transform</code> and implementing <code>_transform</code>.</li>
+        <li><span class="emoji">🚀</span>Use the right stream type to handle data piece by piece—this keeps Node.js apps fast and memory-efficient.</li>
+      </ul>
+    </div>
+
+    <!-- Card 10: What’s Next? -->
+    <div class="card">
+      <h2>🚀 What’s Next?</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>Now that you know the types of streams, we’ll implement sample code for each: read a big file, write it via a writable stream, create a custom Duplex, and build a Transform for encryption/compression.</li>
+        <li><span class="emoji">🎯</span>Practice piping streams together to build powerful data‐processing pipelines without loading entire files into memory.</li>
+        <li><span class="emoji">✨</span>By mastering streams, your Node.js apps will handle large files, videos, and real-time data smoothly—boosting performance and reducing memory usage.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

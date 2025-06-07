@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🔗 Shared Memory Basics: Beginner-Friendly Study Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #1d3557;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #457b9d;
+      font-size: 1.3rem;
+    }
+    .card ul {
+      padding-left: 20px;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔗 Shared Memory Basics</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>📝 Message Passing vs Shared Memory</h2>
+      <ul>
+        <li><span class="emoji">📤</span><strong>Message Passing:</strong> each thread gets its <em>own copy</em> of data ⇒ extra memory + time.</li>
+        <li><span class="emoji">🔗</span><strong>Shared Memory:</strong> one block of memory accessed by all threads ⇒ faster, no copies.</li>
+        <li><span class="emoji">⚠️</span>Becomes tricky: need to coordinate reads/writes by multiple threads.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>💾 Setting Up Shared Memory</h2>
+      <ul>
+        <li><span class="emoji">⚙️</span>Use a <code>SharedArrayBuffer</code> (raw bytes) or <code>ArrayBuffer</code> + <code>Buffer.from(...)</code>.</li>
+        <li><span class="emoji">📏</span>Create with fixed size, e.g. <code>new SharedArrayBuffer(8)</code> ⇒ 8 bytes.</li>
+        <li><span class="emoji">🔄</span>Pass the buffer’s reference to each worker via <code>workerData</code> (no cloning!).</li>
+      </ul>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>🔍 Reading & Writing Bytes</h2>
+      <ul>
+        <li><span class="emoji">🔢</span>Wrap raw buffer in Node’s <code>Buffer</code>:  
+          <code>const buf = Buffer.from(workerData.sharedBuffer)</code>.</li>
+        <li><span class="emoji">✏️</span>Read/write by index:  
+          <code>buf[i] = 255</code> ⇒ set byte to 255.</li>
+        <li><span class="emoji">👀</span>Main thread sees changes automatically after workers modify buffer.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>🚧 Race Conditions & Deadlocks</h2>
+      <ul>
+        <li><span class="emoji">🏁</span><strong>Race Condition:</strong> two threads read/update same byte ⇒ lost update.</li>
+        <li><span class="emoji">🔒</span><strong>Mutex/Lock:</strong> prevent simultaneous writes by “locking” region.</li>
+        <li><span class="emoji">⛔️</span><strong>Deadlock:</strong> thread forgets to release lock ⇒ everyone blocked.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>🛠️ When to Use Shared Memory</h2>
+      <ul>
+        <li><span class="emoji">⚡️</span>Ideal for small numeric arrays or binary data (e.g. image pixels, typed arrays).</li>
+        <li><span class="emoji">🔧</span>Not for complex JS objects—must manually encode into bytes (strings, numbers, booleans).</li>
+        <li><span class="emoji">📚</span>Advanced topic—use if you need very low‐latency, high‐throughput data sharing.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🖥️ CPU-Intensive HTTP &amp; Worker Threads</title>
+  <style>
+    body { background:#eef2f5; font-family:Arial, sans-serif; margin:0; padding:20px; color:#333; }
+    .container { max-width:800px; margin:auto; }
+    .card { background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);
+            padding:20px; margin-bottom:20px; }
+    h1 { text-align:center; color:#2a4365; }
+    h2 { color:#2c5282; margin-top:0; }
+    ul { padding-left:1.2em; }
+    li { margin-bottom:0.8em; line-height:1.4; }
+    code { background:#f7fafc; padding:2px 4px; border-radius:4px; font-family:monospace; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🖥️ CPU-Intensive HTTP &amp; Worker Threads</h1>
+
+    <div class="card">
+      <h2>1. Setup Heavy Server 🚧</h2>
+      <ul>
+        <li>Download and unzip the “Heavy Server” starter code.</li>
+        <li>Run <code>npm install</code> and <code>npm start</code> to launch on <code>http://localhost:8090</code>.</li>
+        <li>Routes: login/logout/profile + <code>/api/primes?start=&lt;n&gt;&amp;count=&lt;k&gt;</code>.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>2. Blocking Main Thread ⚠️</h2>
+      <ul>
+        <li>Prime generator runs in the main thread:</li>
+        <pre><code>const primes = generatePrimes(count, start);
+// … send response</code></pre>
+        <li>With large inputs (e.g. <code>count=400,start=1e12</code>), it can take 10+ seconds.</li>
+        <li>During that time, all other HTTP requests (home, profile…) are frozen.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>3. Cluster ≠ Fix 🛑</h2>
+      <ul>
+        <li>Spinning multiple Node instances (cluster) distributes load, but cloning the block still happens.</li>
+        <li>Under heavy simultaneous requests, each instance still blocks separately.</li>
+        <li>Cluster helps scale, but doesn’t un-block the main thread.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>4. Worker Threads Solution 🧵</h2>
+      <ul>
+        <li>Move heavy work into a separate file (e.g. <code>lib/calc.js</code>).</li>
+        <li>In your route handler:</li>
+        <pre><code>const { Worker } = require('worker_threads');
+app.get('/api/primes', (req,res)=>{
+  const worker = new Worker('./lib/calc.js', {
+    workerData: { start, count }
+  });
+  worker.on('message', primes =&gt; res.json({ primes }));
+});</code></pre>
+        <li>In <code>lib/calc.js</code>:</li>
+        <pre><code>const { parentPort, workerData } = require('worker_threads');
+const generatePrimes = require('./primeGenerator');
+const { start, count } = workerData;
+const primes = generatePrimes(count, start);
+parentPort.postMessage(primes);</code></pre>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>5. Non-Blocking in Action 🌐</h2>
+      <ul>
+        <li>Each <code>/api/primes</code> request spawns one thread—main thread stays free.</li>
+        <li>Concurrent heavy requests run in parallel but don’t block simple routes.</li>
+        <li>Test: open 3 tabs, each generating primes → CPU ≈300%, profile/home remain responsive.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>6. Tips &amp; Best Practices 💡</h2>
+      <ul>
+        <li>🚦 <strong>Thread Pool:</strong> Pre-spawn fixed threads and send tasks instead of constant spawn/terminate.</li>
+        <li>⏱️ <strong>Request Timeout:</strong> Use <code>worker.terminate()</code> after timeout to avoid runaway tasks.</li>
+        <li>🔐 <strong>Rate-Limit:</strong> Protect heavy endpoints so one user can’t exhaust threads.</li>
+        <li>📊 <strong>Monitor:</strong> Watch CPU &amp; thread counts in real-time to avoid overload.</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🔐 Login Routes & Body Parsing – Beginner Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f0f4f7;
+      margin: 0; padding: 20px; color: #333;
+    }
+    h1 { text-align: center; color: #2c3e50; }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #e67e22;
+    }
+    .card ul { padding-left: 1.2em; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    pre { background: #f5f5f5; padding: 8px; overflow-x: auto; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 Login Routes &amp; Body Parsing</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>🧐 Investigate Login Request</h2>
+      <ul>
+        <li><span class="emoji">🖥️</span>Open DevTools → Network → click “Log in”.</li>
+        <li><span class="emoji">🔍</span>See a <code>POST /api/login</code> 404 (not defined yet).</li>
+        <li><span class="emoji">📦</span>Payload shows JSON with <code>username</code> &amp; <code>password</code>.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📥 Read &amp; Parse JSON Body</h2>
+      <ul>
+        <li><span class="emoji">🔗</span>Add route handler:
+          <pre>server.route('POST','/api/login', (req,res) =&gt; {
+  let body = '';
+  req.on('data', chunk =&gt; { body += chunk.toString(); });
+  req.on('end', () =&gt; {
+    const data = JSON.parse(body);
+    console.log(data); // { username, password }
+  });
+});</pre>
+        </li>
+        <li><span class="emoji">🛠️</span>We accumulate chunks, then <code>JSON.parse</code> to get an object.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔑 Authenticate User</h2>
+      <ul>
+        <li><span class="emoji">👥</span>Find user: <code>const user = users.find(u=&gt;u.username===data.username)</code></li>
+        <li><span class="emoji">🔒</span>Check password: <code>if(user &amp;&amp; user.password===data.password)</code></li>
+        <li><span class="emoji">✅</span>On success → <code>res.status(200).json({message:'Logged in!'})</code></li>
+        <li><span class="emoji">❌</span>On failure → <code>res.status(401).json({error:'Invalid credentials'})</code></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📡 Test Login Flow</h2>
+      <ul>
+        <li><span class="emoji">▶️</span>Send correct credentials → 200 “Logged in!”.</li>
+        <li><span class="emoji">🚫</span>Wrong credentials → 401 “Invalid credentials”.</li>
+        <li><span class="emoji">🔧</span>Client uses HTTP status to show messages.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🕸️ Serve HTML on Refresh</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>SPA navigation uses client JS; refresh on <code>/login</code> gives 404.</li>
+        <li><span class="emoji">🔄</span>Add GET route for each path to send <code>index.html</code>.</li>
+        <li><span class="emoji">🔧</span>Later: use middleware to catch all unmatched GETs and serve HTML.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🤔 Next: Sessions &amp; State</h2>
+      <ul>
+        <li><span class="emoji">⚠️</span>Currently stateless: we can’t identify user on later requests.</li>
+        <li><span class="emoji">🔑</span>Need sessions or tokens (cookies, JWT) to remember logged-in user.</li>
+        <li><span class="emoji">🗓️</span>In the next video: discuss adding session support!</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

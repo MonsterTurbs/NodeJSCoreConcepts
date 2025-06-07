@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>IPv6 – Beginner-Friendly Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.5;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.3em;
+    }
+    .emoji {
+      font-size: 1.2em;
+      margin-right: 6px;
+    }
+    code {
+      background: #f4f4f4;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">🌐</span>Why IPv6?</h2>
+    <p>IPv4 had about 4 billion addresses and we’ve <strong>exhausted</strong> them. IPv6 uses 128 bits, giving trillions of trillions of addresses—enough for all devices forever!</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔢</span>IPv4 vs. IPv6</h2>
+    <ul>
+      <li><strong>IPv4:</strong> 32-bit → ~4 billion addresses (e.g. <code>192.168.0.1</code>)</li>
+      <li><strong>IPv6:</strong> 128-bit → ~3.4×10<sup>38</sup> addresses (e.g. <code>2001:0db8:85a3:0000:0000:8a2e:0370:7334</code>)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">✂️</span>Shortening IPv6</h2>
+    <ol>
+      <li>Remove leading zeros in each hextet:  
+        <code>0370</code> → <code>370</code></li>
+      <li>Replace consecutive all-zero hextets with <code>::</code> (only once):  
+        <code>2001:0db8::8a2e:370:7334</code>
+      </li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔄</span>Loopback Address</h2>
+    <p>IPv4 loopback: <code>127.0.0.1</code><br>
+       IPv6 loopback: <code>::1</code>
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🖥️</span>Programming Tip</h2>
+    <p>In Node.js or other apps, you don’t change code—just supply an IPv6 address instead of IPv4. The network stack handles the rest!</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📈</span>Adoption Note</h2>
+    <p>IPv4 remains common, but modern systems prefer IPv6 when available. You can still mix both: apps work the same, only the address format changes.</p>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🗂️ Video Resize Queue – Study Notes</title>
+  <style>
+    body {
+      margin: 0; padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f0f4f8; color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    }
+    .card h2 {
+      margin-top: 0; color: #2c3e50;
+    }
+    .card pre {
+      background: #eef3f7;
+      padding: 8px;
+      overflow-x: auto;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🗂️ Video Resize Queue – Study Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ Why Queue? 🤔</h2>
+      <p>Resizing videos is heavy and can take minutes or hours. If we fire many at once, CPU spikes and crashes. We’ll queue jobs so only one runs at a time.</p>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ What Is a Queue? 📚</h2>
+      <ul>
+        <li><strong>FIFO:</strong> First In → First Out</li>
+        <li><code>enqueue()</code> adds to end</li>
+        <li><code>dequeue()</code> removes from front</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ Queue Demo</h2>
+      <pre><code>
+// start
+let q = [];
+q.push("A"); // enqueue
+q.push("B");
+console.log(q.shift()); // "A" (dequeue)
+console.log(q.shift()); // "B"
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ Build JobQueue Class</h2>
+      <pre><code>
+class JobQueue {
+  constructor() {
+    this.jobs = [];       // waiting list
+    this.current = null;  // job in progress
+  }
+
+  enqueue(job) {
+    this.jobs.push(job);
+    this.executeNext();
+  }
+
+  dequeue() {
+    return this.jobs.shift();
+  }
+
+  executeNext() {
+    if (this.current) return;
+    const job = this.dequeue();
+    if (!job) return;
+    this.current = job;
+    this.execute(job);
+  }
+
+  execute(job) {
+    // run ffmpeg resize...
+    // on finish:
+    this.current = null;
+    this.executeNext();
+  }
+}
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ Enqueue in Controller</h2>
+      <pre><code>
+// in video.js route:
+const jobs = new JobQueue();
+
+app.post('/api/video/resize', (req,res) => {
+  const { videoId, width, height } = req.body;
+  jobs.enqueue({ type:'resize', videoId, width, height });
+  res.status(200).json({ status:'success', message:'Resize scheduled' });
+});
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Execute a Job</h2>
+      <pre><code>
+async execute(job) {
+  const { videoId, width, height } = job;
+  const inPath  = `storage/${videoId}/original.mp4`;
+  const outPath = `storage/${videoId}/${width}x${height}.mp4`;
+  try {
+    await f.resize(inPath, outPath, width, height);
+    // mark done in DB...
+    db.save();
+  } catch(e) {
+    util.deleteFile(outPath);
+  }
+  this.current = null;
+  this.executeNext();
+}
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Benefits ✅</h2>
+      <ul>
+        <li>🛡️ Avoid CPU overload</li>
+        <li>⌛ Users get immediate response (“Scheduled!”)</li>
+        <li>🔄 Jobs run in order</li>
+        <li>🔧 Easy to extend for other tasks</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>8️⃣ Next Steps 🚀</h2>
+      <p>In the next video we’ll add persistence and retry logic so jobs survive restarts!</p>
+    </div>
+
+  </div>
+</body>
+</html>

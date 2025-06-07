@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🎞️ FFmpeg &amp; Video Basics – Study Notes</title>
+  <style>
+    body {
+      margin: 0; padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #eef2f5;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .card p, .card ul {
+      margin: 0.5em 0;
+      line-height: 1.4;
+    }
+    .card code {
+      background: #f4f7fa;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎥 FFmpeg &amp; Video File Basics</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ What Is a Video File?</h2>
+      <ul>
+        <li>📸 A <strong>sequence of images</strong> called <em>frames</em> (e.g. 30 or 60 fps).</li>
+        <li>🔊 May include one or more <strong>audio tracks</strong> (e.g. English, French).</li>
+        <li>💬 Can contain <strong>subtitles</strong> or other data streams.</li>
+        <li>⚙️ Uses <em>codecs</em> (encoders) for video frames (e.g. H.265) and audio (e.g. AAC).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ Frames &amp; Pixels 📐</h2>
+      <p>Each frame is an image of <code>width × height</code> pixels.  
+      • Higher resolution = more pixels.</p>
+      <p>When played quickly, frames create motion! 🎬</p>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ Containers vs. Codecs 📦</h2>
+      <ul>
+        <li><strong>Containers</strong> (extensions): MP4, MOV, MKV → hold streams.</li>
+        <li><strong>Codecs</strong>: H.264, H.265 for video; AAC for audio → compress/decompress data.</li>
+        <li>Not all containers support every codec or subtitles.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ Meet FFmpeg 🛠️</h2>
+      <p>FFmpeg is a powerful open-source tool for video/audio:</p>
+      <ul>
+        <li>🎞️ Convert formats (e.g. MOV → MP4)</li>
+        <li>✂️ Trim or cut segments</li>
+        <li>🔧 Change codecs, bitrates, resolution</li>
+        <li>🔊 Extract or remove audio</li>
+        <li>🔢 Inspect streams, metadata, frames</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ Streams &lt;– FFprobe 🔍</h2>
+      <p>Use <code>ffprobe</code> to inspect a file:</p>
+      <pre><code>ffprobe -v quiet -print_format json -show_format -show_streams input.mov > info.json</code></pre>
+      <p>This outputs JSON containing:</p>
+      <ul>
+        <li>📹 Video stream(s): codec, width, height, fps</li>
+        <li>🔊 Audio stream(s): codec, channels, bitrate</li>
+        <li>📝 Other data streams &amp; metadata</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Quick ffprobe Example 📄</h2>
+      <p>Sample JSON snippet:</p>
+      <pre><code>{
+  "streams": [
+    { "codec_type":"video", "codec_name":"hevc", "width":1920, "height":1080, … },
+    { "codec_type":"audio", "codec_name":"aac", "channels":2, … }
+  ],
+  "format": { "filename":"input.mov", "duration":"10.123", … }
+}</code></pre>
+      <p>We’ll read <strong>width</strong> &amp; <strong>height</strong> for our app. 📏</p>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ ffmpeg in Action 🎞️➡️📦</h2>
+      <p>Convert MOV to MP4:</p>
+      <pre><code>ffmpeg -i input.mov output.mp4</code></pre>
+      <p>FFmpeg reads <code>-i</code> input, writes new file.  
+      It uses all CPU cores by default but you can limit threads.</p>
+    </div>
+
+    <div class="card">
+      <h2>8️⃣ Why Use FFmpeg? 🌟</h2>
+      <p>It’s everywhere: YouTube, VLC, Chrome, streaming apps.  
+      If you work with video as a backend dev, you’ll likely use FFmpeg!</p>
+    </div>
+
+  </div>
+</body>
+</html>

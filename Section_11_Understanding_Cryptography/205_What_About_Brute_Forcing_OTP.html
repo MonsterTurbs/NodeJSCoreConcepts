@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🔍 Brute-Forcing One-Time Pad</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7fafc; margin: 0; padding: 20px; color: #333; }
+    h1 { text-align: center; color: #2d3748; }
+    main { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 800px; margin: auto; }
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 16px; }
+    .card h2 { margin-top: 0; color: #1a202c; }
+    .card p, .card ul { margin: 8px 0; padding-left: 20px; }
+    code { background: #e2e8f0; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 Brute-Forcing One-Time Pad</h1>
+  <main>
+    <section class="card">
+      <h2><span class="emoji">❓</span>Why Brute-Force OTP?</h2>
+      <p>Even with small messages, OTP resists brute-force: many keys yield plausible plaintexts, so you can’t tell which is right.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🧮</span>Keyspace Comparison</h2>
+      <ul>
+        <li>AES-128 keyspace: <code>2¹²⁸</code> combos (practically unsearchable).</li>
+        <li>OTP on 50-bit message: <code>2⁵⁰</code> combos—seems smaller but still fails.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">⚙️</span>Why OTP Fails Brute-Force</h2>
+      <ul>
+        <li>Given <code>C = P ⊕ K</code>, any candidate key <code>K'</code> yields a plaintext: <code>P' = C ⊕ K'</code>.</li>
+        <li>Many <code>K'</code> produce readable messages; attacker can’t distinguish the real one.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">💻</span>Demo Script</h2>
+      <p><code>xor.js</code> takes two hex buffers, XORs them, and prints as text. Play with different keys to see varied outputs.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔄</span>Example Outputs</h2>
+      <ul>
+        <li>Key A → "Commander Hendrik standby to launch"</li>
+        <li>Key B → "Commander Hendrik Nuke launch"</li>
+        <li>Key C → "Commander Hendrik <random>"</li>
+      </ul>
+      <p>All look plausible—no way to pick the true message.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔒</span>Perfect Secrecy</h2>
+      <p>OTP grants <em>perfect secrecy</em>: ciphertext alone reveals nothing about plaintext without the exact key.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🚀</span>Practical Takeaway</h2>
+      <p>OTP is only secure if key never reused and remains secret. For most uses, AES with proper modes offers strong, guaranteed integrity.</p>
+    </section>
+  </main>
+</body>
+</html>

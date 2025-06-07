@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Breaking SHA-256 & Common Hash Attacks 🔒</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      padding: 15px 20px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .emoji {
+      font-size: 1.3em;
+      margin-right: 8px;
+    }
+    code {
+      background: #eef2f5;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    pre {
+      background: #eef2f5;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">💥</span>Avalanche Effect</h2>
+    <p>Even changing one bit in your input totally scrambles the SHA-256 hash. You can’t tweak the message to predictably nudge the hash—brute force is the only way. 🔀</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">⛏️</span>Brute-Forcing Example</h2>
+    <p>A script loops a counter into your data, hashes it, and checks for a pattern (e.g. leading zeros). Finding 2 hex zeros (~8 zero bits) takes ~2⁸ ≈ 256 tries on average; 6 hex zeros (~24 bits) ~2²⁴ (~16 million) tries. 🎲</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">💰</span>Bitcoin Mining Analogy</h2>
+    <p>Miners adjust a “nonce” to find a SHA-256 hash under a target (lots of leading zeros). It’s pure brute force—no shortcuts thanks to avalanche effect. 🖥️🔒</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔑</span>Preimage &amp; 2nd-Preimage Attacks</h2>
+    <p>
+      • <strong>Preimage:</strong> Given a hash, find any input → ~2²⁵⁶ tries (impossible)<br>
+      • <strong>2nd-Preimage:</strong> Given one input &amp; its hash, find another input with same hash → also ~2²⁵⁶ tries in SHA-256 ✅
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🎁</span>Collision &amp; Birthday Attack</h2>
+    <p>
+      • Collision = two different inputs hashing equal.<br>
+      • Birthday paradox reduces effort: ~2¹²⁸ work for SHA-256, still infeasible today. 🎂
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📦</span>Pigeonhole Principle</h2>
+    <p>
+      More possible inputs than 256-bit outputs → infinite collisions guaranteed. Yet none known found in SHA-256 after decades! 🕵️‍♂️
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🌈</span>Rainbow Tables</h2>
+    <p>
+      Precomputed tables map common passwords ↔ their hashes. Speeds lookup vs brute force—use long, unique salts to defeat them! 🔐
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">⏱️</span>Password Length vs Crack Time</h2>
+    <p>
+      • Tiny inputs (32 bits) → 2³² tries → milliseconds<br>
+      • 100 bits (≈12 chars) → 2¹⁰⁰ tries → millions of years  
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🚫</span>Don’t Plain-Hash Passwords</h2>
+    <p>Use salted, slow hashing (PBKDF2, bcrypt, Argon2)—never raw SHA-256 on passwords! 🛡️</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">⚛️</span>Quantum Threat</h2>
+    <p>
+      Grover’s algorithm cuts effort to ~2¹²⁸ for collision search—still huge but shows SHA-256 isn’t quantum-proof. SHA-512 or post-quantum hashes may be needed later. 🌐
+    </p>
+  </div>
+
+</body>
+</html>

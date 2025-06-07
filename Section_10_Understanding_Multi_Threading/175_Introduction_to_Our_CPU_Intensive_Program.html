@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>⚙️ CPU-Intensive Task Demo</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f7fafc; color:#2d3748; }
+    .container { max-width:600px; margin:auto; }
+    .card {
+      background:#fff; border-radius:8px; padding:20px; box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom:20px;
+    }
+    h1 { text-align:center; color:#2b6cb0; }
+    h2 { margin-top:0; color:#2c5282; }
+    ul { padding-left:1.2em; }
+    li { margin-bottom:0.6em; line-height:1.4; }
+    code { background:#e2e8f0; padding:2px 4px; border-radius:4px; font-family:monospace; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>⚙️ Intro to Our CPU-Intensive Program</h1>
+      <h2>Key Concepts</h2>
+      <ul>
+        <li>🖥️ <b>CPU-Intensive Task</b>: Generating large prime numbers takes significant processor time.</li>
+        <li>⏳ When one request runs this heavy work synchronously, the entire Node.js server blocks.</li>
+        <li>🚫 While blocked, other requests (e.g., visiting profile) wait until completion.</li>
+        <li>❌ Spawning extra <code>cluster</code> processes helps capacity but doesn’t remove blocking.</li>
+        <li>✅ Solution: Offload heavy computation into separate threads (or child processes) so main loop stays free.</li>
+      </ul>
+      <h2>Code Example Sketch</h2>
+      <pre><code>app.get('/primes', (req, res) =&gt; {
+  const result = generatePrimes(start, count); // 10s CPU work
+  res.json(result);
+});</code></pre>
+      <p>👉 This blocks the event loop for ~10 seconds per request.</p>
+      <h2>Next Steps</h2>
+      <ul>
+        <li>🔨 Use <code>worker_threads</code> or <code>child_process</code> to run <code>generatePrimes</code> off the main thread.</li>
+        <li>⚙️ Communicate results back so the server can handle other requests concurrently.</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

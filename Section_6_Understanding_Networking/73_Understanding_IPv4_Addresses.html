@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>IP Addresses – Beginner-Friendly Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.5;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.3em;
+    }
+    .emoji {
+      font-size: 1.2em;
+      margin-right: 6px;
+    }
+    code {
+      background: #f4f4f4;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">🌐</span>IP vs. IP Address</h2>
+    <ul>
+      <li><strong>IP</strong> = Internet Protocol (the set of rules in “Layer 3” that moves data packets).</li>
+      <li><strong>IP Address</strong> = the unique numeric label (like your home address) assigned to each device.</li>
+      <li>Informally people say “IP” for shorthand, but technically they’re different concepts.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">💻</span>IPv4 Structure</h2>
+    <ul>
+      <li>Written in 32 bits, split into 4 “octets” (8 bits each): <code>xxxxxxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx</code>.</li>
+      <li>Displayed in decimal as four numbers 0–255, separated by dots, e.g. <code>192.168.0.1</code>.</li>
+      <li>Total addresses = 2³² ≈ 4.29 billion—now nearly exhausted, hence IPv6.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📏</span>Subnet Masks &amp; CIDR</h2>
+    <ul>
+      <li>A <strong>subnet mask</strong> marks which bits are “network” vs. “host.”</li>
+      <li>Examples:
+        <ul>
+          <li><code>/24</code> mask = 255.255.255.0 → first 24 bits network, last 8 bits hosts.</li>
+          <li><code>/16</code> mask = 255.255.0.0 → first 16 bits network, last 16 bits hosts.</li>
+        </ul>
+      </li>
+      <li>Router uses the network portion to decide where to forward packets.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔒</span>Public vs. Private &amp; NAT</h2>
+    <ul>
+      <li><strong>Private ranges</strong> (not routable on the public Internet):
+        <ul>
+          <li>10.0.0.0 – 10.255.255.255 ( /8 )</li>
+          <li>172.16.0.0 – 172.31.255.255 ( /12 )</li>
+          <li>192.168.0.0 – 192.168.255.255 ( /16 )</li>
+        </ul>
+      </li>
+      <li>Devices on a home/office LAN use private IPs. A router’s <strong>NAT</strong> translates them to one public IP.</li>
+      <li>All devices behind that router share its public address to the Internet.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔄</span>Loopback &amp; Special Addresses</h2>
+    <ul>
+      <li><code>127.0.0.1</code> = Loopback (always refers back to your own device).</li>
+      <li>Used for testing local network code—never appears on the outside Internet.</li>
+      <li>IPv6 loopback = <code>::1</code> (128 bits).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🗺️</span>IP Geolocation &amp; VPNs</h2>
+    <ul>
+      <li>Public IPs often map to regions or ISPs. Websites can guess your country/city from your IP.</li>
+      <li>VPNs mask your true public IP by tunneling through another server—appearing from that server’s location.</li>
+      <li>VPNs operate at Layer 3 (IP); Node.js (Layer 4+) is not suited to build a VPN itself.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🚀</span>Why IPv6?</h2>
+    <ul>
+      <li>IPv4’s 4 billion addresses are depleted by billions of devices &amp; private LANs.</li>
+      <li>IPv6 uses 128 bits → 2¹²⁸ addresses (vastly more), and fixes IPv4 limitations.</li>
+      <li>Basics (structure, subnets) are similar—just far more address space.</li>
+    </ul>
+  </div>
+
+</body>
+</html>

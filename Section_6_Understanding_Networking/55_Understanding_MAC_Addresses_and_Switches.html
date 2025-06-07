@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📝 Study Notes – Basic Networking Concepts</title>
+  <style>
+    body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; margin: 0; padding: 20px; color: #2d3748; }
+    h1 { text-align: center; color: #2c5282; margin-bottom: 30px; }
+    .container { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    .card { background-color: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 20px; transition: transform 0.2s; }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .card h2 { font-size: 1.3rem; margin-bottom: 12px; color: #2c5282; }
+    .card ul { list-style: none; padding-left: 0; }
+    .card li { margin-bottom: 10px; line-height: 1.6; }
+    .emoji { margin-right: 6px; }
+    @media print { body { background-color: #fff; color: #000; } .card { box-shadow: none; margin-bottom: 20px; } }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Basic Networking Concepts</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>🔍 Introduction to Networking</h2>
+      <ul>
+        <li><span class="emoji">💡</span>Networking lets computers share information without moving disks by hand.</li>
+        <li><span class="emoji">⏳</span>Before coding network apps in Node.js, understand how networks work.</li>
+        <li><span class="emoji">🌐</span>These ideas apply to any language: JavaScript, Go, Java, Python, and more.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>📼 Old-School File Sharing</h2>
+      <ul>
+        <li><span class="emoji">💾</span>Used floppy disks, CDs, or USB sticks to move data between PCs.</li>
+        <li><span class="emoji">🚶‍♂️</span>You had to save file to disk, walk to another computer, then load it.</li>
+        <li><span class="emoji">✈️</span>To share with someone far away, you might even have to mail or fly the disk.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>🔌 Building a Simple Network</h2>
+      <ul>
+        <li><span class="emoji">📶</span>Use Ethernet cables to connect devices to a network switch.</li>
+        <li><span class="emoji">🔀</span>A switch directs data between connected computers automatically.</li>
+        <li><span class="emoji">⚙️</span>Switch setup may involve simple configuration (like SSH into it).</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>💳 Network Interface &amp; MAC Address</h2>
+      <ul>
+        <li><span class="emoji">🖥️</span>Each computer has a network interface card (NIC) for cable connections.</li>
+        <li><span class="emoji">🔑</span>NIC has a unique MAC address (48‑bit identifier in hex).</li>
+        <li><span class="emoji">🔒</span>MAC addresses help switches know where to send data.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>📦 Packets &amp; Frames</h2>
+      <ul>
+        <li><span class="emoji">✉️</span>Data is broken into packets (also called frames on Ethernet).</li>
+        <li><span class="emoji">📝</span>Each packet includes:<br>
+          • Source MAC (sender)<br>
+          • Destination MAC (receiver)<br>
+          • Payload (your data)
+        </li>
+        <li><span class="emoji">🔄</span>Switch reads destination MAC and forwards packet to the right device.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

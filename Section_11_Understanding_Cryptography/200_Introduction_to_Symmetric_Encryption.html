@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🔑 Introduction to Symmetric Encryption</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9fafb; margin: 0; padding: 20px; color: #333; }
+    h1 { text-align: center; color: #3a506b; }
+    main { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 800px; margin: 0 auto; }
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 16px; }
+    .card h2 { margin-top: 0; color: #1b263b; }
+    .card ul, .card p { margin: 8px 0; padding-left: 20px; }
+    code { background: #eef1f5; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔑 Symmetric Encryption Basics</h1>
+  <main>
+    <section class="card">
+      <h2><span class="emoji">🗝️</span>What Is Symmetric Encryption?</h2>
+      <p>Uses one <strong>secret key</strong> and an <strong>algorithm</strong> (cipher) to turn data into unreadable code and back.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔄</span>How It Works</h2>
+      <ul>
+        <li><code>Plaintext</code>: original data (text, video, etc.).</li>
+        <li>Encrypted by a <code>cipher</code> plus the secret key → <code>Ciphertext</code> (gibberish).</li>
+        <li>Only someone with the same key and algorithm can decrypt back to plaintext.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🛡️</span>Key Points</h2>
+      <ul>
+        <li><strong>Encryption</strong>: plaintext → ciphertext.</li>
+        <li><strong>Decryption</strong>: ciphertext → plaintext.</li>
+        <li><code>Cipher</code>: the method or algorithm used.</li>
+        <li>Key must stay secret; cipher is often public.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">⚙️</span>Common Ciphers</h2>
+      <ul>
+        <li><strong>AES</strong>: industry standard for 20+ years (128, 192, 256-bit keys).</li>
+        <li><strong>3DES</strong>: older; replaced by AES because it's slower and less secure.</li>
+        <li>Having multiple ciphers (AES, ChaCha20) gives fallback if one is broken.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">📜</span>Historical Example: Caesar Cipher</h2>
+      <p>Simple letter shift (e.g., A→D). Teaches <code>plaintext/ciphertext</code> terms, but real encryption works on binary data.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">💻</span>Node.js Example Overview</h2>
+      <p>Using <code>crypto.createCipheriv()</code> and <code>crypto.createDecipheriv()</code> with AES-128:
+      logs show plaintext, ciphertext (gibberish), then decrypted plaintext—lossless round-trip.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">👣</span>Next Steps</h2>
+      <p>Try running the sample code from resources. Observe how changing the key or cipher name breaks decryption.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🚀</span>Coming Up</h2>
+      <p>We’ll build your own <strong>one-time pad</strong> encryption to see perfect secrecy in action—key management challenges included!</p>
+    </section>
+  </main>
+</body>
+</html>

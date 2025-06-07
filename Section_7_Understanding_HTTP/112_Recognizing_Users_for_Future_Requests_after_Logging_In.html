@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🔐 Sessions & Cookies – Beginner Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #eef2f5;
+      margin: 0; padding: 20px; color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #27ae60;
+    }
+    .card ul { padding-left: 1.2em; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    pre { background: #f4f4f4; padding: 8px; border-radius: 4px; overflow-x: auto; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 Sessions & Cookies – Beginner Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>📝 1. Store Sessions In Memory</h2>
+      <ul>
+        <li><span class="emoji">📂</span>Use an array (or database) to hold sessions:
+          <pre>const sessions = [];</pre>
+        </li>
+        <li><span class="emoji">🔑</span>Each session = `{ userId, token }`</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🚪 2. Login & Generate Token</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>On successful login:
+          <pre>const token = Math.floor(Math.random()*1e10).toString();</pre>
+        </li>
+        <li><span class="emoji">➕</span>Save session:
+          <pre>sessions.push({ userId: user.id, token });</pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🍪 3. Send Cookie To Browser</h2>
+      <ul>
+        <li><span class="emoji">✉️</span>Tell browser to store token:
+          <pre>res.setHeader("Set-Cookie", "token=" + token + "; Path=/");</pre>
+        </li>
+        <li><span class="emoji">🔄</span>Browser saves it and auto-sends in every request.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔑 4. Read & Parse Cookie</h2>
+      <ul>
+        <li><span class="emoji">📥</span>Get raw header:
+          <pre>const raw = req.headers.cookie;</pre>
+        </li>
+        <li><span class="emoji">🔍</span>Extract token:
+          <pre>const token = raw.split("=")[1];</pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>✔️ 5. Verify Session</h2>
+      <ul>
+        <li><span class="emoji">🕵️‍♂️</span>Find in sessions:
+          <pre>
+const session = sessions.find(s => s.token === token);
+if (!session) {
+  res.statusCode = 401;
+  return res.end("Unauthorized");
+}
+          </pre>
+        </li>
+        <li><span class="emoji">✅</span>If found, user is authenticated.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>👤 6. Serve Profile</h2>
+      <ul>
+        <li><span class="emoji">📋</span>Once validated, send user info:
+          <pre>
+res.statusCode = 200;
+res.end(JSON.stringify({
+  name: user.name,
+  username: user.username
+}));
+          </pre>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🐧 What Is Unix? – Beginner Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0; padding: 24px; color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 24px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 20px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #c0392b;
+    }
+    .card ul {
+      padding-left: 1.2em;
+      line-height: 1.6;
+    }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🐧 What Is Unix?</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2><span class="emoji">❓</span>Definition</h2>
+      <ul>
+        <li>Unix is an operating system first made in the late 1960s/early 1970s.</li>
+        <li>Created by Ken Thompson &amp; Dennis Ritchie at Bell Labs (AT&amp;T).</li>
+        <li>Powerful, portable, and inspired many modern OSes.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🏛️</span>Bell Labs &amp; Inventors</h2>
+      <ul>
+        <li><strong>Bell Labs</strong>: Research center behind many tech advances.</li>
+        <li><strong>Dennis Ritchie</strong>: Invented C language; rewrote Unix in C for portability.</li>
+        <li><strong>Ken Thompson</strong>: Co-creator of original Unix in assembly language.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🎯</span>Unix Philosophy</h2>
+      <ul>
+        <li><span class="emoji">🛠️</span>Modular design: small programs that each do one job well.</li>
+        <li><span class="emoji">🔗</span>Pipes &amp; IPC: programs communicate by streaming data.</li>
+        <li><span class="emoji">📜</span>Scripting: combine tools in shell scripts for powerful workflows.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🌐</span>Unix “Descendants”</h2>
+      <ul>
+        <li><strong>Linux</strong> (by Linus Torvalds): Rewritten from scratch in C, open source.</li>
+        <li><strong>BSD</strong> (FreeBSD, etc.): Direct branch of original Unix code.</li>
+        <li><strong>macOS</strong> (Darwin): Apple’s Unix-based system from BSD.</li>
+        <li><strong>Android</strong>: Linux-based for mobile devices.</li>
+        <li><strong>iOS</strong>: Apple’s Unix-like kernel for iPhones/iPads.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

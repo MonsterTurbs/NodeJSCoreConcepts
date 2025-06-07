@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🧵 Spawning Threads in Node.js</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f0f4f8; color:#333; }
+    h1 { text-align:center; color:#2b6cb0; margin-bottom:1em; }
+    .container { max-width:800px; margin:auto; display:flex; flex-direction:column; gap:16px; }
+    .card {
+      background:#fff; border-radius:8px; padding:16px; box-shadow:0 2px 4px rgba(0,0,0,0.1);
+    }
+    .card h2 { margin-top:0; color:#2c5282; }
+    ul { padding-left:1.2em; }
+    li { margin-bottom:0.6em; line-height:1.4; }
+    code { background:#e2e8f0; padding:2px 4px; border-radius:4px; font-family:monospace; }
+    @media print { .card { box-shadow:none; } }
+  </style>
+</head>
+<body>
+  <h1>🧵 Spawning Threads in Node.js</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1. Import &amp; Create</h2>
+      <ul>
+        <li>Load the module: <code>const { Worker } = require('worker_threads');</code> 🧩</li>
+        <li>Spawn a new thread pointing to a JS file:
+          <br><code>new Worker('./calc.js');</code>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>2. Thread Isolation</h2>
+      <ul>
+        <li>Each thread has its own copy of variables. They don’t share globals.</li>
+        <li>Main thread vs worker example:
+          <pre><code>// main.js
+const a = 400;
+new Worker('./calc.js');  // in calc.js: const a = 1000;
+console.log(a);           // prints “400”</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>3. Timed Thread Launch</h2>
+      <ul>
+        <li>Delay spawning with <code>setTimeout</code>:
+          <pre><code>setTimeout(() =&gt; {
+  new Worker('./calc.js');
+}, 5000);</code></pre>
+        </li>
+        <li>Keep worker alive with:
+          <code>setInterval(() =&gt; {}, 1000);</code> ↻</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>4. process.exit &amp; Logging</h2>
+      <ul>
+        <li><code>process.exit()</code> inside a worker quits only that thread.</li>
+        <li>Worker <code>console.log</code> messages route through the main thread’s console.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>5. Creating Multiple Workers</h2>
+      <ul>
+        <li>Example: spawn 4 workers dynamically:
+          <pre><code>for (let i = 0; i &lt; 4; i++) {
+  new Worker('./calc.js');
+}
+// On a 4-core CPU, total usage ~400%</code></pre>
+        </li>
+        <li>Don’t spawn per request—use a pool for reuse.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>6. Offload Blocking Tasks</h2>
+      <ul>
+        <li>Bad (blocks main thread):
+          <pre><code>while(true) {}
+setTimeout(() =&gt; fs.writeFileSync('out.txt','hi'), 3000);</code></pre>
+        </li>
+        <li>Good (in worker):
+          <pre><code>// worker.js
+setTimeout(() =&gt; {
+  require('fs').writeFileSync('out.txt','hi');
+}, 3000);</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>7. Best Practices</h2>
+      <ul>
+        <li>🛡️ Keep main thread free—offload heavy work.</li>
+        <li>📊 Monitor CPU &amp; memory: too many workers → high memory.</li>
+        <li>🔄 Reuse workers (pool) vs. frequent new spawns.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

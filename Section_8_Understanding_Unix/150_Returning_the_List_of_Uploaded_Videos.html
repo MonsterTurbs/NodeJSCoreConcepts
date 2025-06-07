@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>📺 Get Videos Route – Study Notes</title>
+  <style>
+    body {
+      margin: 0; padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #eef2f5;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .card p, .card ul {
+      margin: 0.5em 0;
+      line-height: 1.4;
+    }
+    .card code {
+      background: #e3ebf0;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📂 Get Videos Route – Study Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ Purpose</h2>
+      <p>Allow a logged-in user to get the list of all their uploaded videos.</p>
+      <p>Endpoint: <code>GET /api/videos</code> 📋</p>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ Read &amp; Refresh DB</h2>
+      <ul>
+        <li>Use our file-backed DB module to load latest data:</li>
+        <li><code>db.update()</code> reads JSON files into memory</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ Filter by User 🔍</h2>
+      <p>Only return videos owned by <code>req.userId</code>:</p>
+      <pre><code>
+const all = db.videos;
+const mine = all.filter(v => v.userId === req.userId);
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ Send Response 📤</h2>
+      <p>Return the filtered list:</p>
+      <pre><code>
+res.status(200).json(mine);
+      </code></pre>
+      <p>Status <code>200 OK</code> on success.</p>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ Error Handling 🚨</h2>
+      <ul>
+        <li>If something goes wrong, call <code>handleError</code>.</li>
+        <li>Example: catch I/O or logic errors and send <code>500 Internal Server Error</code>.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Test It 🧪</h2>
+      <ol>
+        <li>Clear storage &amp; DB data; restart server.</li>
+        <li>Upload a video → thumbnail &amp; DB entry created.</li>
+        <li>GET <code>/api/videos</code> → see array of your videos.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Next Steps ▶️</h2>
+      <p>Implement <code>GET /api/videos/:id/assets?type=…</code> to download:</p>
+      <ul>
+        <li><code>type=original</code> → raw video</li>
+        <li><code>type=thumbnail</code> → JPEG thumb</li>
+        <li><code>type=audio</code> → extracted AAC</li>
+        <li><code>type=resize</code> → resized version</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

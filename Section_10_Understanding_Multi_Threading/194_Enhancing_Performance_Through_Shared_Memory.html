@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🚀 Shared Memory Performance Boost: Beginner-Friendly Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #eef2f5;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1f6feb;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #116d6e;
+    }
+    .card ul {
+      padding-left: 20px;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 Shared Memory vs Message Passing</h1>
+  <div class="container">
+
+    <!-- Card 1: Why Shared Memory? -->
+    <div class="card">
+      <h2>💡 Why Use Shared Memory?</h2>
+      <ul>
+        <li><span class="emoji">⚡</span>Eliminate frequent data copies → fewer memory operations</li>
+        <li><span class="emoji">⚙️</span>Faster writes/reads via <code>SharedArrayBuffer</code> + typed arrays</li>
+        <li><span class="emoji">📈</span>Great for memory-intensive tasks (big arrays) and also helps CPU tasks</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Setup Shared Buffers -->
+    <div class="card">
+      <h2>🔧 Setup Shared Buffers</h2>
+      <ul>
+        <li><span class="emoji">📦</span>Create buffers in main thread:</li>
+        <li>
+          ```js
+          const primesBuf = new SharedArrayBuffer(totalPrimes * 8);
+          const lockBuf   = new SharedArrayBuffer(4);
+          ```
+        </li>
+        <li><span class="emoji">🚚</span>Pass both buffers as `workerData` to each worker</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Locking & Writing -->
+    <div class="card">
+      <h2>🔒 Lock & Write Safely</h2>
+      <ul>
+        <li><span class="emoji">🔑</span>Use a mutex buffer and Atomics for safe writes:</li>
+        <li>
+          ```js
+          // in worker:
+          lock(mutexBuf);
+          primes64.set(generatedPrimes, writeOffset);
+          unlock(mutexBuf);
+          ```
+        </li>
+        <li><span class="emoji">🧩</span>Prevent race conditions without heavy message passing</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: CPU-Intensive Example -->
+    <div class="card">
+      <h2>🧮 Prime Generation Example</h2>
+      <ul>
+        <li><span class="emoji">✅</span>CPU-heavy task but shared memory still speeds it up</li>
+        <li><span class="emoji">⏱️</span>Original (message passing): ~1000s</li>
+        <li><span class="emoji">🚀</span>Shared memory version: ~200s (~5× faster!)</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Memory-Intensive Example -->
+    <div class="card">
+      <h2>📊 Large Array Example</h2>
+      <ul>
+        <li><span class="emoji">🗃️</span>Worker builds big arrays of numbers</li>
+        <li><span class="emoji">⏱️</span>Message passing: ~7s</li>
+        <li><span class="emoji">🚀</span>Shared memory: ~2s (~3× faster!)</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Key Takeaways -->
+    <div class="card">
+      <h2>📝 Key Takeaways</h2>
+      <ul>
+        <li><span class="emoji">🏎️</span>Shared memory often outperforms heavy message passing</li>
+        <li><span class="emoji">🔐</span>Always guard writes with Atomics (locks)</li>
+        <li><span class="emoji">⚖️</span>Balance CPU vs memory intensity to choose strategy</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

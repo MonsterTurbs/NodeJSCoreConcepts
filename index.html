@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Node.js Core Concepts</title>
+  <style>
+    /* ───── Reset & Base ───── */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      display: flex;
+      height: 100vh;
+      background-color: #f4f6f8;
+      color: #333;
+      overflow: hidden; /* prevent double scrollbars */
+    }
+
+    /* ───── Sidebar ───── */
+    .sidebar {
+      width: 260px;
+      background-color: #2c3e50;
+      color: #ecf0f1;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar h2 {
+      text-align: center;
+      padding: 1rem 0;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+      border-bottom: 1px solid #34495e;
+    }
+
+    .nav-container {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding-bottom: 1rem;
+    }
+    .nav-list {
+      list-style: none;
+      padding-left: 0.5rem;
+    }
+    .nav-list > li {
+      margin-bottom: 0.3rem;
+    }
+    .nav-list .section-title {
+      display: block;
+      padding: 0.6rem 1rem;
+      font-weight: bold;
+      cursor: default;
+      color: #bdc3c7;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      border-left: 4px solid transparent;
+      transition: background 0.2s;
+    }
+    .nav-list .section-title:hover {
+      background-color: #34495e;
+    }
+
+    .sub-list {
+      list-style: none;
+      padding-left: 1rem;
+    }
+    .sub-list li {
+      margin: 0.2rem 0;
+    }
+    .sub-list a {
+      display: block;
+      padding: 0.4rem 1rem;
+      color: #ecf0f1;
+      text-decoration: none;
+      border-left: 4px solid transparent;
+      transition: background 0.2s, border-left 0.2s;
+      font-size: 0.9rem;
+    }
+    .sub-list a:hover {
+      background-color: #34495e;
+    }
+    .sub-list a.active {
+      background-color: #1abc9c;
+      border-left: 4px solid #16a085;
+      color: #fff;
+    }
+
+    /* ───── Main Content ───── */
+    .main-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .header {
+      background-color: #fff;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      color: #2c3e50;
+    }
+
+    .content-area {
+      flex-grow: 1;
+      padding: 1.5rem;
+      overflow-y: auto;
+      background-color: #fff;
+    }
+
+    /* ───── Footer / Next Button ───── */
+    .footer {
+      background-color: #fff;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .btn-next {
+      background-color: #1abc9c;
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .btn-next:hover {
+      background-color: #16a085;
+    }
+    .btn-next:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+  <!-- ───── Sidebar ───── -->
+  <nav class="sidebar">
+    <h2>Node.js Course</h2>
+    <div class="nav-container">
+      <ul class="nav-list">
+        <!-- Section 1: Introduction -->
+        <li>
+          <span class="section-title">Section 1 – Introduction</span>
+          <ul class="sub-list">
+            <li><a data-page="Section_1_Introduction/1_Course_Overview.html" href="#">1 Course Overview</a></li>
+            <li><a data-page="Section_1_Introduction/2_Setting_Up_For_Windows_Users_Only.html" href="#">2 Setup (Windows)</a></li>
+            <li><a data-page="Section_1_Introduction/3_Setting_Up_For_Mac_Users_Only.html" href="#">3 Setup (Mac)</a></li>
+            <li><a data-page="Section_1_Introduction/4_Setting_Up_For_Linux_Users_Only.html" href="#">4 Setup (Linux)</a></li>
+            <li><a data-page="Section_1_Introduction/5_Introduction_to_the_Command_Line.html" href="#">5 Intro to CLI</a></li>
+            <li><a data-page="Section_1_Introduction/6_Learning_NVM_and_Nodejs_Versions.html" href="#">6 NVM & Versions</a></li>
+            <li><a data-page="Section_1_Introduction/7_Nodejs_Under_the_Hood.html" href="#">7 Node.js Under the Hood</a></li>
+          </ul>
+        </li>
+
+        <!-- Section 2: Understanding EventEmitter -->
+        <li>
+          <span class="section-title">Section 2 – EventEmitter</span>
+          <ul class="sub-list">
+            <li><a data-page="Section_2_Understanding_EventEmitter/8_Understanding_EventEmitter.html" href="#">8 Understanding EventEmitter</a></li>
+          </ul>
+        </li>
+
+        <!-- Section 3: Understanding Buffers -->
+        <li>
+          <span class="section-title">Section 3 – Buffers</span>
+          <ul class="sub-list">
+            <li><a data-page="Section_3_Understanding_Buffers/9_Introdcution.html" href="#">9 Buffers Intro</a></li>
+            <li><a data-page="Section_3_Understanding_Buffers/10_Understanding_Binary_Numbers.html" href="#">10 Binary Numbers</a></li>
+            <li><a data-page="Section_3_Understanding_Buffers/11_Understanding_Hexadecimal_Numbers.html" href="#">11 Hexadecimal Numbers</a></li>
+            <li><a data-page="Section_3_Understanding_Buffers/12_Using_a_Programming_Calculator.html" href="#">12 Programming Calculator</a></li>
+            <li><a data-page="Section_3_Understanding_Buffers/13_Understanding_Character_Encodings.html" href="#">13 Character Encodings</a></li>
+            <li><a data-page="Section_3_Understanding_Buffers/14_The_Concept_of_Buffers.html" href="#">14 Buffers Concept</a></li>
+            <li><a data-page="Section_3_Understanding_Buffers/15_Buffers_in_Action.html" href="#">15 Buffers in Action</a></li>
+            <li><a data-page="Section_3_Understanding_Buffers/16_Allocating_Huge_Buffers.html" href="#">16 Huge Buffers</a></li>
+            <li><a data-page="Section_3_Understanding_Buffers/17_Fastest_Way_of_Allocating_Buffers.html" href="#">17 Fast Allocation</a></li>
+            <li><a data-page="Section_3_Understanding_Buffers/18_Reading_the_Nodejs_Docs.html" href="#">18 Reading Docs</a></li>
+            <li><a data-page="Section_3_Understanding_Buffers/19_Outro.html" href="#">19 Buffers Outro</a></li>
+          </ul>
+        </li>
+
+        <!-- Section 4: Understanding File System -->
+        <li>
+          <span class="section-title">Section 4 – File System</span>
+          <ul class="sub-list">
+            <li><a data-page="Section_4_Understanding_File_System/20_Introduction.html" href="#">20 Introduction</a></li>
+            <li><a data-page="Section_4_Understanding_File_System/21_What_Exactly_Is_a_File.html" href="#">21 What Is a File</a></li>
+            <li><a data-page="Section_4_Understanding_File_System/22_How_Nodejs_Deals_with_Files.html" href="#">22 How Node.js Deals with Files</a></li>
+            <li><a data-page="Section_4_Understanding_File_System/23_Three_Different_Ways_of_Doing_the_Same_Thing.html" href="#">23 Three Ways of Doing It</a></li>
+            <li><a data-page="Section_4_Understanding_File_System/24_Starting_Point_for_Building_Our_Application.html" href="#">24 Starting Our App</a></li>
+            <li><a data-page="Section_4_Understanding_File_System/25_Watching_the_Command_File_for_Changes.html" href="#">25 Watching File Changes</a></li>
+            <li><a data-page="Section_4_Understanding_File_System/26_Reading_the_Content_of_the_Command_File.html" href="#">26 Reading File Content</a></li>
+            <li><a data-page="Section_4_Understanding_File_System/27_Cleaning_Up_the_Code_using_EventEmitter.html" href="#">27 Cleanup with EventEmitter</a></li>
+            <li><a data-page="Section_4_Understanding_File_System/28_Making_Sense_Out_of_the_Read_Data.html" href="#">28 Parsing Read Data</a></li>
+            <li><a data-page="Section_4_Understanding_File_System/29_Implementing_the_Create_File_Command.html" href="#">29 Create File Command</a></li>
+            <li><a data-page="Section_4_Understanding_File_System/30_Defining_the_Rest_of_the_Commands.html" href="#">30 Define Other Commands</a></li>
+            <li><a data-page="Section_4_Understanding_File_System/31_Solution_Implementing_the_deleteFile_Function.html" href="#">31 deleteFile Solution</a></li>
+            <li><a data-page="Section_4_Understanding_File_System/32_Solution_Implementing_the_renameFile_Function.html" href="#">32 renameFile Solution</a></li>
+            <li><a data-page="Section_4_Understanding_File_System/33_Solution_Implementing_the_addToFile_Function.html" href="#">33 addToFile Solution</a></li>
+            <li><a data-page="Section_4_Understanding_File_System/34_Outro.html" href="#">34 Outro</a></li>
+          </ul>
+        </li>
+
+        <!-- Section 5: Understanding Streams -->
+        <li>
+          <span class="section-title">Section 5 – Streams</span>
+          <ul class="sub-list">
+            <li><a data-page="Section_5_Understanding_Streams/35_Introduction.html" href="#">35 Introduction</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/36_Benchmarking_Writing_a_Million_Times_to_a_File.html" href="#">36 Benchmark File Writes</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/37_Using_Streams_Naively_in_Our_Solution.html" href="#">37 Naive Streams</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/38_So_What_Exactly_Are_Streams.html" href="#">38 What Are Streams?</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/39_Understanding_Different_Types_of_Streams.html" href="#">39 Stream Types</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/40_Fixing_the_Memory_Issue_in_Our_Program.html" href="#">40 Fix Memory Issue</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/41_Reading_Writable_Streams_Nodejs_Docs_and_Recap.html" href="#">41 Writable Streams Docs</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/42_Readable_Streams_in_Action.html" href="#">42 Readable Streams</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/43_Selectively_Writing_Our_Data_from_the_Readable_Stream.html" href="#">43 Selective Write</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/44_Understanding_the_Splitting_Issue.html" href="#">44 Splitting Issue</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/45_Implementing_the_Solution_and_Resolving_the_Splitting_Issue.html" href="#">45 Resolve Split</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/46_Reading_Nodejs_Docs_and_Recap.html" href="#">46 Streams Docs Recap</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/47_Building_Our_Own_Streaming_Solution_Using_Buffers.html" href="#">47 Custom Streaming Solution</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/48_Understanding_Piping.html" href="#">48 Understanding Piping</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/49_Implementing_Our_Own_Writable_Stream.html" href="#">49 Own Writable Stream</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/50_Implementing_Our_Own_Readable_Stream.html" href="#">50 Own Readable Stream</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/51_Understanding_Duplex_and_Transform_Streams.html" href="#">51 Duplex & Transform</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/52_Creating_an_Encryption_Decryption_Application.html" href="#">52 Encryption/Decryption App</a></li>
+            <li><a data-page="Section_5_Understanding_Streams/53_Final_Notes.html" href="#">53 Streams Outro</a></li>
+          </ul>
+        </li>
+
+        <!-- Section 6: Understanding Networking -->
+        <li>
+          <span class="section-title">Section 6 – Networking</span>
+          <ul class="sub-list">
+            <li><a data-page="Section_6_Understanding_Networking/54_Introduction.html" href="#">54 Introduction</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/55_Understanding_MAC_Addresses_and_Switches.html" href="#">55 MAC Addresses & Switches</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/56_Understanding_Routers_and_How_the_Internet_Works.html" href="#">56 Routers & Internet</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/57_Understanding_Networking_Layers.html" href="#">57 Networking Layers</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/58_A_Quick_Tip_About_Filtering_in_Wireshark.html" href="#">58 Wireshark Tip</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/59_Creating_a_Simple_TCP_Application_in_Nodejs.html" href="#">59 TCP App</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/60_Understanding_the_Transport_Layer_TCP_UDP.html" href="#">60 TCP/UDP Transport</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/61_A_Networking_Scenario_in_Action.html" href="#">61 Networking Scenario</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/62_Understanding_Port_Numbers.html" href="#">62 Port Numbers</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/63_Starting_Point_for_Building_Our_Chat_App.html" href="#">63 Chat App Start</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/64_Creating_a_Chat_Application_PART_1.html" href="#">64 Chat App Part 1</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/65_Creating_a_Chat_Application_PART_2.html" href="#">65 Chat App Part 2</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/66_Improving_the_UI_of_our_Chat_App.html" href="#">66 Chat UI Improvements</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/67_Identifying_Users_in_the_Chat_App.html" href="#">67 User IDs in Chat</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/68_Notifying_Everyone_When_Somebody_Joins_Leaves_the_Chat.html" href="#">68 Join/Leave Notifications</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/69_A_Note_About_the_end_Event_on_Windows.html" href="#">69 ‘iend’ Event on Windows</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/70_Some_Final_Notes_About_the_Chat_App.html" href="#">70 Final Chat Notes</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/71_Deploying_our_Chat_App_to_AWS.html" href="#">71 Deploy to AWS</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/72_Commands_Used_for_Installing_NVM.html" href="#">72 NVM Commands</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/73_Understanding_IPv4_Addresses.html" href="#">73 IPv4 Addresses</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/74_Understanding_DNS.html" href="#">74 DNS</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/75_Understanding_IPv6_Addresses.html" href="#">75 IPv6 Addresses</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/76_Starting_Point_for_Building_Our_Uploader_App.html" href="#">76 Uploader App Start</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/77_Creating_an_Uploader_Application.html" href="#">77 Uploader App</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/78_Taking_Care_of_Backpressures_in_the_Uploader_App.html" href="#">78 Backpressure in Uploader</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/79_Getting_the_File_Names_Dynamically_in_the_Uploader_App.html" href="#">79 Dynamic File Names</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/80_Displaying_the_Upload_Progress_in_Our_Uploader_App.html" href="#">80 Upload Progress</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/81_Deploying_our_Uploader_App.html" href="#">81 Deploy Uploader App</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/82_AWS_Cost_Warning_Server_Termination_Reminder.html" href="#">82 AWS Cost Warning</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/83_Understanding_UDP_and_the_Dgram_Module.html" href="#">83 UDP & dgram</a></li>
+            <li><a data-page="Section_6_Understanding_Networking/84_Outro.html" href="#">84 Outro</a></li>
+          </ul>
+        </li>
+
+        <!-- Section 7: Understanding HTTP -->
+        <li>
+          <span class="section-title">Section 7 – HTTP</span>
+          <ul class="sub-list">
+            <li><a data-page="Section_7_Understanding_HTTP/85_Introduction.html" href="#">85 Introduction</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/86_The_Idea_of_HTTP.html" href="#">86 The Idea of HTTP</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/87_Creating_a_Simple_HTTP_Server_in_Node.html" href="#">87 Simple HTTP Server</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/88_Understanding_HTTP_Messages_Requests_and_Responses.html" href="#">88 HTTP Messages</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/89_Understanding_Connection_Types.html" href="#">89 Connection Types</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/90_Building_our_Client_and_Sending_a_Request.html" href="#">90 Client Request</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/91_Sending_a_Response_to_the_Client.html" href="#">91 Send Response</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/92_Learning_Postman_and_Testing_Our_Server_with_It.html" href="#">92 Postman Testing</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/93_Reading_Some_Docs.html" href="#">93 Read Docs</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/94_Sending_an_HTTP_Request_Directly_on_Top_of_TCP!_PART_1.html" href="#">94 Raw HTTP (Part 1)</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/95_Sending_an_HTTP_Request_Directly_on_Top_of_TCP!_PART_2.html" href="#">95 Raw HTTP (Part 2)</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/96_Emulating_our_HTTP_Server_Using_the_Net_Module.html" href="#">96 Net Module Emulation</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/97_Understanding_Media_Types_MIME_Types.html" href="#">97 MIME Types</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/98_Understanding_HTTP_Methods.html" href="#">98 HTTP Methods</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/99_Understanding_HTTP_status_codes.html" href="#">99 Status Codes</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/100_Creating_a_Simple_Web_Server_in_Node.html" href="#">100 Simple Web Server</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/101_Serving_a_CSS_and_JavaScript_File.html" href="#">101 Serve CSS/JS</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/102_Adding_Some_JSON_Routes.html" href="#">102 JSON Routes</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/103_Adding_a_File_Upload_Route.html" href="#">103 File Upload</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/104_Creating_our_Own_Little_Mini_Express_Framework!.html" href="#">104 Mini Express Framework</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/105_Making_our_Framework_More_Robust.html" href="#">105 Robust Framework</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/106_Getting_Ready_for_Our_Next_Project.html" href="#">106 Next Project Prep</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/107_Using_Our_Framework_to_Create_a_Web_App.html" href="#">107 Use Our Framework</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/108_Adding_the_Login_Route.html" href="#">108 Login Route</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/109_Understanding_HTTP_Proxies.html" href="#">109 HTTP Proxies</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/110_HTTP_is_Stateless.html" href="#">110 HTTP is Stateless</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/111_Understanding_Cookies.html" href="#">111 Cookies</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/112_Recognizing_Users_for_Future_Requests_after_Logging_In.html" href="#">112 Recognize Users</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/113_Sending_the_Users_Info_in_Profile.html" href="#">113 User Profile Info</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/114_Enhancing_Our_Framework_with_Middleware_Support.html" href="#">114 Middleware Support</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/115_Defining_the_Middleware_Functions.html" href="#">115 Define Middleware</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/116_Implementing_the_Create_Post_Update_User_and_Logout_Routes.html" href="#">116 CRUD & Logout</a></li>
+            <li><a data-page="Section_7_Understanding_HTTP/117_Outro.html" href="#">117 Outro</a></li>
+          </ul>
+        </li>
+
+        <!-- Section 8: Understanding Unix -->
+        <li>
+          <span class="section-title">Section 8 – Unix</span>
+          <ul class="sub-list">
+            <li><a data-page="Section_8_Understanding_Unix/118_Introduction.html" href="#">118 Introduction</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/119_What_Is_Unix.html" href="#">119 What Is Unix</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/120_Why_Should_We_Care_About_Unix.html" href="#">120 Why Unix Matters</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/121_Setting_Up_Unix_on_Windows_WSL_For_Wndows_Users_Only.html" href="#">121 Unix on WSL</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/122_A_First_Look_at_the_Child_Process_Module.html" href="#">122 Child Process Module</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/123_Understanding_Unix_Shells.html" href="#">123 Unix Shells</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/124_Demystifying_Bash_Execution_Order_Aliases_Functions_Built_ins_and_Path.html" href="#">124 Bash Execution Order</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/125_A_Few_Notes_about_Unix_File_Permissions.html" href="#">125 Unix Permissions</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/126_Sourcing_in_Bash.html" href="#">126 Sourcing in Bash</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/127_Understanding_Shell_Config_Files.html" href="#">127 Shell Config Files</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/128_What_Exactly_is_a_Child_Process.html" href="#">128 What is Child Process</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/129_Understanding_Environment_Variables.html" href="#">129 Environment Vars</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/130_Understanding_Unix_File_System_Paths_and_CWD.html" href="#">130 FS Paths & CWD</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/131_Understanding_Stdout_Stdin_and_Stderr.html" href="#">131 Stdout/Stdin/Stderr</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/132_Understanding_Pipes_and_Output_Redirection_in_Bash.html" href="#">132 Pipes & Redirection</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/133_Building_a_Command_Line_Utility_with_Nodejs.html" href="#">133 CLI Utility with Node.js</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/134_Building_Massive_Communication_App_Node_Part.html" href="#">134 Comm App (Node)</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/135_Intro_to_the_C_Part.html" href="#">135 Intro to C</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/136_Learning_C_Our_First_App.html" href="#">136 C First App</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/137_Learning_C_Static_Types_and_Our_Memory.html" href="#">137 C Static Types & Memory</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/138_Learning_C_Memory_Allocation.html" href="#">138 C Memory Allocation</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/139_Learning_C_Reading_the_Arguments.html" href="#">139 C Reading Arguments</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/140_Building_Massive_Communication_App_C_Part.html" href="#">140 Comm App (C)</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/141_Only_Watch_if_You_Skipped_the_C_Part.html" href="#">141 Skip if No C</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/142_Another_Way_of_IPC_Unix_Domain_Sockets.html" href="#">142 Unix Domain Sockets</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/143_Understanding_Clustering.html" href="#">143 Clustering</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/144_Clustering_in_Action.html" href="#">144 Clustering in Action</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/145_Installing_and_Building_FFmpeg_from_Source_Code.html" href="#">145 FFmpeg Build</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/146_Video_Editor_App_Setup_and_Walkthrough.html" href="#">146 Video Editor Walkthrough</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/147_Adding_the_Upload_Route.html" href="#">147 Upload Route</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/148_Quick_Intro_to_FFmpeg_and_Video_Files.html" href="#">148 FFmpeg Intro</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/149_Making_a_Thumbnail_and_Getting_the_Dimensions_After_an_Upload.html" href="#">149 Thumbnail & Dimensions</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/150_Returning_the_List_of_Uploaded_Videos.html" href="#">150 List Uploaded Videos</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/151_Adding_a_Route_for_Returning_the_Video_Assets.html" href="#">151 Video Assets Route</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/152_Adding_a_Route_to_Extract_the_Audio_of_a_Video_File.html" href="#">152 Audio Extract Route</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/153_Adding_the_Resize_Route.html" href="#">153 Resize Route</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/154_Scheduling_the_Resizes.html" href="#">154 Schedule Resizes</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/155_More_on_Queue_based_Processing.html" href="#">155 Queue Processing</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/156_Resuming_Scheduled_Resize_Operations_Upon_App_Restart.html" href="#">156 Resume Scheduled Resizes</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/157_Running_Our_Application_in_Cluster_Mode.html" href="#">157 Cluster Mode</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/158_Refactor_from_Cpeak_to_Express_in_Less_than_20_Minutes!.html" href="#">158 Refactor to Express</a></li>
+            <li><a data-page="Section_8_Understanding_Unix/159_Outro.html" href="#">159 Outro</a></li>
+          </ul>
+        </li>
+
+        <!-- Section 9: Understanding Compression -->
+        <li>
+          <span class="section-title">Section 9 – Compression</span>
+          <ul class="sub-list">
+            <li><a data-page="Section_9_Understanding_Compression/160_Introduction.html" href="#">160 Introduction</a></li>
+            <li><a data-page="Section_9_Understanding_Compression/161_How_Does_a_Lossless_Compression_Work.html" href="#">161 Lossless Compression</a></li>
+            <li><a data-page="Section_9_Understanding_Compression/162_Lossy_Compression.html" href="#">162 Lossy Compression</a></li>
+            <li><a data-page="Section_9_Understanding_Compression/163_Gzip_Brotli_and_Deflate.html" href="#">163 Gzip/Brotli/Deflate</a></li>
+            <li><a data-page="Section_9_Understanding_Compression/164_Compression_in_HTTP.html" href="#">164 HTTP Compression</a></li>
+            <li><a data-page="Section_9_Understanding_Compression/165_Compression_vs_Minification.html" href="#">165 Compression vs Minification</a></li>
+            <li><a data-page="Section_9_Understanding_Compression/166_Deploying_Compression_onto_Our_Apps.html" href="#">166 Deploy Compression</a></li>
+            <li><a data-page="Section_9_Understanding_Compression/167_Final_Notes.html" href="#">167 Compression Outro</a></li>
+          </ul>
+        </li>
+
+        <!-- Section 10: Understanding Multi Threading -->
+        <li>
+          <span class="section-title">Section 10 – Multi Threading</span>
+          <ul class="sub-list">
+            <li><a data-page="Section_10_Understanding_Multi_Threading/168_Introduction.html" href="#">168 Introduction</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/169_Guide_for_Skilled_Multi_Threaded_Developers.html" href="#">169 MultiThread Guide</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/170_What_Exactly_Is_a_Thread.html" href="#">170 What Is a Thread</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/171_How_to_Monitor_Threads_on_Your_Operating_System.html" href="#">171 Monitor Threads</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/172_Understanding_CPU_Usage.html" href="#">172 CPU Usage</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/173_Spawning_Threads.html" href="#">173 Spawning Threads</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/174_Thread_Communication_through_Message_Passing.html" href="#">174 Thread Communication</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/175_Introduction_to_Our_CPU_Intensive_Program.html" href="#">175 CPU Intensive App</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/176_Enhancing_Performance_with_Multi_Threading.html" href="#">176 Enhance Performance</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/177_Handling_CPU_Intensive_Operations_in_an_HTTP_Server.html" href="#">177 CPU vs I/O</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/178_isMainThread.html" href="#">178 isMainThread</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/179_CPU_Intensive_vs_IO_Intensive.html" href="#">179 CPU vs I/O Deep Dive</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/180_Examining_a_Crypto_Heavy_Multi_Threaded_App.html" href="#">180 Crypto App</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/181_Nodejs_Thread_Pool.html" href="#">181 Thread Pool</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/182_Developing_a_Thread_Pool_From_Scratch.html" href="#">182 Build Thread Pool</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/183_Event_Loop_Utilization_and_Main_Thread.html" href="#">183 Event Loop & Threads</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/184_Keep_the_Main_Thread_Light_with_Batch_Processing.html" href="#">184 Batch Processing</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/185_Effortlessly_Expanding_Our_Thread_Pool_Capabilities.html" href="#">185 Expand Thread Pool</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/186_Dont_Block_the_Worker_Pool!.html" href="#">186 Don’t Block Worker Pool</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/187_Handling_Billions_of_HTTP_Requests.html" href="#">187 High Volume Requests</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/188_Communication_Through_Shared_Memory.html" href="#">188 Shared Memory</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/189_ArrayBuffers_SharedArrayBuffers_and_TypedArrays.html" href="#">189 ArrayBuffers & TypedArrays</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/190_Race_Conditions.html" href="#">190 Race Conditions</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/191_Understanding_Atomic_Operations.html" href="#">191 Atomic Operations</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/192_Understanding_Mutual_Exclusion.html" href="#">192 Mutual Exclusion</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/193_Deadlocks.html" href="#">193 Deadlocks</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/194_Enhancing_Performance_Through_Shared_Memory.html" href="#">194 Shared Memory Perf</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/195_Native_Multi_Threading_with_C_C_plusplus_Addons.html" href="#">195 Native Threads (C/C++)</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/196_A_Deeper_Look_at_the_Event_Loop_PART_1.html" href="#">196 Event Loop Part 1</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/197_A_Deeper_Look_at_the_Event_Loop_PART_2.html" href="#">197 Event Loop Part 2</a></li>
+            <li><a data-page="Section_10_Understanding_Multi_Threading/198_Outro.html" href="#">198 Outro</a></li>
+          </ul>
+        </li>
+
+        <!-- Section 11: Understanding Cryptography -->
+        <li>
+          <span class="section-title">Section 11 – Cryptography</span>
+          <ul class="sub-list">
+            <li><a data-page="Section_11_Understanding_Cryptography/199_Introduction.html" href="#">199 Introduction</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/200_Introduction_to_Symmetric_Encryption.html" href="#">200 Symmetric Encryption</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/201_The_Unbreakable_Encryption_OTP_From_Scratch.html" href="#">201 OTP Encryption</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/202_How_AES_Encryption_Works.html" href="#">202 How AES Works</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/203_Understanding_AES_Modes.html" href="#">203 AES Modes</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/204_What_It_Takes_to_Break_AES.html" href="#">204 Breaking AES</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/205_What_About_Brute_Forcing_OTP.html" href="#">205 Brute Forcing OTP</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/206_History_of_AES.html" href="#">206 AES History</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/207_Understanding_Hashing.html" href="#">207 Hashing</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/208_SHA_256_From_Scratch.html" href="#">208 SHA-256</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/209_What_It_Takes_to_Break_SHA_256.html" href="#">209 Breaking SHA-256</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/210_Message_Authentication_Codes.html" href="#">210 MACs (MAC)</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/211_Understanding_Key_Derivation_Functions.html" href="#">211 KDFs</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/212_Building_a_File_Encryption_Application.html" href="#">212 File Encryption App</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/213_Part_2_Under_Production.html" href="#">213 Under Production</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/214_Introduction_to_Asymmetric_Cryptography.html" href="#">214 Asymmetric Intro</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/215_Introduction_to_RSA.html" href="#">215 RSA Intro</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/216_The_Mathematics_Behind_RSA.html" href="#">216 RSA Math</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/217_What_It_Takes_to_Break_RSA.html" href="#">217 Breaking RSA</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/218_HTTPS_from_Scratch.html" href="#">218 HTTPS</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/219_Elliptic_Curve_Diffie_Hellman.html" href="#">219 ECDH</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/220_Signatures.html" href="#">220 Signatures</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/221_Digital_Certificates.html" href="#">221 Certificates</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/222_Understanding_TLS.html" href="#">222 TLS</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/223_Secure_Communication_in_Microservices.html" href="#">223 Microservices Security</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/224_Understanding_PKI.html" href="#">224 PKI</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/225_Legal_Battles_over_Cryptography.html" href="#">225 Crypto Law</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/226_Outro.html" href="#">226 Outro</a></li>
+          </ul>
+        </li>
+
+        <!-- Section 12: Security -->
+        <li>
+          <span class="section-title">Section 12 – Security</span>
+          <ul class="sub-list">
+            <li><a data-page="Section_12_Security/227_Introduction.html" href="#">227 Introduction</a></li>
+            <li><a data-page="Section_12_Security/228_How_to_Securely_Store_User_Passwords.html" href="#">228 Secure Password Storage</a></li>
+            <li><a data-page="Section_12_Security/229_More_Lectures_on_the_Way.html" href="#">229 More Lectures</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ───── Main Content Area ───── -->
+  <div class="main-content">
+    <!-- Top Header: Display Current Page Title -->
+    <div class="header">
+      <h1 id="page-title">Welcome</h1>
+    </div>
+
+    <!-- Content Area (where we inject each lecture’s HTML) -->
+    <div id="content-area" class="content-area">
+      <p>Select any lecture from the sidebar to begin.</p>
+    </div>
+
+    <!-- Bottom Footer: Next Button -->
+    <div class="footer">
+      <button class="btn-next" id="next-button" disabled>Next →</button>
+    </div>
+  </div>
+
+  <!-- ───── JavaScript: dynamic loading, highlighting, history ───── -->
+  <script>
+    // Helper: grab all sidebar <a> elements (in one flat array)
+    const allLinks = Array.from(document.querySelectorAll(".sub-list a"));
+    const contentArea = document.getElementById("content-area");
+    const pageTitleEl = document.getElementById("page-title");
+    const nextBtn = document.getElementById("next-button");
+
+    // When a sidebar link is clicked:
+    allLinks.forEach((link, index) => {
+      link.addEventListener("click", event => {
+        event.preventDefault();
+        const pagePath = link.getAttribute("data-page");
+        loadPage(pagePath, true);
+      });
+    });
+
+    // Load a given fragment (lecture) into #content-area
+    function loadPage(pagePath, pushToHistory) {
+      fetch(pagePath)
+        .then(resp => {
+          if (!resp.ok) throw new Error("Failed to fetch: " + resp.status);
+          return resp.text();
+        })
+        .then(htmlFragment => {
+          // 1) Inject the HTML into content-area
+          contentArea.innerHTML = htmlFragment;
+
+          // 2) Highlight the active link
+          highlightActiveLink(pagePath);
+
+          // 3) Set the page title
+          setPageTitleFromPath(pagePath);
+
+          // 4) Configure the “Next” button
+          configureNextButton(pagePath);
+
+          // 5) Push to browser history (so back/forward works)
+          if (pushToHistory) {
+            history.pushState({ page: pagePath }, "", "?page=" + encodeURIComponent(pagePath));
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          contentArea.innerHTML = "<p style='color:red;'>Error loading page.</p>";
+        });
+    }
+
+    // Highlight sidebar link whose data-page === pagePath
+    function highlightActiveLink(pagePath) {
+      allLinks.forEach(link => {
+        if (link.getAttribute("data-page") === pagePath) {
+          link.classList.add("active");
+        } else {
+          link.classList.remove("active");
+        }
+      });
+    }
+
+    // Prettify filename → H1 text & document.title
+    function setPageTitleFromPath(pagePath) {
+      // Take trailing part after last slash
+      const filename = pagePath.split("/").pop();
+      const pretty = filename
+        .replace(/\.html$/, "")
+        .replace(/_/g, " ")
+        .replace(/\b(\w)/g, m => m.toUpperCase());
+      pageTitleEl.textContent = pretty;
+      document.title = pretty + " – Node.js Core Concepts";
+    }
+
+    // Find index of current in allLinks, then wire up Next button
+    function configureNextButton(pagePath) {
+      const idx = allLinks.findIndex(link => link.getAttribute("data-page") === pagePath);
+      if (idx !== -1 && idx < allLinks.length - 1) {
+        nextBtn.disabled = false;
+        nextBtn.onclick = () => {
+          const nextPage = allLinks[idx + 1].getAttribute("data-page");
+          loadPage(nextPage, true);
+        };
+      } else {
+        nextBtn.disabled = true;
+        nextBtn.onclick = null;
+      }
+    }
+
+    // On popstate (user clicked Back/Forward), load that page without pushing new history
+    window.addEventListener("popstate", event => {
+      const state = event.state;
+      if (state && state.page) {
+        loadPage(state.page, false);
+      } else {
+        // If no state (e.g. user pressed Back from initial), show welcome screen
+        contentArea.innerHTML = "<p>Select any lecture from the sidebar to begin.</p>";
+        pageTitleEl.textContent = "Welcome";
+        document.title = "Node.js Core Concepts";
+        highlightActiveLink("");
+        nextBtn.disabled = true;
+      }
+    });
+
+    // On initial load: check if URL has “?page=…” so we load that right away
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(location.search);
+      const requested = params.get("page");
+      if (requested) {
+        // Verify it’s in our link list:
+        const matchingLink = allLinks.find(a => a.getAttribute("data-page") === requested);
+        if (matchingLink) {
+          loadPage(requested, false);
+        }
+      }
+    });
+  </script>
+</body>
+</html>

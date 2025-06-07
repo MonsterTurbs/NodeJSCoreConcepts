@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>File Uploader – Backpressure Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.4;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.3em;
+    }
+    .emoji { font-size: 1.2em; margin-right: 6px; }
+    code { background: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+    ul { padding-left: 20px; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">⚠️</span>The Problem</h2>
+    <ul>
+      <li>Uploading a huge (5 GB+) file at once → Node’s memory spikes to GBs 😱</li>
+      <li>We opened the file handle &amp; wrote chunks without flow control → internal buffers overflow</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🎯</span>Backpressure Concept</h2>
+    <ul>
+      <li>When <code>stream.write()</code> returns <code>false</code>, its internal buffer is full</li>
+      <li>Action:
+        <ul>
+          <li>Pause reading from source stream</li>
+          <li>Wait for <code>'drain'</code> event</li>
+          <li>On <code>'drain'</code>, resume reading &amp; writing</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🛠️</span>Implementing on Server</h2>
+    <ul>
+      <li>Keep one file handle &amp; write stream per upload</li>
+      <li>In <code>socket.on('data', chunk)</code>:
+        <pre><code>if (!fileHandle) {
+  fileHandle = await fs.open(...);
+  fileStream = fileHandle.createWriteStream();
+}
+const ok = fileStream.write(chunk);
+if (!ok) {
+  socket.pause();               // stop reading new chunks
+  fileStream.once('drain', () =&gt; {
+    socket.resume();            // resume after buffer empties
+  });
+}</code></pre>
+      </li>
+      <li>On <code>socket.on('end')</code>, close file + reset handles</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🚀</span>Implementing on Client</h2>
+    <ul>
+      <li>Keep one read stream from file</li>
+      <li>In <code>fileStream.on('data', chunk)</code>:
+        <pre><code>const ok = socket.write(chunk);
+if (!ok) {
+  fileStream.pause();          // stop reading file
+  socket.once('drain', () =&gt; {
+    fileStream.resume();       // resume when socket ready
+  });
+}</code></pre>
+      </li>
+      <li>On <code>fileStream.on('end')</code>, <code>socket.end()</code> to finish upload</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📊</span>Testing &amp; Monitoring</h2>
+    <ul>
+      <li>Generate a 5 GB test file (e.g. modify <code>write-many.js</code> count to 500 million)</li>
+      <li>Move it into <code>uploader/</code> and run server/client</li>
+      <li>Watch memory in Activity Monitor/Task Manager → should stay low (~tens MB)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🎁</span>Next Exercises</h2>
+    <ul>
+      <li>📂 Make filename dynamic: accept <code>node client.js &lt;path/to/file&gt;</code></li>
+      <li>📈 Show upload progress (%) in client console</li>
+    </ul>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🔐 One-Time Pad Encryption</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #eef2f5; margin: 0; padding: 20px; color: #333; }
+    h1 { text-align: center; color: #2c3e50; }
+    main { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 800px; margin: 0 auto; }
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 16px; }
+    .card h2 { margin-top: 0; color: #1a242f; }
+    .card ul, .card p { margin: 8px 0; padding-left: 20px; }
+    code { background: #f0f4f8; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 Perfect Encryption: One-Time Pad</h1>
+  <main>
+    <section class="card">
+      <h2><span class="emoji">✨</span>What Is One-Time Pad?</h2>
+      <p>A <strong>perfect encryption</strong> using a random key (pad) the same length as the message, used only once and then destroyed.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">📏</span>Key Rules</h2>
+      <ul>
+        <li><strong>Length:</strong> Key length = message length.</li>
+        <li><strong>Randomness:</strong> Key must be truly random.</li>
+        <li><strong>One-Time Use:</strong> Destroy key after encryption/decryption.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔄</span>Core Operation: XOR</h2>
+      <p>XOR (⊕) compares bits: identical → 0, different → 1. Only with the same key can you reverse (decrypt) the ciphertext.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">💻</span>Node.js XOR Demo</h2>
+      <p>In REPL: <code>a = Buffer.from([0xA4]); b = Buffer.from([0xF3]); a[0] ^ b[0] → 0x87</code>. Matches bitwise XOR table.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🚀</span>Encryption Flow</h2>
+      <ul>
+        <li>Generate random key bytes (e.g., 100 bytes): <code>crypto.randomBytes()</code>.</li>
+        <li>Encrypt: For each byte, <code>cipher[i] = plaintext[i] ⊕ key[i]</code> and then zero-out <code>key[i]</code>.</li>
+        <li>Share ciphertext; key never travels online.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">📡</span>Practical Example</h2>
+      <p>Commander and submarine each hold a copy of the key (exchanged physically). Commander sends XORed message over insecure channel; submarine XORs back to recover plaintext.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">⚠️</span>Key Management Challenge</h2>
+      <p>Key must match message size—encrypting large data (e.g., terabyte) needs huge key and secure distribution, making OTP impractical at scale.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔜</span>Next Up</h2>
+      <p>With OTP understood, we'll explore AES for practical, secure symmetric encryption without massive key distribution.</p>
+    </section>
+  </main>
+</body>
+</html>

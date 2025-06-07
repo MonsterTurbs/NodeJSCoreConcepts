@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>📝 Beginner Notes: Bash &amp; Zsh Startup</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f7fafc;
+      margin: 0; padding: 24px; color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 720px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #1a365d;
+    }
+    .emoji { margin-right: 6px; }
+    code {
+      background: #edf2f7;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-size: 0.95em;
+    }
+    pre {
+      background: #edf2f7;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🐚 Bash &amp; Zsh: What Happens on Startup?</h1>
+  <div class="container">
+
+    <!-- 1 -->
+    <div class="card">
+      <h2><span class="emoji">🔀</span>Shell Types</h2>
+      <ul>
+        <li><strong>Login</strong> shell: you “log in” (SSH, console).</li>
+        <li><strong>Non-login</strong> shell: e.g. new terminal tab.</li>
+        <li><strong>Interactive</strong> shell: you type commands live.</li>
+        <li><strong>Non-interactive</strong> shell: runs a script file, no prompt.</li>
+      </ul>
+    </div>
+
+    <!-- 2 -->
+    <div class="card">
+      <h2><span class="emoji">📁</span>Bash Startup Files</h2>
+      <p>On a new <strong>login interactive</strong> bash shell, files run in order:</p>
+      <pre><code>/etc/profile
+~/.bash_profile  (or ~/.bash_login or  ~/.profile)
+then ~/.bashrc</code></pre>
+      <p>On a new <strong>non-login interactive</strong> bash shell, only:</p>
+      <pre><code>~/.bashrc</code></pre>
+    </div>
+
+    <!-- 3 -->
+    <div class="card">
+      <h2><span class="emoji">⚙️</span>Zsh Startup Files</h2>
+      <p>On a new <strong>login interactive</strong> zsh shell:</p>
+      <pre><code>~/.zprofile
+~/.zshrc</code></pre>
+      <p>On a new <strong>non-login interactive</strong> zsh shell:</p>
+      <pre><code>~/.zshrc</code></pre>
+    </div>
+
+    <!-- 4 -->
+    <div class="card">
+      <h2><span class="emoji">🛠️</span>Why Two Files?</h2>
+      <ul>
+        <li><code>profile</code>/<code>zprofile</code>: global &amp; login setup (PATH, env-vars).</li>
+        <li><code>rc</code>/<code>zshrc</code>: interactive configs (aliases, prompt, functions).</li>
+        <li>Separating them speeds up non-login shells by skipping heavy login steps.</li>
+      </ul>
+    </div>
+
+    <!-- 5 -->
+    <div class="card">
+      <h2><span class="emoji">✨</span>Make It Yours!</h2>
+      <ul>
+        <li>Edit your <code>~/.bashrc</code> or <code>~/.zshrc</code>—add:<br/>
+          • Aliases  <code>alias ll='ls -l'</code><br/>
+          • Functions<br/>
+          • Prompt customization<br/>
+          • Environment variables
+        </li>
+        <li>Reload with <code>source ~/.bashrc</code> (or simply <code>. ~/.bashrc</code>).</li>
+        <li>Backup your config—save hours every month!</li>
+      </ul>
+    </div>
+
+    <!-- 6 -->
+    <div class="card">
+      <h2><span class="emoji">📋</span>Quick Examples</h2>
+      <pre><code># alias in bashrc
+alias d='cd ~/Desktop'
+
+# function in bashrc
+mkd() {
+  mkdir -p "$1"
+  cd "$1"
+}
+
+# reload config
+alias bc='source ~/.bashrc'
+
+# prompt (bash)
+PS1="\u:\W\$ "
+</code></pre>
+    </div>
+
+  </div>
+</body>
+</html>

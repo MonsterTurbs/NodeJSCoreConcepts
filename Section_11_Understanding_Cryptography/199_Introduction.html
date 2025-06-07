@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🔐 Introduction to Cryptography</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f4f8; margin: 0; padding: 20px; color: #333; }
+    h1 { text-align: center; color: #2c3e50; }
+    main { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 800px; margin: 0 auto; }
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 16px; }
+    .card h2 { margin-top: 0; color: #1a242f; }
+    .card ul, .card p { margin: 8px 0; padding-left: 20px; }
+    code { background: #eef1f5; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 Cryptography for Beginners</h1>
+  <main>
+    <section class="card">
+      <h2><span class="emoji">📖</span>What is Cryptography?</h2>
+      <p>Cryptography turns plain data (text, files) into secret code using a key—only someone with the key can read it.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🛡️</span>Why Do We Need It?</h2>
+      <ul>
+        <li><strong>Confidentiality:</strong> Only the right people see the data.</li>
+        <li><strong>Integrity:</strong> Detect if data was changed by someone else.</li>
+        <li><strong>Authentication:</strong> Verify who sent the data.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🌐</span>Everyday Impact</h2>
+      <ul>
+        <li>Private messaging, secure online banking, and phone passcodes.</li>
+        <li>Disk and file encryption, HTTPS, SSH, VPNs.</li>
+        <li>Even cryptocurrencies rely on cryptography for security.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">⚙️</span>Key Node.js Modules</h2>
+      <ul>
+        <li><code>crypto</code>: Core encryption, hashing, and more.</li>
+        <li><code>tls</code>: Secure connections built on <code>crypto</code>.</li>
+        <li><code>https</code>: HTTPS servers, built on <code>tls</code>.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔗</span>Under the Hood: OpenSSL</h2>
+      <p>Node.js uses OpenSSL (written in C) for all cryptographic operations—making it both powerful and reliable.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🧠</span>Three Subfields</h2>
+      <ul>
+        <li><strong>Symmetric:</strong> Same secret key for encrypt/decrypt.</li>
+        <li><strong>Keyless (Hashing):</strong> No key; one-way algorithms.</li>
+        <li><strong>Asymmetric:</strong> Public/private key pairs, secure key exchange.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">📋</span>Cheat Sheet & Concepts</h2>
+      <p>Download the course cheat sheet to revisit terms, conversions (1 byte = 8 bits, 1 hex = 4 bits), and definitions anytime.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🛠️</span>Tools & Prerequisites</h2>
+      <ul>
+        <li>Buffers & binary data (Node.js).</li>
+        <li>File system & streams basics.</li>
+        <li>Networking: DNS, TCP, HTTP/HTTPS.</li>
+        <li>Discrete math: bit math, probability.</li>
+        <li>Optional: Hex viewers (Hex Fiend, HxD) for exploring bytes.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">⚠️</span>Legal & Security Notes</h2>
+      <ul>
+        <li>Check local laws—some regions regulate or ban strong encryption.</li>
+        <li>Encryption is strong, but overall security can still be attacked (e.g., zero-click spyware).</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🚀</span>Next Steps</h2>
+      <p>Ready to dive deeper? Let’s explore hands-on encryption, hashing, and secure systems in the next lessons!</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Message Authentication Codes (MACs) 🛡️</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      padding: 15px 20px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .emoji {
+      font-size: 1.3em;
+      margin-right: 6px;
+    }
+    code {
+      background: #eef2f5;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    pre {
+      background: #eef2f5;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">🔒</span>Why We Need MACs</h2>
+    <p>Encrypting with CTR mode is fast, but an attacker can flip bits in the ciphertext and you won’t know! You need a way to detect any tampering. 😱</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">✍️</span>How a MAC Works</h2>
+    <p>
+      1. Take your <strong>ciphertext</strong> (or any message) 📄<br>
+      2. Mix in a shared secret <strong>key</strong> 🔑<br>
+      3. Feed both into a hash function → output is called the <strong>MAC tag</strong> 🏷️<br>
+      4. Send <em>both</em> cipher text + tag
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🕵️‍♂️</span>Receiver Verification</h2>
+    <p>
+      • Receiver recomputes the MAC from received data + shared key.<br>
+      • If the computed tag matches the sent tag → message is unmodified and from the right sender.<br>
+      • If tags differ → tampering or wrong sender! 🚨
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔑</span>HMAC: Hash-Based MAC</h2>
+    <p>
+      • Uses <code>Hmac</code> + a hash (e.g. SHA-256) under the hood.<br>
+      • Protects against “length extension” attacks that plain hashes suffer. 🚫🔗
+    </p>
+    <pre><code>const mac = crypto.createHmac('sha256', key);
+mac.update(ciphertext);
+const tag = mac.digest('hex');</code></pre>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">⚙️</span>GCM Mode: Encryption + Auth</h2>
+    <p>
+      AES‐GCM combines CTR‐style encryption with built‐in <strong>authentication</strong> via a “GHASH” tag.<br>
+      You don’t compute HMAC yourself—GCM does it for you:
+    </p>
+    <pre><code>const cipher = crypto.createCipheriv('aes-128-gcm', key, iv);
+const tag    = cipher.getAuthTag();
+// On decrypt:
+decipher.setAuthTag(tag);
+decipher.update(...);
+decipher.final();</code></pre>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">✅</span>What MACs Guarantee</h2>
+    <ul>
+      <li><strong>Integrity</strong>: Any bit-flip breaks the tag.</li>
+      <li><strong>Authentication</strong>: Only someone with the shared key can create a valid tag.</li>
+      <li>No silent tampering, no impersonation—ever! 🛡️</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔗</span>Next Steps</h2>
+    <p>Now that you’ve mastered MACs, next up is <strong>key derivation</strong> (deriving AES keys from passwords) and then <strong>asymmetric encryption</strong> for secure key exchange. 🌐🔐</p>
+  </div>
+
+</body>
+</html>

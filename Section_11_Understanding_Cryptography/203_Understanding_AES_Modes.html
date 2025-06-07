@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🔐 AES Modes: ECB, CBC & CTR</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f4f8; margin: 0; padding: 20px; color: #333; }
+    h1 { text-align: center; color: #2a3d66; }
+    main { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 800px; margin: auto; }
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 16px; }
+    .card h2 { margin-top: 0; color: #1a222f; }
+    .card ul, .card p { margin: 8px 0; padding-left: 20px; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 Block Cipher Modes: ECB, CBC & CTR</h1>
+  <main>
+    <section class="card">
+      <h2><span class="emoji">📚</span>What Are Modes?</h2>
+      <p>Modes tell AES how to process many 128-bit blocks: how to chain them, add randomness, and protect integrity.</p>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔲</span>ECB (Electronic Codebook)</h2>
+      <ul>
+        <li>Encrypts each block independently.</li>
+        <li>Identical plaintext blocks → identical ciphertext blocks.</li>
+        <li>Fast & parallelizable but leaks patterns (e.g. image outlines).</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">⛓️</span>CBC (Cipher Block Chaining)</h2>
+      <ul>
+        <li>Uses an IV (random 128-bit) XORed with first block.</li>
+        <li>Each block’s ciphertext is XORed into next block’s input.</li>
+        <li>Hides patterns—identical plaintext blocks give different ciphertext.</li>
+        <li>Cannot parallelize encryption; decryption is parallel-safe.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🔢</span>CTR (Counter)</h2>
+      <ul>
+        <li>Encrypts a counter (nonce + increment) instead of plaintext.</li>
+        <li>XORs encrypted counter with plaintext for ciphertext.</li>
+        <li>Parallel encrypt/decrypt & hides patterns.</li>
+        <li>Does not detect tampering—use GCM for authenticity.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">💡</span>Choosing a Mode</h2>
+      <ul>
+        <li>Avoid ECB in real data—use CBC or CTR.</li>
+        <li>For tampering protection, use authenticated modes like GCM.</li>
+        <li>Always use a random IV/nonce and never reuse it.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="emoji">🚀</span>Next Up</h2>
+      <p>Coming soon: AES-GCM (counter mode with authentication tag) and XTS for disk encryption.</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Beginner-Friendly SHA-256 Deep Dive 🛠️</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      padding: 15px;
+    }
+    .card h2 {
+      margin-top: 0;
+    }
+    .emoji {
+      font-size: 1.3em;
+      margin-right: 8px;
+    }
+    pre {
+      background: #eef2f5;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">🔍</span>SHA-256 From Scratch?</h2>
+    <p>This video walks through a pure-JavaScript implementation of SHA-256. It’s ~100 lines of code—no magic, just simple math you could trace on paper! 📝</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">✨</span>The “Magic” of Random</h2>
+    <p>The only part that feels like magic is <code>crypto.randomBytes()</code>—OpenSSL gathering true randomness from your hardware. Everything else is clear math. 🔮</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔄</span>Rotate-Right Helper</h2>
+    <p>SHA-256 uses 32-bit words and needs to rotate bits right. A helper does:</p>
+    <pre>
+function rotR (x, n) {
+  return (x >>> n) | (x << (32 - n));
+}
+    </pre>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📏</span>Padding to 512-bit Blocks</h2>
+    <p>SHA-256 works on 512-bit (64-byte) chunks. If your message isn’t a multiple of 512 bits, you:</p>
+    <ol>
+      <li>Append <code>0x80</code> byte</li>
+      <li>Pad with zeros until you’re 64 bits shy of a multiple of 512</li>
+      <li>Append original message length in 64 bits</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📐</span>Constants from Math</h2>
+    <p>SHA-256 uses 64 fixed 32-bit “K” values (cube roots of primes) and 8 initial hash words (square roots of primes). These drive the mixing in each round.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">⚙️</span>Main Compression Loop</h2>
+    <p>For each 512-bit block:</p>
+    <ul>
+      <li>Expand 16 words into 64</li>
+      <li>Repeat 64 rounds: mix current words with <code>K[i]</code>, rotate, xor, add</li>
+      <li>Update the 8 running hash values</li>
+    </ul>
+    <p>At the end, concatenate the 8 words → final 256-bit hash. 🔗</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">✅</span>Verify vs. Node Crypto</h2>
+    <p>At the end, the custom implementation’s output matches <code>crypto.createHash('sha256')</code> exactly—proof you’ve built it right! 🎉</p>
+  </div>
+
+</body>
+</html>

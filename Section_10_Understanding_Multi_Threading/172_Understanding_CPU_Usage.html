@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🖥️ Study Notes: CPU &amp; Process Utilization</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f0f4f8; color:#333; }
+    h1 { text-align:center; color:#2a4365; margin-bottom:1em; }
+    .container {
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      max-width:800px;
+      margin:auto;
+    }
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      padding:20px;
+    }
+    .card h2 { margin-top:0; color:#2b6cb0; }
+    ul { padding-left:1.2em; margin:0; }
+    li { margin-bottom:0.6em; }
+    code { background:#ebf8ff; padding:2px 4px; border-radius:4px; font-family:monospace; }
+    @media print { .card { box-shadow:none; } }
+  </style>
+</head>
+<body>
+  <h1>🖥️ CPU &amp; Process Utilization (Beginner)</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>💡 Core Utilization</h2>
+      <ul>
+        <li>Measures one CPU core’s busy time over a period (e.g. 100 ms).</li>
+        <li>Formula: <code>(total_time – idle_time) / total_time × 100%</code> 👍</li>
+        <li>Value is 0–100% per core (speed doesn’t matter).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📊 Total CPU Utilization</h2>
+      <ul>
+        <li>Average of all cores’ utilizations.</li>
+        <li>Formula: <code>(sum of each core %) / number_of_cores</code> ⚖️</li>
+        <li>Never exceeds 100%. It’s an overall “health” metric.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔍 How to Find Core Count</h2>
+      <ul>
+        <li>macOS/Linux: <code>nproc</code> or <code>sysctl -n hw.ncpu</code></li>
+        <li>Windows PowerShell: <code>(Get-WmiObject -Class Win32_ComputerSystem).NumberOfLogicalProcessors</code></li>
+        <li>Node.js: <code>os.availableParallelism()</code> 🖥️</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🛠️ Process CPU Utilization Methods</h2>
+      <ul>
+        <li>👣 <strong>Method 1</strong> (per‐core): Sum core usage used by process.  
+          - Four threads fully busy → 400% usage.  
+          - Common on macOS &amp; <code>top</code> default.
+        </li>
+        <li>🔢 <strong>Method 2</strong> (normalized): Divide Method 1 result by core count.  
+          - Four cores &amp; one busy core → 25% usage.  
+          - Used by Windows Task Manager &amp; some Linux monitors.
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>⚙️ Switching Between Methods</h2>
+      <ul>
+        <li>Linux <code>top</code>: Press <code>Shift + I</code> to toggle Irix mode (Method 1) on/off.</li>
+        <li>Observe process % change (e.g. 100% → 50% on a 2-core machine).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📈 Visualizing Core Load</h2>
+      <ul>
+        <li>macOS Activity Monitor: View ▶️ CPU History for each core.</li>
+        <li>Windows Resource Monitor: Performance → CPU → per‐core graphs.</li>
+        <li>Linux System Monitor: Resources → per‐core charts.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>⚙️ Recap</h2>
+      <ul>
+        <li>Core Utilization: Busy% of one core (0–100%).</li>
+        <li>Total CPU: Average across cores (0–100%).</li>
+        <li>Process CPU:<br>
+          &nbsp;&nbsp;• Method 1: Sum of cores used (can exceed 100%).<br>
+          &nbsp;&nbsp;• Method 2: Normalized by core count (max 100%).
+        </li>
+        <li>Always confirm which method your monitor uses! 🔎</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

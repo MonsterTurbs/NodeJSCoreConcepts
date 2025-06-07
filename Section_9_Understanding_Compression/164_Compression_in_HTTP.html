@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>📦 HTTP Compression – Study Notes</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f0f4f8; color:#333; }
+    h1 { text-align:center; margin-bottom:1em; color:#1d4ed8; }
+    .container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      max-width:720px;
+      margin:auto;
+    }
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      padding:20px;
+    }
+    .card h2 { margin-top:0; color:#065f46; }
+    ul { padding-left:1.2em; }
+    code { background:#eef; padding:2px 4px; border-radius:4px; font-size:0.95em; }
+    @media print {
+      .card { box-shadow:none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📦 HTTP Compression – Beginner Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>🌐 How It Works</h2>
+      <ul>
+        <li>Client sends <code>Accept-Encoding</code> header listing supported methods (e.g. <code>gzip, deflate, br</code>)</li>
+        <li>Server picks one (say <code>gzip</code>) and compresses <strong>only the body</strong> ▼</li>
+        <li>Response must include headers:
+          <ul>
+            <li><code>Content-Type</code> – original type (e.g. <code>application/json</code>)</li>
+            <li><code>Content-Encoding</code> – compressor used (e.g. <code>gzip</code>)</li>
+            <li><code>Content-Length</code> – size of <em>compressed</em> body</li>
+          </ul>
+        </li>
+        <li>Browser auto-decompresses; you only implement on server 🚀</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🛠️ Server Setup</h2>
+      <ul>
+        <li><strong>Proxy (e.g. nginx)</strong> – easiest: just add <code>gzip on;</code> in config</li>
+        <li>Or in Node app:
+          <pre><code>res.setHeader('Content-Encoding','gzip');
+stream.pipe(zlib.createGzip()).pipe(res);</code></pre>
+        </li>
+        <li>Adjust options (level, windowBits, etc.) for speed ↔ ratio trade-off ⚖️</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🕵️ Browser Support</h2>
+      <ul>
+        <li>Check your browser’s <code>Accept-Encoding</code> in DevTools ▶︎ Network ▶︎ Request Headers</li>
+        <li>Common support:
+          <ul>
+            <li>Chrome: <code>gzip, deflate, br, zstd</code></li>
+            <li>Firefox: <code>gzip, deflate, br</code></li>
+            <li>Safari: <code>gzip, deflate</code></li>
+          </ul>
+        </li>
+        <li>Server should pick the best supported method per request 🔄</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📝 Tips &amp; Gotchas</h2>
+      <ul>
+        <li>If you set wrong <code>Content-Length</code>, client will wait forever ➡️ use chunked or correct length</li>
+        <li>Skip compressing already-compressed media (PNG, JPEG, MP3…) to save CPU 🚫</li>
+        <li>Compress responses, not usually requests (rarely needed) 🔄</li>
+        <li>Always benchmark on your real data &amp; pick defaults if you need simplicity 👍</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

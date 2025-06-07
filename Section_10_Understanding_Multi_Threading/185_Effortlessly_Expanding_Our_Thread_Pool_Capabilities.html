@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>🔧 Extending Our Worker Pool</title>
+  <style>
+    body { background: #f0f2f5; font-family: Arial, sans-serif; margin: 20px; }
+    .card { background: #fff; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 20px; padding: 20px; max-width: 700px; }
+    h1 { text-align: center; color: #333; }
+    h2 { color: #007acc; margin-top: 0; }
+    ul { margin: 0; padding-left: 1.2em; }
+    li { margin-bottom: 0.6em; }
+    code { background: #eef; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <h1>🧩 Add a New Task to the Thread Pool</h1>
+  <div class="card">
+    <h2>➕ Create a Factorial Task</h2>
+    <ul>
+      <li>Write <code>calculateFactorial(n)</code> function:  
+        <pre><code>
+function calculateFactorial(n) {
+  let result = 1n;
+  for (let i = 2n; i <= n; i++) result *= i;
+  return result;
+}
+module.exports = calculateFactorial;
+        </code></pre>
+      </li>
+      <li>Export from <code>factorial.js</code> and require in your pool controller:</li>
+      <li>In your worker‐pool switch:</li>
+      <pre><code>
+case 'factorial':
+  const fact = calculateFactorial(options.n);
+  parentPort.postMessage(fact);
+  break;
+      </code></pre>
+    </ul>
+
+    <h2>🔄 Submit Factorial Jobs</h2>
+    <ul>
+      <li>When scheduling, choose task type by condition, e.g.:</li>
+      <pre><code>
+if (i % 5 === 0) {
+  pool.submit({ type: 'factorial', n: BigInt(i) });
+} else {
+  pool.submit({ type: 'primes', count: i, start: BigInt(2) });
+}
+      </code></pre>
+      <li>Worker threads handle both tasks seamlessly in parallel 🏃‍♂️🏃‍♀️</li>
+    </ul>
+
+    <h2>✅ Quick Test</h2>
+    <ul>
+      <li>Run <code>node app.js</code> and monitor CPU—you’ll see mix of prime & factorial jobs.  
+      <li>Add <code>console.log</code> inside each case to confirm results 🤓</li>
+    </ul>
+
+    <h2>💡 Key Takeaway</h2>
+    <ul>
+      <li>Extending your pool with new operations is as easy as adding a new case ✔️</li>
+      <li>Workers stay reusable; main thread simply dispatches tasks, keeping it free 🔧</li>
+    </ul>
+  </div>
+</body>
+</html>

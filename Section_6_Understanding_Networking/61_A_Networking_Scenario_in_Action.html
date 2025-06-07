@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📝 Study Notes: Networking Concepts & TCP/UDP in Node.js</title>
+  <style>
+    body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; margin:0; padding:20px; color:#2d3748; }
+    h1 { text-align:center; color:#2c5282; margin-bottom:30px; }
+    .container { display:grid; grid-template-columns:1fr; gap:20px; }
+    .card { background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); padding:20px; transition:transform .2s; }
+    .card:hover { transform:translateY(-4px); box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+    .card h2 { font-size:1.3rem; margin-bottom:12px; color:#2c5282; }
+    .card ul { list-style:none; padding-left:0; }
+    .card li { margin-bottom:10px; line-height:1.6; }
+    .emoji { margin-right:6px; }
+    pre { background:#eef2f7; padding:10px; border-radius:4px; overflow-x:auto; }
+    @media print { body { background:#fff; color:#000; } .card { box-shadow:none; margin-bottom:20px; } pre { background:transparent; } }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Networking & TCP/UDP Basics</h1>
+  <div class="container">
+    <!-- previous cards here -->
+
+    <!-- TCP & UDP Detailed Cards -->
+    <div class="card">
+      <h2>🚦 Transport Layer: Why TCP Exists</h2>
+      <ul>
+        <li><span class="emoji">⚠️</span>Network layer may drop, duplicate, or corrupt packets.</li>
+        <li><span class="emoji">🔍</span>TCP (Transmission Control Protocol) ensures every bit sent arrives intact.</li>
+        <li><span class="emoji">🔁</span>Retransmits lost packets and orders them correctly using sequence &amp; ack numbers.</li>
+        <li><span class="emoji">🔒</span>Detects corruption via checksum; requests resend if mismatch.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📖 TCP Three-Way Handshake</h2>
+      <ul>
+        <li><span class="emoji">1️⃣ SYN:</span> Client sends SYN packet to server to start connection.</li>
+        <li><span class="emoji">2️⃣ SYN-ACK:</span> Server replies with SYN+ACK acknowledging receipt.</li>
+        <li><span class="emoji">3️⃣ ACK:</span> Client sends final ACK; connection established.</li>
+        <li><span class="emoji">🔗</span>After handshake, data can flow reliably both directions.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔧 Key TCP Header Fields</h2>
+      <ul>
+        <li><span class="emoji">📍 Source &amp; Destination Ports:</span> Identify sending &amp; receiving applications.</li>
+        <li><span class="emoji">🔢 Sequence &amp; Ack Numbers:</span> Track order and acknowledge packets.</li>
+        <li><span class="emoji">📏 Window Size:</span> Flow control; how many bytes can be in-flight.</li>
+        <li><span class="emoji">✅ Checksum:</span> Verifies header + data integrity.</li>
+        <li><span class="emoji">🏁 Flags:</span> Indicate control signals (SYN, ACK, FIN for closing).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>⚡ UDP: Fast but Unreliable</h2>
+      <ul>
+        <li><span class="emoji">🏃‍♂️</span>UDP (User Datagram Protocol) sends datagrams without handshake.</li>
+        <li><span class="emoji">❌</span>No retransmission on loss; no ordering or flow control.</li>
+        <li><span class="emoji">✔️</span>Checksum only verifies data against corruption.</li>
+        <li><span class="emoji">🎥</span>Used for video/audio streaming, gaming, DNS queries where speed matters.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📝 UDP Header Fields</h2>
+      <ul>
+        <li><span class="emoji">📍 Source &amp; Dest Ports:</span> Identify apps.</li>
+        <li><span class="emoji">🔢 Length:</span> Length of header + data (16 bits).</li>
+        <li><span class="emoji">✅ Checksum:</span> Verifies header + data integrity (16 bits).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔀 Choosing TCP vs. UDP</h2>
+      <ul>
+        <li><span class="emoji">🔒</span>Use TCP when data integrity and order matter (e.g., SSH, HTTP).</li>
+        <li><span class="emoji">⚡</span>Use UDP when low latency is key and occasional loss is acceptable (e.g., VoIP).</li>
+      </ul>
+    </div>
+
+      <!-- Card: Loopback vs External Interfaces -->
+    <div class="card">
+      <h2>🔄 Loopback vs External Interfaces</h2>
+      <ul>
+        <li><span class="emoji">🏷️</span><strong>Loopback (127.0.0.1):</strong> Traffic stays inside your device.</li>
+        <li><span class="emoji">🌐</span><strong>External IP:</strong> Assigned by router (e.g., 172.23.1.2) to connect other devices.</li>
+        <li><span class="emoji">🚫</span>If server binds only to loopback, other devices cannot reach it.</li>
+        <li><span class="emoji">✅</span>Bind server to external interface to allow LAN/other-device access.</li>
+      </ul>
+    </div>
+
+    <!-- Card: Accessing Node App from Another Device -->
+    <div class="card">
+      <h2>📱 Accessing from iPad/Phone</h2>
+      <ul>
+        <li><span class="emoji">🔗</span>Ensure your device and server are on the same network (same router).</li>
+        <li><span class="emoji">📶</span>Find server’s external IP (e.g., via ifconfig or router settings).</li>
+        <li><span class="emoji">🔢</span>Run Node.js server on that IP and port:<br>
+          <pre><code>server.listen(4080, '172.23.1.2', ...)</code></pre>
+        </li>
+        <li><span class="emoji">🌍</span>On iPad/phone browser, visit <code>http://172.23.1.2:4080</code> to reach your app.</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

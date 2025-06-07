@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dynamic Filename – Uploader App Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.4;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.3em;
+    }
+    .emoji { font-size: 1.2em; margin-right: 6px; }
+    code { background: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">🎯</span>Goal</h2>
+    <p>Allow the client to specify any file path when running:</p>
+    <pre><code>node client.js path/to/myfile.txt</code></pre>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔢</span>Grab Command-Line Args</h2>
+    <ul>
+      <li>Use <code>process.argv</code> array:</li>
+      <pre><code>const args = process.argv;
+// args[0] = full Node path
+// args[1] = script path
+// args[2] = your file path
+const filePath = args[2];</code></pre>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📂</span>Extract Filename</h2>
+    <ul>
+      <li>Use Node’s <code>path.basename()</code>:</li>
+      <pre><code>const path = require('path');
+const fileName = path.basename(filePath);
+// e.g. 'myfile.txt'</code></pre>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📤</span>Client: Send Filename &amp; File</h2>
+    <ul>
+      <li>First write the header:</li>
+      <pre><code>socket.write(`FILENAME:${fileName}-----`);</code></pre>
+      <li>Then stream file data:</li>
+      <pre><code>fileStream.on('data', chunk =&gt; socket.write(chunk));</code></pre>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🖥️</span>Server: Parse Header</h2>
+    <ul>
+      <li>On first <code>'data'</code> event:</li>
+      <pre><code>const divider = '-----';
+const idx = data.indexOf(divider);
+const fileName = data
+  .subarray(divider.length, idx)
+  .toString('utf8');
+// now open write stream: `storage/${fileName}`
+// then write data.subarray(idx + divider.length)</code></pre>
+    </ul>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Node.js HTTP Client – Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.4;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      max-width: 700px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .emoji {
+      font-size: 1.5em;
+      margin-right: 8px;
+    }
+    code {
+      background: #f0f0f0;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">📦</span>Include HTTP Module &amp; Agent</h2>
+    <p>
+      • Use Node’s built-in HTTP module:<br>
+      <code>const http = require('node:http');</code> 😊<br>
+      • Create an <strong>agent</strong> to manage TCP connections:<br>
+      <code>const agent = new http.Agent({ keepAlive: true });</code><br>
+      Agents let you reuse or close sockets when sending multiple requests.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🛠️</span>Build Request Options</h2>
+    <p>
+      Configure where and how to send your HTTP request:
+    </p>
+    <ul>
+      <li><code>agent</code>: which TCP connection to use</li>
+      <li><code>hostname</code>: server address (e.g. <code>'localhost'</code>)</li>
+      <li><code>port</code>: server port (e.g. <code>8050</code>)</li>
+      <li><code>method</code>: HTTP verb (e.g. <code>'POST'</code>)</li>
+      <li><code>path</code>: endpoint URL (e.g. <code>'/upload'</code>)</li>
+      <li><code>headers</code>: extra info, like content type</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">✍️</span>Sending the Body as a Stream</h2>
+    <p>
+      • The request object is a <strong>duplex stream</strong>.<br>
+      • Write chunks of data with <code>req.write(…)</code>:  
+      you can call it many times.<br>
+      • Call <code>req.end()</code> (optionally with one final chunk) to signal:  
+      “I’m done sending.” 👍
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📬</span>Handling the Server Response</h2>
+    <p>
+      • Listen for the <code>'response'</code> event once:<br>
+      <code>req.on('response', res =&gt; { … })</code><br>
+      • Inside, <code>res</code> is a readable stream:<br>
+      &nbsp;&nbsp;– Read status code: <code>res.statusCode</code><br>
+      &nbsp;&nbsp;– Read headers: <code>res.headers</code><br>
+      &nbsp;&nbsp;– Read body chunks: <code>res.on('data', chunk =&gt; { … })</code> 😊
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔀</span>Chunked vs. Content-Length</h2>
+    <p>
+      • <code>Transfer-Encoding: chunked</code><br>
+      &nbsp;&nbsp;&ndash; Send body in unknown-size chunks;<br>
+      &nbsp;&nbsp;&ndash; End with <code>req.end()</code> marker.<br><br>
+      • <code>Content-Length: N</code><br>
+      &nbsp;&nbsp;&ndash; Tell server exactly how many bytes you’ll send;<br>
+      &nbsp;&nbsp;&ndash; Useful when you know body size ahead.<br><br>
+      Choose one per message—can’t use both at once!
+    </p>
+  </div>
+
+</body>
+</html>

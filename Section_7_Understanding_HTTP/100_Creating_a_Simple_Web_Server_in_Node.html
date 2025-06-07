@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🚀 Your First Node.js Web Server – Beginner Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f8fa;
+      margin: 0; padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #1abc9c;
+    }
+    .card ul {
+      padding-left: 1em;
+      line-height: 1.5;
+    }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 Your First Node.js Web Server – Beginner Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>🌐 What Is a Web Server?</h2>
+      <ul>
+        <li><span class="emoji">💡</span>A <strong>server</strong> can serve any protocol (TCP chat, HTTP JSON, etc.).</li>
+        <li><span class="emoji">🖥️</span>A <strong>web server</strong> specifically serves <strong>HTML, CSS, JS</strong> to browsers.</li>
+        <li><span class="emoji">📱</span>Browsers understand HTML + web APIs—no extra install needed!</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📦 Project Setup</h2>
+      <ul>
+        <li><span class="emoji">📁</span>Create folder <code>simple-web</code> and inside it <code>server.js</code> and a subfolder <code>public</code>.</li>
+        <li><span class="emoji">🛠️</span>In <code>public/index.html</code> put basic HTML:
+          <pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;&lt;head&gt;&lt;title&gt;Hello&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;&lt;h1&gt;Hi from Node.js!&lt;/h1&gt;&lt;/body&gt;
+&lt;/html&gt;</pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🖥️ Writing <code>server.js</code></h2>
+      <ul>
+        <li><span class="emoji">📦</span>Import modules:
+          <code>const http = require('http');</code><br>
+          <code>const fs = require('fs').promises;</code>
+        </li>
+        <li><span class="emoji">🎧</span>Create server and listen:
+          <pre>const server = http.createServer(async (req, res) =&gt; {
+  // handle requests...
+});
+server.listen(9000, () =&gt; console.log('Running at http://localhost:9000'));</pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔀 Routing “/”</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>Detect root URL and GET method:
+          <pre>if (req.method==='GET' &amp;&amp; req.url==='/' ) { … }</pre>
+        </li>
+        <li><span class="emoji">📄</span>For "/", serve your HTML file.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📑 Serving HTML with Streams</h2>
+      <ul>
+        <li><span class="emoji">⚙️</span>Set response header: <code>res.setHeader('Content-Type','text/html')</code></li>
+        <li><span class="emoji">📂</span>Read &amp; stream file:
+          <pre>const fh = await fs.open('./public/index.html');
+const rs = fh.createReadStream();
+rs.pipe(res);</pre>
+        </li>
+        <li><span class="emoji">🚀</span>Efficient: streams send file in small chunks, not whole memory.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔄 Recap</h2>
+      <ul>
+        <li><span class="emoji">1️⃣</span>Create HTTP server with <code>http.createServer</code>.</li>
+        <li><span class="emoji">2️⃣</span>Listen on port 9000.</li>
+        <li><span class="emoji">3️⃣</span>Route GET "/" → set header → pipe HTML file to response.</li>
+        <li><span class="emoji">🎉</span>Open <code>http://localhost:9000</code> in browser to see your page!</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

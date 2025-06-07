@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🐣 Beginner Notes: Environment Variables</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f0f4f8;
+      color: #2d3748;
+      margin: 0; padding: 24px;
+    }
+    h1 {
+      text-align: center;
+      color: #2a4365;
+    }
+    .container {
+      max-width: 720px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c5282;
+    }
+    .emoji { margin-right: 6px; }
+    pre {
+      background: #edf2f7;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code {
+      background: #e2e8f0;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>👶 Environment Variables in Unix &amp; Node</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2><span class="emoji">🌱</span>What Are Env Vars?</h2>
+      <p>
+        • Like regular variables (<code>foo=bar</code> in shell) but marked to be <strong>exported</strong>.<br/>
+        • Exported vars are passed from a parent process to its child processes.<br/>
+        • Commonly used to configure apps (e.g. <code>MODE=production</code>).
+      </p>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2><span class="emoji">🖥️</span>Defining &amp; Viewing in Shell</h2>
+      <pre><code># Define a normal var
+MY_VAR=hello
+
+# Export to make it an env var
+export MY_VAR
+
+# List all env vars
+env
+
+# See one
+echo $MY_VAR
+</code></pre>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2><span class="emoji">🔄</span>Scope of Env Vars</h2>
+      <ul>
+        <li>Available <em>only</em> to the process that exports them and <em>its</em> children.</li>
+        <li>Not automatically inherited by new sibling shells.</li>
+        <li>To make persistent, put <code>export</code> lines in <code>~/.bashrc</code> or <code>~/.zshrc</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2><span class="emoji">📦</span>Accessing in Node.js</h2>
+      <pre><code>// In Node
+console.log(process.env.MY_VAR);
+
+// Log all env vars
+console.log(process.env);
+</code></pre>
+      <p>If you run <code>node app.js</code> after <code>export MY_VAR=hello</code>, <code>process.env.MY_VAR</code> is <code>"hello"</code>.</p>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2><span class="emoji">👶</span>Passing to Child Processes</h2>
+      <pre><code>const { spawn } = require('child_process');
+
+// By default, child.env == process.env
+const cp = spawn('node', ['child.js'], {
+  env: process.env
+});
+</code></pre>
+      <p>You can override <code>env</code> to pass a custom env var set.</p>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2><span class="emoji">🔧</span>Example in C</h2>
+      <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main() {
+  char *mode = getenv("MODE");
+  printf("MODE = %s\n", mode ? mode : "undefined");
+  return 0;
+}
+</code></pre>
+      <p>Compile &amp; run after <code>export MODE=staging</code> to see it.</p>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card">
+      <h2><span class="emoji">✅</span>Key Takeaways</h2>
+      <ul>
+        <li>Use <code>export NAME=value</code> to share vars with child processes.</li>
+        <li>Read in shell: <code>echo $NAME</code>; in Node: <code>process.env.NAME</code>.</li>
+        <li>Env vars control config (dev vs prod) without changing code.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>👤 Finish Profile Route & Plan Middleware</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f0f4f8;
+      color: #333;
+      margin: 0; padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2980b9;
+    }
+    .card ul { padding-left: 1.2em; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    pre { background: #f4f4f4; padding: 8px; border-radius: 4px; overflow-x: auto; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>👤 Finish Profile Route & Plan Middleware</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>✅ 1. Look Up & Send User Info</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>Find user by session’s userId:
+          <pre>
+const user = users.find(u =&gt; u.id === session.userId);
+          </pre>
+        </li>
+        <li><span class="emoji">📤</span>Send back name &amp; username:
+          <pre>
+res.json({
+  name: user.name,
+  username: user.username
+});
+          </pre>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🗺️ 2. Remaining JSON Routes</h2>
+      <ul>
+        <li><span class="emoji">🚪</span><strong>Log out</strong> – DELETE <code>/api/logout</code></li>
+        <li><span class="emoji">✏️</span><strong>Update Profile</strong> – PUT <code>/api/user</code></li>
+        <li><span class="emoji">📝</span><strong>Create Post</strong> – POST <code>/api/posts</code></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>⚙️ 3. Avoid Repetition with Middleware</h2>
+      <ul>
+        <li><span class="emoji">🔄</span>Every protected route must:
+          <ul>
+            <li>✔️ Parse JSON body</li>
+            <li>✔️ Verify session &amp; token</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔧</span>Plan: add “middleware” to Butter so you can:
+          <pre>
+server.use(parseJson);
+server.use(authenticate);
+          </pre>
+        </li>
+        <li><span class="emoji">✨</span>Then routes stay clean:
+          <pre>
+server.route('POST','/api/posts', (req,res) =&gt; {
+  // req.body, req.user available!
+});
+          </pre>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

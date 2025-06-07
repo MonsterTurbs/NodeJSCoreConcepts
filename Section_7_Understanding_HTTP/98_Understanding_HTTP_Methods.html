@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HTTP Methods – Study Notes</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+      max-width: 800px;
+    }
+    .card h2 { margin-top: 0; font-size: 1.2em; }
+    .emoji { font-size: 1.4em; margin-right: 6px; }
+    code { background: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <!-- Card 1 -->
+  <div class="card">
+    <h2><span class="emoji">🔹</span>What Is an HTTP Method?</h2>
+    <p>An HTTP method is included only in <strong>requests</strong> to tell the server what you want to do:  
+      e.g. <code>GET</code> to fetch data, <code>POST</code> to create, <code>DELETE</code> to remove, etc.</p>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card">
+    <h2><span class="emoji">🔧</span>Idempotency Explained</h2>
+    <p>An operation is <strong>idempotent</strong> if calling it multiple times has the same effect as calling it once.  
+    Example:
+      <ul>
+        <li><code>deleteFilesOver1GB()</code> → only first call deletes files; repeats do nothing ⇒ <em>idempotent</em></li>
+        <li><code>deleteLargestFile()</code> → each call deletes a new file ⇒ <em>not idempotent</em></li>
+      </ul>
+    </p>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="card">
+    <h2><span class="emoji">📥</span>GET</h2>
+    <ul>
+      <li>Fetch a resource (no request body)</li>
+      <li>Response has a body</li>
+      <li><strong>Idempotent:</strong> repeating returns same data, no server-state change</li>
+    </ul>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="card">
+    <h2><span class="emoji">🆕</span>POST</h2>
+    <ul>
+      <li>Create a resource or perform an action (request has body)</li>
+      <li>Response may have a body</li>
+      <li><strong>Non-idempotent:</strong> each repeat may create a new resource</li>
+    </ul>
+  </div>
+
+  <!-- Card 5 -->
+  <div class="card">
+    <h2><span class="emoji">🔄</span>PUT</h2>
+    <ul>
+      <li>Create or <em>fully</em> replace a resource (request has body)</li>
+      <li>Response may have a body</li>
+      <li><strong>Idempotent:</strong> repeating same data keeps resource unchanged after first write</li>
+    </ul>
+  </div>
+
+  <!-- Card 6 -->
+  <div class="card">
+    <h2><span class="emoji">✏️</span>PATCH</h2>
+    <ul>
+      <li><em>Partially</em> update a resource (request has body)</li>
+      <li>Response may have a body</li>
+      <li>Can be idempotent or not (depends on update)—use for partial changes</li>
+    </ul>
+  </div>
+
+  <!-- Card 7 -->
+  <div class="card">
+    <h2><span class="emoji">🗑️</span>DELETE</h2>
+    <ul>
+      <li>Remove a resource (URL/ID often enough; body optional)</li>
+      <li>Response may have a body or be empty</li>
+      <li><strong>Idempotent:</strong> once deleted, repeats do nothing (resource already gone)</li>
+    </ul>
+  </div>
+
+  <!-- Card 8 -->
+  <div class="card">
+    <h2><span class="emoji">📄</span>HEAD</h2>
+    <ul>
+      <li>Same as <code>GET</code> but <em>no body</em> in response—only headers</li>
+      <li>Useful for checking metadata (e.g. file size) without downloading</li>
+      <li><strong>Idempotent</strong></li>
+    </ul>
+  </div>
+
+  <!-- Card 9 -->
+  <div class="card">
+    <h2><span class="emoji">⚙️</span>OPTIONS</h2>
+    <ul>
+      <li>Ask server which methods or headers are allowed</li>
+      <li>Crucial for CORS: browser sends <code>OPTIONS</code> preflight</li>
+      <li>Response includes allowed methods/headers in response headers</li>
+      <li><strong>Idempotent</strong></li>
+    </ul>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Uploader App Wrap-Up – Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.4;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.3em;
+    }
+    .emoji { font-size: 1.2em; margin-right: 6px; }
+    code { background: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">🔒</span>Security Reminder</h2>
+    <p>Plain TCP is unencrypted—anyone sniffing the network can read your files.  
+    In production, wrap traffic in TLS (Node’s built-in <code>tls</code> module) to get secure upload (like HTTPS).  
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🚀</span>Deploying Your Uploader</h2>
+    <ol>
+      <li>SSH into your server: <code>ssh -i key.pem user@host</code></li>
+      <li>Upload <code>uploader.js</code> and make <code>storage/</code> folder</li>
+      <li>Install PM2: <code>npm install -g pm2</code></li>
+      <li>Start app: <code>pm2 start uploader.js</code></li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📤</span>Uploading to Remote</h2>
+    <p>On your client machine, run:</p>
+    <pre><code>node client.js &lt;path/to/your-file&gt;</code></pre>
+    <p>Example:</p>
+    <pre><code>node client.js ./video.mp4</code></pre>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📂</span>Verify on Server</h2>
+    <ol>
+      <li>SSH back in and list <code>storage/</code>.</li>
+      <li>Check file size: <code>ls -l storage/&lt;filename&gt;</code>.</li>
+      <li>Download via SCP to compare:</li>
+      <pre><code>scp -i key.pem user@host:storage/video.mp4 ./downloaded.mp4</code></pre>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🎉</span>Success!</h2>
+    <p>You can reliably upload large files (text, images, video) from any machine to your Node.js server—no data loss or corruption. 😄</p>
+  </div>
+
+</body>
+</html>

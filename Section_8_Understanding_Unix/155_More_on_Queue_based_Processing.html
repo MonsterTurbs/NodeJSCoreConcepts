@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🎓 Job Queue Review – Study Notes</title>
+  <style>
+    body {
+      margin: 0; padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f7f9fc; color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    }
+    .card h2 {
+      margin-top: 0; color: #2c3e50;
+    }
+    .card ul {
+      padding-left: 1.2em;
+    }
+    .card pre {
+      background: #eef3f7;
+      padding: 8px;
+      overflow-x: auto;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎓 Job Queue Review – Study Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ Why Use a Queue? 🤔</h2>
+      <p>Resizing videos can take a long time. If we run many at once, the computer slows down or crashes. A queue makes sure only one runs at a time.</p>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ What Is a Queue? 📚</h2>
+      <ul>
+        <li><strong>FIFO:</strong> First In → First Out</li>
+        <li><code>enqueue(item)</code> adds to end of list</li>
+        <li><code>dequeue()</code> removes from front of list</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ How It Works – Step by Step</h2>
+      <pre><code>
+// 1. enqueue({videoId, w, h})
+jobs.enqueue(job)
+
+// 2. executeNext():
+if (!currentJob) {
+  currentJob = jobs.dequeue()
+  execute(currentJob)
+}
+
+// 3. execute(job):
+//    runs ffmpeg resize...
+//    when done: 
+currentJob = null
+executeNext()
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ Enqueue from Controller 🖥️</h2>
+      <pre><code>
+// in video.js route:
+const jobs = new JobQueue()
+
+app.post('/api/video/resize', (req, res) => {
+  const { videoId, width, height } = req.body
+  jobs.enqueue({ type: 'resize', videoId, width, height })
+  res.json({ status:'success', message:'Resize scheduled!' })
+})
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ JobQueue Class Structure 🔧</h2>
+      <pre><code>
+class JobQueue {
+  constructor() {
+    this.jobs = []      // pending jobs
+    this.current = null // running job
+  }
+  enqueue(job) {
+    this.jobs.push(job)
+    this.executeNext()
+  }
+  dequeue() {
+    return this.jobs.shift()
+  }
+  executeNext() {
+    if (this.current) return
+    const job = this.dequeue()
+    if (!job) return
+    this.current = job
+    this.execute(job)
+  }
+  async execute(job) {
+    // perform resize...
+    // on finish:
+    this.current = null
+    this.executeNext()
+  }
+}
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Benefits ✅</h2>
+      <ul>
+        <li>🛡️ Prevent CPU overload</li>
+        <li>⌛ Immediate “Scheduled!” reply</li>
+        <li>🔄 Jobs run in order</li>
+        <li>⚙️ Easy to extend for other tasks</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Next Up 🚀</h2>
+      <p>Make jobs survive restarts (persist queue) and add retries. Also explore priority queues for faster small tasks!</p>
+    </div>
+
+  </div>
+</body>
+</html>

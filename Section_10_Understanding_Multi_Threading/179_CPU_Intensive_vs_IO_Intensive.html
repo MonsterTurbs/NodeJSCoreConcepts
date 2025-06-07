@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>⚙️ CPU vs I/O Intensive Operations</title>
+  <style>
+    body { background: #f0f4f8; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+    .container { max-width: 700px; margin: auto; }
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            padding: 20px; margin-bottom: 20px; }
+    h1 { text-align: center; color: #2a4365; }
+    h2 { margin-top: 0; color: #2c5282; }
+    ul { padding-left: 1.2em; }
+    li { margin-bottom: 0.8em; line-height: 1.4; }
+    code { background: #e2e8f0; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚙️ CPU vs I/O Intensive Operations</h1>
+    <div class="card">
+      <h2>What’s the Difference? 🤔</h2>
+      <ul>
+        <li><strong>CPU-Intensive</strong> – uses the processor heavily; most of the time in <code>RUNNING</code> state  
+          <br/>Examples: prime-number generation, image/video processing, encryption, compression, sorting, hashing  
+          <span>🔢🧮</span>
+        </li>
+        <li><strong>I/O-Intensive</strong> – spends most time waiting (<code>SLEEP</code> state) for external events  
+          <br/>Examples: network requests (HTTP/UDP), file reads/writes, database queries, inter-process messages  
+          <span>🌐💾</span>
+        </li>
+      </ul>
+
+      <h2>Why It Matters 🔍</h2>
+      <ul>
+        <li>🧵 <code>worker_threads</code> boost <em>CPU-intensive</em> tasks by parallelizing across cores.</li>
+        <li>🚀 Node’s event loop & built-in threads handle <em>I/O-intensive</em> tasks efficiently—workers offer little gain.</li>
+      </ul>
+
+      <h2>Quick Tips 👍</h2>
+      <ul>
+        <li>Use workers for heavy math, cryptography, or media tasks.</li>
+        <li>Keep network, file, and database calls in main thread—Node excels at I/O.</li>
+        <li>Remember mixed workloads (“CPU + I/O”): may need both patterns.</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>📝 Beginner Notes: Bash Sourcing &amp; Reusable Code</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f0f4f8;
+      margin: 0; padding: 24px; color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2a6f97;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #1e3a5f;
+    }
+    .emoji { margin-right: 6px; }
+    code {
+      background: #eef;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-size: 0.95em;
+    }
+    pre {
+      background: #eef;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔄 Bash: Sourcing &amp; Reusable Code</h1>
+  <div class="container">
+
+    <!-- 1 -->
+    <div class="card">
+      <h2><span class="emoji">✏️</span>Defining Functions &amp; Variables</h2>
+      <ul>
+        <li>Function syntax:
+          <pre><code>myfunc() {
+  echo "Hello!"
+}</code></pre>
+          Call with <code>myfunc</code>.</li>
+        <li>Variables:
+          <pre><code>myvar=100
+echo $myvar</code></pre>
+          Note: no spaces around <code>=</code>, use <code>$</code> when referencing.</li>
+      </ul>
+    </div>
+
+    <!-- 2 -->
+    <div class="card">
+      <h2><span class="emoji">📂</span>Making Code Available Everywhere</h2>
+      <p>To use your functions/vars/aliases in any shell, “include” your script:</p>
+      <pre><code>source ~/scripts.sh
+# or shorthand:
+. ~/scripts.sh</code></pre>
+      <p>This runs <code>scripts.sh</code> in the current shell.</p>
+    </div>
+
+    <!-- 3 -->
+    <div class="card">
+      <h2><span class="emoji">🚚</span>What Gets Imported?</h2>
+      <ul>
+        <li><strong>Functions</strong> — your custom bash functions.</li>
+        <li><strong>Variables</strong> — any <code>VAR=…</code> definitions.</li>
+        <li><strong>Aliases</strong> — e.g.
+          <pre><code>alias ll='ls -l'</code></pre>
+        </li>
+      </ul>
+      <p>After sourcing, you can immediately call them:</p>
+      <pre><code>$ myfunc
+$ echo $myvar
+$ ll</code></pre>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Emulating HTTP over TCP with <code>net</code> – Study Notes</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+      max-width: 800px;
+    }
+    .card h2 { margin-top: 0; font-size: 1.2em; }
+    .emoji { font-size: 1.4em; margin-right: 6px; }
+    code { background: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <!-- Card 1 -->
+  <div class="card">
+    <h2><span class="emoji">🛠️</span>Creating a TCP “Net” Server</h2>
+    <p>We use Node’s <code>net.createServer()</code> to build a simple TCP server that listens on a port.</p>
+    <pre><code>
+const net = require('net');
+const server = net.createServer(socket =&gt; {
+  socket.on('data', data =&gt; {
+    console.log(data.toString('utf8'));
+  });
+});
+server.listen(8000);
+    </code></pre>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card">
+    <h2><span class="emoji">🔍</span>Reading Raw HTTP Requests</h2>
+    <p>When Postman (or any HTTP client) sends a request, our <code>socket.on('data')</code> logs the clear-text HTTP:</p>
+    <ul>
+      <li>Request line (e.g. <code>GET /path HTTP/1.1</code>)</li>
+      <li>Headers (<code>Host:</code>, <code>User-Agent:</code>, etc.)</li>
+      <li>Body (if any)</li>
+    </ul>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="card">
+    <h2><span class="emoji">🕵️‍♂️</span>HTTP Is Clear-Text!</h2>
+    <p>All HTTP messages travel unencrypted over TCP. Anyone sniffing the network can read everything:</p>
+    <pre><code>
+GET /login HTTP/1.1
+Host: localhost:8000
+Custom-Header: hello
+Content-Type: application/json
+
+{"user":"Jack","pass":"1234"}
+    </code></pre>
+    <p>→ Sensitive data (passwords, tokens) are exposed.</p>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="card">
+    <h2><span class="emoji">📤</span>Sending a Raw HTTP Response</h2>
+    <p>We manually craft the raw response bytes and write them back on the same socket:</p>
+    <pre><code>
+const response = Buffer.from('HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{"msg":"Hi!"}', 'utf8');
+socket.write(response);
+    </code></pre>
+    <p>Postman then shows the JSON reply and status 200.</p>
+  </div>
+
+  <!-- Card 5 -->
+  <div class="card">
+    <h2><span class="emoji">⏳</span>Connection Keep-Alive vs Close</h2>
+    <ul>
+      <li>By default HTTP/1.1 uses persistent (keep-alive) connections.</li>
+      <li>You can close the TCP socket manually: <code>socket.end()</code>.</li>
+      <li>Or respect the <code>Connection: close</code> header and let client/server drop.</li>
+    </ul>
+  </div>
+
+  <!-- Card 6 -->
+  <div class="card">
+    <h2><span class="emoji">🔑</span>Key Takeaways</h2>
+    <ul>
+      <li>HTTP = text + CRLF delimiters over TCP.</li>
+      <li>All headers &amp; bodies are visible in plain text.</li>
+      <li>Use HTTPS/TLS to encrypt and protect sensitive data.</li>
+      <li>Node’s <code>http</code> module automates parsing; raw <code>net</code> shows how it really works under the hood.</li>
+    </ul>
+  </div>
+
+</body>
+</html>

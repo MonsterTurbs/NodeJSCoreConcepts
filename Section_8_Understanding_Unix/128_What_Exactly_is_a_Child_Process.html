@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🐣 Beginner Notes: Child Processes in Unix</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f0f4f8;
+      color: #2d3748;
+      margin: 0; padding: 24px;
+    }
+    h1 {
+      text-align: center;
+      color: #2a4365;
+    }
+    .container {
+      max-width: 720px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c5282;
+    }
+    .emoji { margin-right: 6px; }
+    pre {
+      background: #edf2f7;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code {
+      background: #e2e8f0;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>👶 Child Processes in Unix</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2><span class="emoji">🖥️</span>What Is a Child Process?</h2>
+      <p>Every running program in Unix is a <strong>process</strong>. When one process <em>starts</em> another, the new one is its <strong>child process</strong>.</p>
+      <ul>
+        <li>Parent ↔ Child relationship</li>
+        <li>All processes (except the kernel) have a parent</li>
+        <li>PID = unique Process ID</li>
+        <li>PPID = Parent’s Process ID</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2><span class="emoji">📟</span>Viewing PID &amp; PPID</h2>
+      <p>In your shell you can see your current process and parent IDs:</p>
+      <pre><code># Your shell’s PID
+echo $$
+
+# Your shell’s PPID
+echo $PPID
+</code></pre>
+      <p>Spawn a child (e.g. Node) and inspect inside it:</p>
+      <pre><code>node -e "console.log('PID=', process.pid, 'PPID=', process.ppid)"
+</code></pre>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2><span class="emoji">🐚</span>Spawning in Bash</h2>
+      <p>Any executable file can be run as a child process:</p>
+      <pre><code># Start a process from shell
+/path/to/app arg1 arg2
+
+# Example: run “ls -l”
+ls -l
+</code></pre>
+      <p>Behind the scenes, the shell calls a <code>fork/exec</code> system call to create the child.</p>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2><span class="emoji">💥</span>Spawning in Node.js</h2>
+      <p>Node’s <code>child_process</code> module lets you launch new processes:</p>
+      <pre><code>const { spawn } = require('child_process');
+
+const ls = spawn('ls', ['-l']);
+ls.stdout.on('data', data => console.log(data.toString()));
+</code></pre>
+      <p>The first argument is the executable name, the second is an array of arguments.</p>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2><span class="emoji">🔄</span>Environment &amp; Streams</h2>
+      <ul>
+        <li><strong>Environment variables</strong> flow from parent → child</li>
+        <li><strong>STDIN / STDOUT / STDERR</strong> are pipes for passing data</li>
+        <li>You can <code>pipe</code>, read output, or send input programmatically</li>
+      </ul>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2><span class="emoji">👀</span>Quick Recap</h2>
+      <ul>
+        <li>A <strong>PID</strong> identifies each process; <strong>PPID</strong> shows its parent.</li>
+        <li>Any executable—CLI or GUI—can be a child process.</li>
+        <li>Use your shell or Node’s <code>spawn</code> to launch children.</li>
+        <li>Communicate via arguments, environment, and streams.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Study Notes – Custom Readable Streams</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr; /* one card per row */
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    pre {
+      background-color: #eef2f7;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Implementing a Custom Readable Stream</h1>
+  <div class="container">
+
+    <!-- Card 1: Why Create a Custom Readable Stream? -->
+    <div class="card">
+      <h2>⚙️ Why Create a Custom Readable Stream?</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>Built-in streams (like <code>fs.createReadStream</code>) work well, but you may need extra control over how data is read from a source (e.g., a file, a database, or another process).</li>
+        <li><span class="emoji">✏️</span>By extending Node’s <code>Readable</code> class, you decide:
+          <ul>
+            <li>• How and when chunks get pulled from the source</li>
+            <li>• How to handle end-of-stream (signaling that no more data is coming)</li>
+            <li>• Custom error handling and cleanup</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🚀</span>In this example, we’ll build a stream that reads fixed-size chunks from a file descriptor and emits them to consumers, mimicking <code>fs.createReadStream</code> behavior.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Including & Extending Readable -->
+    <div class="card">
+      <h2>➕ Including &amp; Extending <code>Readable</code></h2>
+      <ul>
+        <li><span class="emoji">📦</span>Import Node’s <code>Readable</code> base class:
+          <pre><code>const { Readable } = require('stream');
+const fs = require('fs');</code></pre>
+        </li>
+        <li><span class="emoji">🏷️</span>Define your own class that <code>extends Readable</code>:
+          <pre><code>class FileReadStream extends Readable {
+  constructor(options) {
+    super(options);
+    // … custom setup …
+  }
+  // … must implement _construct, _read, _destroy …
+}</code></pre>
+        </li>
+        <li><span class="emoji">🔄</span>Inside the subclass’s <code>constructor</code>, call <code>super()</code> to set up options (e.g., <code>highWaterMark</code>). Save the file name for later:
+          <pre><code>constructor({ fileName, highWaterMark = 16 * 1024 }) {
+  super({ highWaterMark });
+  this.fileName = fileName;
+  this.fd = null;           // file descriptor (will open later)
+}</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Asynchronous Setup via _construct() -->
+    <div class="card">
+      <h2>🔧 Async Setup: <code>_construct(callback)</code></h2>
+      <ul>
+        <li><span class="emoji">⏳</span>Implement <code>_construct(cb)</code> to open the file before any reading:
+          <pre><code>_construct(cb) {
+  fs.open(this.fileName, 'r', (err, fd) => {
+    if (err) return cb(err);
+    this.fd = fd;      // Save the file descriptor
+    cb();              // Signal “ready to read”
+  });
+}</code></pre>
+        </li>
+        <li><span class="emoji">📁</span>Node will wait for <code>cb()</code> before invoking <code>_read</code>. If you pass an error (<code>cb(err)</code>), the stream errors out immediately.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Implementing <code>_read()</code> -->
+    <div class="card">
+      <h2>📥 Implementing <code>_read(size)</code></h2>
+      <ul>
+        <li><span class="emoji">🔍</span>Signature:
+          <pre><code>_read(size) {
+  // 1. Allocate a Buffer of length “size”
+  // 2. Read from file descriptor into Buffer
+  // 3. Push the Buffer (or its valid slice) into stream’s buffer
+  // 4. If no more data, push null to signal EOF
+}</code></pre>
+        </li>
+        <li><span class="emoji">📦</span>Inside <code>_read(size)</code>:
+          <ul>
+            <li>• <code>size</code>: Requested number of bytes to read</li>
+            <li>• Create a temporary <code>Buffer.alloc(size)</code></li>
+            <li>• Use <code>fs.read(fd, buffer, 0, size, null, …)</code> to read from file</li>
+          </ul>
+        </li>
+        <li><span class="emoji">✔️</span>Example code:
+          <pre><code>_read(size) {
+  const buffer = Buffer.alloc(size);
+  fs.read(this.fd, buffer, 0, size, null, (err, bytesRead) =&gt; {
+    if (err) {
+      // Signal an error
+      return this.destroy(err);
+    }
+    if (bytesRead &gt; 0) {
+      // Push only the bytes actually read (slice off any unused bytes)
+      this.push(buffer.subarray(0, bytesRead));
+    } else {
+      // No more data: signal end-of-stream
+      this.push(null);
+    }
+  });
+}</code></pre>
+        </li>
+        <li><span class="emoji">🔚</span>When you call <code>push(null)</code>, Node emits the <code>'end'</code> event on the stream.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Cleanup via <code>_destroy()</code> -->
+    <div class="card">
+      <h2>🧹 Cleanup: <code>_destroy(err, callback)</code></h2>
+      <ul>
+        <li><span class="emoji">⚠️</span>Signature:
+          <pre><code>_destroy(error, callback) {
+  // 1. Close file descriptor if open
+  // 2. Call callback(errOrNull)
+}</code></pre>
+        </li>
+        <li><span class="emoji">🚪</span>Close the file descriptor (if it exists):
+          <pre><code>if (this.fd) {
+  fs.close(this.fd, (closeErr) =&gt; {
+    callback(closeErr || error);
+  });
+} else {
+  callback(error);
+}</code></pre>
+        </li>
+        <li><span class="emoji">🛡️</span>If an error occurred earlier, pass it to <code>callback(error)</code>. Otherwise, pass any <code>closeErr</code> (or <code>null</code>).</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Full Custom Readable Stream Class -->
+    <div class="card">
+      <h2>📦 Full <code>FileReadStream</code> Class</h2>
+      <pre><code>const fs = require('fs');
+const { Readable } = require('stream');
+
+class FileReadStream extends Readable {
+  constructor({ fileName, highWaterMark = 16 * 1024 }) {
+    super({ highWaterMark });
+    this.fileName = fileName;
+    this.fd       = null;  // File descriptor (opened in _construct)
+  }
+
+  // 1. Async setup: open the file before reading
+  _construct(callback) {
+    fs.open(this.fileName, 'r', (err, fd) =&gt; {
+      if (err) return callback(err);
+      this.fd = fd;
+      callback();
+    });
+  }
+
+  // 2. Read requested bytes, push to internal buffer
+  _read(size) {
+    const buffer = Buffer.alloc(size);
+    fs.read(this.fd, buffer, 0, size, null, (err, bytesRead) =&gt; {
+      if (err) {
+        // Signal error: will trigger 'error' on the stream
+        return this.destroy(err);
+      }
+      if (bytesRead &gt; 0) {
+        // Only push the portion actually read
+        this.push(buffer.subarray(0, bytesRead));
+      } else {
+        // End of file: signal EOF
+        this.push(null);
+      }
+    });
+  }
+
+  // 3. Cleanup: close the file descriptor
+  _destroy(err, callback) {
+    if (this.fd) {
+      fs.close(this.fd, (closeErr) =&gt; {
+        callback(closeErr || err);
+      });
+    } else {
+      callback(err);
+    }
+  }
+}
+
+module.exports = FileReadStream;</code></pre>
+    </div>
+
+    <!-- Card 7: Using the Custom Readable Stream -->
+    <div class="card">
+      <h2>🚀 Using <code>FileReadStream</code> to Pipe &amp; Process Data</h2>
+      <ul>
+        <li><span class="emoji">📂</span>Example: Copy a file from source to destination using <code>pipe()</code>:
+          <pre><code>const FileReadStream  = require('./FileReadStream');
+const fs              = require('fs');
+
+// Create custom readable from “source.txt”
+const readStream  = new FileReadStream({ fileName: 'source.txt' });
+// Create built-in write stream to “dest.txt”
+const writeStream = fs.createWriteStream('dest.txt');
+
+console.time('copyTime');
+readStream.pipe(writeStream);
+
+writeStream.on('finish', () =&gt; {
+  console.log('Done copying.');
+  console.timeEnd('copyTime'); // Shows how fast the pipe completed
+});</code></pre>
+        </li>
+        <li><span class="emoji">⚙️</span>Key points:
+          <ul>
+            <li>• <strong>Backpressure:</strong> <code>pipe()</code> handles pause/resume automatically when read buffer fills faster than write can consume.</li>
+            <li>• <strong>Stream Events:</strong> <code>'data'</code> is emitted whenever a chunk is ready; <code>'end'</code> when EOF; <code>'error'</code> if any error occurs.</li>
+            <li>• <strong>Cleanup:</strong> On any error, <code>pipe()</code> will forward the error &amp; you can handle it via <code>readStream.on('error', …)</code> or <code>writeStream.on('error', …)</code>.</li>
+            <li>• <strong>Asynchronous Setup:</strong> <code>_construct()</code> ensures <code>_read</code> won’t run until file is opened.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Best Practices & Key Takeaways -->
+    <div class="card">
+      <h2>📌 Best Practices &amp; Key Takeaways</h2>
+      <ul>
+        <li><span class="emoji">⚠️</span>Do not call or override internal methods (like <code>_read</code>) directly—Node manages them. Implement only the underscored methods documented (<code>_construct</code>, <code>_read</code>, <code>_destroy</code>).</li>
+        <li><span class="emoji">🛡️</span>Error handling: Inside <code>_read</code>, use <code>this.destroy(err)</code> if <code>fs.read</code> fails. Inside <code>_destroy</code>, always call <code>callback(err)</code> so Node knows cleanup is done.</li>
+        <li><span class="emoji">🔚</span>End-of-stream: Push <code>null</code> in <code>_read</code> to signal “no more data,” which triggers the <code>'end'</code> event.</li>
+        <li><span class="emoji">💡</span>Always call <code>callback()</code> (or <code>callback(err)</code>) in <code>_construct</code> and <code>_destroy</code> to avoid hanging streams.</li>
+        <li><span class="emoji">🔍</span>Read Node’s <code>stream</code> docs to learn available options (e.g., <code>encoding</code>, <code>objectMode</code>, <code>highWaterMark</code>) and event names (<code>'data'</code>, <code>'end'</code>, <code>'error'</code>, <code>'close'</code>).</li>
+        <li><span class="emoji">📚</span>Use built-in <code>fs.createReadStream</code> in production unless you need this deep customization; Node’s implementation is battle-tested and optimized.</li>
+        <li><span class="emoji">🚀</span>Once comfortable with custom streams, you can implement more advanced streams (e.g., <code>Duplex</code> and <code>Transform</code>) for encryption, compression, or custom protocol parsing.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

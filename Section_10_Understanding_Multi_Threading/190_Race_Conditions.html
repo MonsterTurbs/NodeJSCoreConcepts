@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🏁 Race Conditions: Beginner-Friendly Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0; padding: 20px; color: #333;
+    }
+    h1 {
+      text-align: center; color: #2a9d8f; margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff; border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px; transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0; color: #264653;
+    }
+    .card ul { padding-left: 20px; }
+    .card li { margin-bottom: 8px; line-height: 1.5; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🏁 Understanding Race Conditions</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>⚡ What Is a Race Condition?</h2>
+      <ul>
+        <li><span class="emoji">🏃‍♂️</span>Occurs when multiple threads/processes read &amp; write the <strong>same data</strong> at once.</li>
+        <li><span class="emoji">❓</span>Final result depends on <em>who writes last</em>—“the winner” of the race.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔍 Example Scenario</h2>
+      <ul>
+        <li><span class="emoji">🔢</span>Start with a shared number = 0.</li>
+        <li><span class="emoji">➕</span>Two threads each do: read, add 1, write back, 500 times.</li>
+        <li><span class="emoji">⚠️</span>Instead of ending at 1000, you get <em>less</em> because reads overlap.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🎯 Critical Section</h2>
+      <ul>
+        <li><span class="emoji">🔐</span>The code block that <strong>reads then writes</strong> shared data is called the <em>critical section</em>.</li>
+        <li><span class="emoji">🚧</span>Must prevent two threads entering it simultaneously.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🐢 Why It Happens</h2>
+      <ul>
+        <li><span class="emoji">⏸️</span>Thread A reads value, gets paused before writing.</li>
+        <li><span class="emoji">🏃</span>Thread B reads the same old value, writes its update.</li>
+        <li><span class="emoji">🔄</span>Thread A resumes and overwrites B’s update—lost increment.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🛠️ Preventing Race Conditions</h2>
+      <ul>
+        <li><span class="emoji">🔒</span><strong>Locks / Mutexes:</strong> Only one thread may enter critical section at a time.</li>
+        <li><span class="emoji">⚙️</span><strong>Atomic Operations:</strong> Read‐modify‐write done as one uninterruptible step.</li>
+        <li><span class="emoji">📋</span>Next lectures: see how <em>Mutex</em> &amp; <em>Atomics</em> work in JavaScript.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Node.js File APIs – Study Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Node.js File APIs – Study Notes</h1>
+  <div class="container">
+
+    <!-- Card 1: Three Ways to Handle Files -->
+    <div class="card">
+      <h2>📂 Three Ways to Handle File Operations</h2>
+      <ul>
+        <li><span class="emoji">🔹</span><strong>Promises API</strong> – Modern and clean to use. Supports <code>async/await</code>.</li>
+        <li><span class="emoji">🔹</span><strong>Callback API</strong> – Traditional method; uses a function that executes when the task completes.</li>
+        <li><span class="emoji">🔹</span><strong>Synchronous API</strong> – Performs operations immediately and blocks other code until finished.</li>
+      </ul>
+      <p><span class="emoji">💡</span>All three produce the same result: <em>working with files</em>. They differ only in how they run behind the scenes.</p>
+    </div>
+
+    <!-- Card 2: Promises API -->
+    <div class="card">
+      <h2>🚀 Promises API</h2>
+      <ul>
+        <li><span class="emoji">✨</span>Uses <code>fs.promises</code>, for example:  
+          <pre style="background: #edf2f7; padding: 8px; border-radius: 4px; overflow-x: auto;">
+<code>await fs.promises.copyFile("source.txt", "dest.txt");</code></pre>
+        </li>
+        <li><span class="emoji">😊</span>Easy to read and write because you can use <code>async/await</code>.</li>
+        <li><span class="emoji">🔄</span>Does not block other parts of your code while waiting for the operation (non-blocking).</li>
+        <li><span class="emoji">👍</span>Recommended for most situations because it is clean and maintainable.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Callback API -->
+    <div class="card">
+      <h2>➿ Callback API</h2>
+      <ul>
+        <li><span class="emoji">🛠️</span>Uses functions like <code>fs.copyFile("source.txt", "dest.txt", (err) =&gt; { … })</code> with a “callback” as the last argument.</li>
+        <li><span class="emoji">⚙️</span>Write code that calls a function when the file operation finishes:</li>
+        <pre style="background: #edf2f7; padding: 8px; border-radius: 4px; overflow-x: auto;">
+<code>fs.copyFile("source.txt", "dest.txt", (err) => {
+  if (err) {
+    console.error("Error:", err);
+  } else {
+    console.log("Copy Complete!");
+  }
+});</code></pre>
+        <li><span class="emoji">⏩</span>Faster than the Promise version in some scenarios—when performance is critical.</li>
+        <li><span class="emoji">⚠️</span>Can lead to “callback hell” if many nested callbacks appear—harder to maintain without proper structure.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Synchronous API -->
+    <div class="card">
+      <h2>⏱️ Synchronous API</h2>
+      <ul>
+        <li><span class="emoji">⌛</span>Uses functions ending in “Sync,” such as <code>fs.copyFileSync("source.txt", "dest.txt")</code>.</li>
+        <li><span class="emoji">🚫</span>Blocks the entire application while the file operation completes—no other code runs during that time.</li>
+        <li><span class="emoji">🔒</span>Useful only in specific cases, like reading a configuration file before the app starts, when you must get data before proceeding.</li>
+        <li><span class="emoji">❗</span>If an error occurs, the entire process stops immediately; there’s no error handling unless you explicitly add it.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: How to Choose? -->
+    <div class="card">
+      <h2>🤔 How to Choose the Right API?</h2>
+      <ul>
+        <li><span class="emoji">1️⃣</span><strong>Promises API</strong> – Use most of the time because it’s easy to read, non-blocking, and handles errors with <code>try/catch</code>.</li>
+        <li><span class="emoji">2️⃣</span><strong>Callback API</strong> – Use when performance is extremely critical. Be cautious of nested callbacks.</li>
+        <li><span class="emoji">3️⃣</span><strong>Synchronous API</strong> – Use only when you truly need to block everything (e.g., reading config before starting the server).</li>
+        <li><span class="emoji">💡</span>In many applications, 90% of the time, the <strong>Promises API</strong> is the most practical and easiest to use.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Key Takeaways & Next Steps -->
+    <div class="card">
+      <h2>🏁 Key Takeaways &amp; Next Steps</h2>
+      <ul>
+        <li><span class="emoji">📌</span>Three methods: Promises (modern), Callbacks (traditional), and Sync (blocking).</li>
+        <li><span class="emoji">📖</span>The Promises API is the easiest to read with <code>async/await</code> and does not block other work.</li>
+        <li><span class="emoji">⚡</span>The Callback API can be fastest in some scenarios but may be hard to read if excessive nesting occurs.</li>
+        <li><span class="emoji">⏳</span>The Sync API is not recommended for normal operation because it freezes the entire application while working with files.</li>
+        <li><span class="emoji">🚀</span>Next, let’s write simple code using <code>fs.promises</code> to read, write, and copy files—see how the flow works without blocking the app. 😊</li>
+      </ul>
+      <p>Happy learning! 📚✨</p>
+    </div>
+
+  </div>
+</body>
+</html>

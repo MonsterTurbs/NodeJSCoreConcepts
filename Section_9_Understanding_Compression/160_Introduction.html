@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🗜️ Compression Basics – Study Notes</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f0f4f8; color:#333; }
+    h1 { text-align:center; margin-bottom:1em; }
+    .container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      max-width:700px;
+      margin:auto;
+    }
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      padding:20px;
+    }
+    .card h2 { margin-top:0; color:#1e3a8a; }
+    ul { padding-left:1.2em; }
+    code { background:#eef; padding:2px 4px; border-radius:4px; }
+    @media print {
+      body { background:#fff; }
+      .card { box-shadow:none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🗜️ Compression Basics</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>🔍 What Is Compression?</h2>
+      <ul>
+        <li>Encoding data using fewer bits (zeros &amp; ones).</li>
+        <li>Reduces file size without changing its content.</li>
+        <li>Two types:
+          <ul>
+            <li><strong>Lossless</strong>: no information lost.</li>
+            <li><strong>Lossy</strong>: some detail dropped (e.g. images, video).</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔒 Lossless vs Lossy</h2>
+      <ul>
+        <li><strong>Lossless</strong>: exact original can be reconstructed.  
+          Examples: text files, gzip, PNG.
+        </li>
+        <li><strong>Lossy</strong>: drops tiny details for smaller size.  
+          Examples: JPEG images, MP3 audio, video codecs.
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🛠️ Node.js zlib Example</h2>
+      <ul>
+        <li>Use built-in <code>zlib</code> module:<br/>
+          <code>zlib.createGzip()</code> to compress,  
+          <code>zlib.createGunzip()</code> to decompress.
+        </li>
+        <li>Stream example:
+          <pre><code>fs.createReadStream('big.txt')
+  .pipe(zlib.createGzip())
+  .pipe(fs.createWriteStream('big.txt.gz'))</code></pre>
+        </li>
+        <li>Gzip is lossless—data restored exactly!</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🚀 Why Compression Matters</h2>
+      <ul>
+        <li><strong>Storage</strong>: smaller files → lower disk costs.</li>
+        <li><strong>Transfer</strong>: less data over network → faster uploads/downloads.</li>
+        <li>Example: 10 GB text → 2 GB gzip (~80% saved!)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📊 Real-World Video Example</h2>
+      <ul>
+        <li>Uncompressed 1080 p 7 min video → 57 GB!</li>
+        <li>Lossy tool („compressor“) → ~100 MB (~500× smaller).</li>
+        <li>Gzip (lossless) → 3.8 GB (~15× smaller) with zero quality loss.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Beginner-Friendly Study Notes – Writable Streams & Backpressure</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Writable Streams & Backpressure</h1>
+  <div class="container">
+
+    <!-- Card 1: Context & Code Setup -->
+    <div class="card">
+      <h2>🔧 Context & Initial Setup</h2>
+      <ul>
+        <li><span class="emoji">🗒️</span>We copied previous code and commented out old solutions to focus on the new writable-stream approach.</li>
+        <li><span class="emoji">💡</span>Stream object was created via <code>fs.createWriteStream('test.txt')</code>, representing the blue “internal buffer” box from slides.</li>
+        <li><span class="emoji">🏷️</span>We saw a memory spike (~200 MB) when writing a million lines without handling backpressure—now we’ll fix that.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Inspecting HighWaterMark & Buffer Length -->
+    <div class="card">
+      <h2>📏 HighWaterMark & Buffer Length</h2>
+      <ul>
+        <li><span class="emoji">🔍</span><code>stream.writableHighWaterMark</code> shows the internal buffer size (default ~16 384 bytes).</li>
+        <li><span class="emoji">⭕</span><code>stream.writableLength</code> shows how many bytes are currently buffered.</li>
+        <li><span class="emoji">📝</span>Before writing, <code>writableLength</code> is 0. After writing a 6-byte buffer, it becomes 6, matching the buffer’s byte length.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Filling the Buffer & Return Value -->
+    <div class="card">
+      <h2>🧱 Filling the Buffer & Return Value</h2>
+      <ul>
+        <li><span class="emoji">⚖️</span>When you call <code>stream.write(buf)</code>, Node pushes that chunk into the internal buffer.</li>
+        <li><span class="emoji">✅</span>If the buffer isn’t yet full (<code>writableLength < highWaterMark</code>), <code>write()</code> returns <code>true</code>.</li>
+        <li><span class="emoji">❌</span>Once <code>writableLength ≥ highWaterMark</code>, <code>write()</code> returns <code>false</code>, signaling that you must wait before writing more.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Allocating a Full-Sized Buffer -->
+    <div class="card">
+      <h2>📦 Allocating a Buffer Equal to highWaterMark</h2>
+      <ul>
+        <li><span class="emoji">🔢</span>We created a buffer with <code>Buffer.alloc(16384)</code> (16 384 bytes) so that writing it fills the buffer exactly.</li>
+        <li><span class="emoji">📊</span>Calling <code>stream.write(fullBuffer)</code> immediately returns <code>false</code> because the buffer becomes full.</li>
+        <li><span class="emoji">⚠️</span>Writing more without waiting would queue extra data in memory, causing spikes & possible crashes.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Listening for 'drain' Event -->
+    <div class="card">
+      <h2>🔄 Handling Backpressure: The 'drain' Event</h2>
+      <ul>
+        <li><span class="emoji">🛑</span>When <code>write()</code> returns <code>false</code>, stop writing to avoid exhausting memory.</li>
+        <li><span class="emoji">📢</span>Listen for <code>stream.on('drain', callback)</code>: once the internal buffer empties (data written to disk), <code>'drain'</code> fires.</li>
+        <li><span class="emoji">✅</span>In <code>'drain'</code> callback, resume writing—now safe to push more chunks into the buffer.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Refactoring Loop with Backpressure Logic -->
+    <div class="card">
+      <h2>⏳ Refactoring Loop: Stop & Resume</h2>
+      <ul>
+        <li><span class="emoji">🔀</span>Moved the write loop into a function (<code>writeMany()</code>), with <code>let i = 0</code> defined outside so it persists across calls.</li>
+        <li><span class="emoji">⚙️</span>Inside <code>writeMany()</code>, use a <code>while (i &lt; 1_000_000)</code> loop and each <code>write()</code> increments <code>i</code>.</li>
+        <li><span class="emoji">❌</span>If <code>stream.write(buf)</code> returns <code>false</code>, <code>break</code> from the loop—then wait for <code>'drain'</code>.</li>
+        <li><span class="emoji">🔄</span>On <code>'drain'</code>, call <code>writeMany()</code> again to continue from the last <code>i</code> value.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Ending the Stream & Timing -->
+    <div class="card">
+      <h2>🏁 Ending the Stream & Measuring Time</h2>
+      <ul>
+        <li><span class="emoji">⏱️</span>We start timing before calling <code>writeMany()</code> with <code>console.time('writeMany')</code>.</li>
+        <li><span class="emoji">🔚</span>Inside the loop, when <code>i === 1_000_000 – 1</code> (last write), call <code>stream.end(buf)</code> to signal no more writes.</li>
+        <li><span class="emoji">🎉</span>Listen for <code>stream.on('finish', …)</code> to know when all data has been flushed; then call <code>console.timeEnd('writeMany')</code> and close the file.</li>
+        <li><span class="emoji">🚀</span>Result: ~300 ms execution, with memory usage ~50 MB (far better than ~200 MB before).</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Memory & Drain Count Explanation -->
+    <div class="card">
+      <h2>📊 Memory & Drain Count Explanation</h2>
+      <ul>
+        <li><span class="emoji">📈</span>Memory monitored in Activity Monitor: drops from ~200 MB to ~50 MB after adding backpressure handling.</li>
+        <li><span class="emoji">🔢</span>Counted <code>'drain'</code> events: 481 times for a 7 MB file divided by 16 384 bytes per chunk (7 MB &div; 16 KB ≈ 481).</li>
+        <li><span class="emoji">🧐</span>Last chunk is smaller than 16 KB so no final drain; total <code>write()</code> calls = 482, drains = 481.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Key Takeaways -->
+    <div class="card">
+      <h2>✅ Key Takeaways</h2>
+      <ul>
+        <li><span class="emoji">🌟</span><strong>Never write unconditionally</strong> once <code>write()</code> returns <code>false</code>; always wait for <code>'drain'</code>.</li>
+        <li><span class="emoji">💧</span><strong>'drain'</strong> indicates the internal buffer has emptied and is safe for new writes.</li>
+        <li><span class="emoji">⚡</span>Properly handling backpressure keeps memory usage low and performance high, even when writing millions of chunks.</li>
+      </ul>
+    </div>
+
+    <!-- Card 10: Next Steps -->
+    <div class="card">
+      <h2>➡️ Next Steps: Readable Streams</h2>
+      <ul>
+        <li><span class="emoji">📖</span>Now that writable streams are clear, we’ll explore <strong>readable streams</strong> (how data is pulled in chunks).</li>
+        <li><span class="emoji">🔄</span>Learn about <code>stream.push()</code>, <code>'data'</code> & <code>'end'</code> events, and how to pipe read streams into write streams.</li>
+        <li><span class="emoji">🎯</span>Mastering both sides (readable & writable) lets you build efficient pipelines (e.g., file copying, transformations, network flows) without overloading memory.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

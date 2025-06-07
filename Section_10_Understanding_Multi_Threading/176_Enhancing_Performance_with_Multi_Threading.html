@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🚀 Enhancing Performance with Multithreading</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f0f4f8; color:#2d3748; }
+    .container { max-width:700px; margin:auto; }
+    .card {
+      background:#fff; border-radius:10px; padding:20px; box-shadow:0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom:20px;
+    }
+    h1 { text-align:center; color:#3182ce; }
+    h2 { color:#2c5282; margin-top:0; }
+    ul { padding-left:1.2em; }
+    li { margin-bottom:0.8em; line-height:1.5; }
+    code { background:#edf2f7; padding:2px 4px; border-radius:4px; font-family:monospace; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>🚀 Enhancing Performance with Multithreading</h1>
+      <h2>Why Multithreading Helps</h2>
+      <ul>
+        <li>💡 <strong>Parallel Execution:</strong> Break heavy tasks (e.g., prime calculation) into threads so multiple CPU cores work simultaneously.</li>
+        <li>⚙️ <strong>Non-blocking Main Thread:</strong> Offload CPU-intensive work to worker threads—keeps your server responsive to new requests.</li>
+        <li>📈 <strong>Speed Gains:</strong> On an <em>n</em>-core machine, up to ~<em>n</em>× faster for parallelizable jobs (minus small overhead).</li>
+      </ul>
+      <h2>Node.js Example</h2>
+      <pre><code>const { Worker } = require('worker_threads');
+
+// In main.js
+app.get('/compute', (req, res) => {
+  const worker = new Worker('./heavy-task.js');
+  worker.on('message', result =&gt; res.json({ result }));
+});</code></pre>
+      <h2>Key Tips 👍</h2>
+      <ul>
+        <li>🔍 <strong>Measure First:</strong> Benchmark single-thread time before adding threads.</li>
+        <li>🛠️ <strong>Choose Tasks Wisely:</strong> Use threads for CPU-bound work. I/O remains async.</li>
+        <li>🧠 <strong>Watch Overhead:</strong> Too many threads add context-switch costs and memory use.</li>
+        <li>🔄 <strong>Graceful Shutdown:</strong> Ensure threads exit cleanly to avoid resource leaks.</li>
+      </ul>
+      <p>✨ With threading, your Node.js app can stay fast and scalable under heavy computation!</p>
+    </div>
+  </div>
+</body>
+</html>

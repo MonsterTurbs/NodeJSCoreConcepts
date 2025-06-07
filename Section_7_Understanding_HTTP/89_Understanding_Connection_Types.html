@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTTP Connection Lifecycle – Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.5;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
+      max-width: 640px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .emoji {
+      font-size: 1.4em;
+      margin-right: 8px;
+    }
+    code {
+      background: #f4f4f4;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">⚡️</span>Reusing TCP Connections</h2>
+    <p>
+      After a client sends an HTTP request and the server responds:<br>
+      • You can <strong>close</strong> the TCP connection (default in HTTP/1.0).<br>
+      • Or <strong>keep it alive</strong> for more requests (HTTP/1.1+).
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔄</span><code>Connection</code> Header</h2>
+    <p>
+      Control the TCP connection behavior with the <code>Connection</code> header:
+    </p>
+    <ul>
+      <li><code>Connection: close</code> → close socket after response</li>
+      <li><code>Connection: keep-alive</code> → keep socket open for more requests</li>
+    </ul>
+    <p>
+      HTTP/2 &amp; HTTP/3 are persistent by default and ignore this header.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">💾</span>Caching Responses</h2>
+    <p>
+      Browsers and servers can <strong>cache</strong> responses (e.g. CSS, images).<br>
+      • Saves a copy locally (disk or memory).<br>
+      • Next request for the same resource can be served without a new HTTP round-trip.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">⏱️</span>Why Keep-Alive Matters</h2>
+    <p>
+      Modern webpages often send <strong>hundreds of requests</strong> for HTML, CSS, JS, images…<br>
+      • Each new TCP handshake costs milliseconds.<br>
+      • Reusing connections adds up to <strong>seconds saved</strong> in page load time.
+    </p>
+    <p>
+      Check in browser DevTools ▶️ Network tab to see how many requests and whether connections stay open.
+    </p>
+  </div>
+
+</body>
+</html>

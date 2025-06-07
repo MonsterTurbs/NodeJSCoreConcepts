@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>📚 C-Part Pathways &amp; Setup Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7fafc;
+      margin: 0; padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2b6cb0;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c5282;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    pre {
+      background: #edf2f7;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code {
+      background: #e2e8f0;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📚 C-Part Pathways &amp; Setup</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>🤔 Why Learn C?</h2>
+      <ul>
+        <li>🔹 Unix &amp; Linux are written in C</li>
+        <li>🔹 Core developer tools (Node.js, databases) use C</li>
+        <li>🔹 Deepen OS &amp; memory understanding</li>
+        <li>🔹 Boost your skills as a software engineer</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>🚦 Four Learning Paths</h2>
+      <ol>
+        <li>✅ Comfortable with C → jump to “C port” lecture</li>
+        <li>🔄 Need C refresh → watch learning-C videos</li>
+        <li>❌ Skip C code, but install compiler → download C &amp; Node solutions</li>
+        <li>🚫 No C at all → skip C &amp; compiler steps, use Node version</li>
+      </ol>
+      <p><em>Tip: If under 1 year JS experience, skip C to avoid confusion.</em></p>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>🛠 Installing on macOS</h2>
+      <p>Most Macs already include GCC &amp; make. If missing:</p>
+      <pre><code>xcode-select --install</code></pre>
+      <p>Runs Apple’s Command-Line Tools installer (includes <code>gcc</code> &amp; <code>make</code>).</p>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>🐧 Installing on Ubuntu/Linux</h2>
+      <p>Update &amp; install build tools:</p>
+      <pre><code>sudo apt update
+sudo apt upgrade
+sudo apt autoremove -y
+sudo apt install build-essential</code></pre>
+      <p><em>Or install minimal:</em></p>
+      <pre><code>sudo apt install gcc make</code></pre>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>✅ Verify Installation</h2>
+      <ul>
+        <li><code>gcc</code> → “no input files” (not “command not found”)</li>
+        <li><code>make</code> → “No targets specified”</li>
+      </ul>
+      <p>If errors appear, fix before proceeding.</p>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2>🔗 Next Steps</h2>
+      <ul>
+        <li>If coding in C → start “Building Massive Communication app (C port)”</li>
+        <li>If skipping C → jump to “Only watch if you skipped C part” and use Node code</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

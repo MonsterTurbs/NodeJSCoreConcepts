@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>👩‍💻 Quick Guide: Worker Threads in Node.js</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#eef2f7; color:#2d3748; }
+    h1 { text-align:center; color:#1a365d; margin-bottom:1em; }
+    .container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      max-width:700px;
+      margin:auto;
+    }
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.1);
+      padding:20px;
+    }
+    .card h2 { margin-top:0; color:#2b6cb0; }
+    ul { margin:0; padding-left:1.2em; }
+    li { margin-bottom:0.6em; }
+    code { background:#f1f5f9; padding:2px 4px; border-radius:4px; font-family:monospace; }
+    @media print { .card { box-shadow:none; } }
+  </style>
+</head>
+<body>
+  <h1>👩‍💻 Fast‐Track: Worker Threads in Node.js</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>🔍 Who Is This For?</h2>
+      <ul>
+        <li><span>🛠️</span>Advanced multithreading devs switching to Node.</li>
+        <li><span>⚡</span>Want just syntax &amp; API cheatsheet—no deep theory.</li>
+        <li><span>⏭️</span>If you’re new or intermediate, skip this—follow full module.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🚀 Spawning a Worker</h2>
+      <ul>
+        <li>Import: <code>const { Worker } = require('worker_threads')</code></li>
+        <li>Start: <code>new Worker('path/to/file.js')</code></li>
+        <li>Send data:<br/>
+          <code>worker.postMessage(data)</code>
+        </li>
+        <li>Receive data:<br/>
+          <code>worker.on('message', msg => {…})</code>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔗 MessageChannel &amp; SharedArrayBuffer</h2>
+      <ul>
+        <li><code>MessageChannel</code> &amp; <code>MessagePort</code> for multi-port comms.</li>
+        <li><code>SharedArrayBuffer</code> + <code>Atomics</code> for shared memory.</li>
+        <li>Manual layout: break objects into TypedArrays or Buffers.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>⚠️ Sync Issues: Atomics &amp; Locks</h2>
+      <ul>
+        <li>Use <code>Atomics.wait</code> &amp; <code>Atomics.notify</code> to block/resume threads.</li>
+        <li>Build mutexes/semaphores with <code>Atomics.compareExchange</code>, <code>Atomics.add</code>.</li>
+        <li>Avoid race conditions &amp; deadlocks—test heavily!</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📚 Must-Read API Docs</h2>
+      <ul>
+        <li>Node.js Worker Threads docs — syntax &amp; examples.</li>
+        <li>“Shared memory” section in source for implementation details.</li>
+        <li>Atomics on MDN — complete list of atomic ops.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🎓 Recommended Deep-Dives</h2>
+      <ul>
+        <li>Main thread &amp; event-loop interaction</li>
+        <li>Node.js thread-pool operations (fs, zlib, crypto)</li>
+        <li>Examples: race conditions, mutexes, worker pools</li>
+        <li>Advanced: Native addons (C/C++) for max speed</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

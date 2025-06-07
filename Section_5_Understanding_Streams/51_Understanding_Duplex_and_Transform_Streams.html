@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📝 Study Notes – Custom Duplex & Transform Streams</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji { margin-right: 6px; }
+    pre {
+      background-color: #eef2f7;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    @media print {
+      body { background-color: #fff; color: #000; }
+      .card { box-shadow: none; margin-bottom: 20px; }
+      pre { background-color: transparent; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Duplex & Transform Streams</h1>
+  <div class="container">
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>📦 What is a Duplex Stream?</h2>
+      <ul>
+        <li><span class="emoji">🔀</span>A <strong>duplex</strong> stream can <em>read</em> and <em>write</em> data independently.</li>
+        <li><span class="emoji">🛠️</span>It has two internal buffers: one for readable data and one for writable data.</li>
+        <li><span class="emoji">⚙️</span>You implement <code>_read()</code> for reading and <code>_write()</code> for writing.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>🔍 Key Duplex Concepts</h2>
+      <ul>
+        <li><span class="emoji">📚</span>No multiple inheritance in JavaScript, so Node provides <code>Duplex</code> class.</li>
+        <li><span class="emoji">🔒</span>Readable and writable parts are totally separate—it can read from one source and write to another.</li>
+        <li><span class="emoji">🔄</span>Example: Read from <code>read.txt</code> and write to <code>write.txt</code>, or even different destinations like network sockets.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>✏️ Implementing a Custom Duplex</h2>
+      <ul>
+        <li><span class="emoji">📥</span><code>_construct(cb)</code>: Open both read and write file descriptors before use.</li>
+        <li><span class="emoji">📤</span><code>_write(chunk, encoding, cb)</code>: Append incoming chunks to writable buffer.</li>
+        <li><span class="emoji">📥</span><code>_read(size)</code>: Pull data from readable buffer and <code>push()</code> to consumer.</li>
+        <li><span class="emoji">🧹</span><code>_destroy(err, cb)</code>: Clean up resources (e.g., close files) and call callback.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>🚀 Using Your Duplex Stream</h2>
+      <ul>
+        <li><span class="emoji">⚡</span>Create instance: <code>new DuplexStream({ readFile, writeFile, readableHighWaterMark, writableHighWaterMark })</code>.</li>
+        <li><span class="emoji">🖊️</span>Write: <code>duplex.write(Buffer.from("hello"))</code> and end with <code>duplex.end()</code>.</li>
+        <li><span class="emoji">👂</span>Read: <code>duplex.on('data', chunk =&gt; console.log(chunk.toString()))</code>.</li>
+        <li><span class="emoji">🔄</span>Readable and writable operations run in parallel.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>🔄 Transform Streams</h2>
+      <ul>
+        <li><span class="emoji">🔧</span>A <strong>transform</strong> stream extends <code>Duplex</code>, piping its write data into its read buffer.</li>
+        <li><span class="emoji">🔄</span>You implement <code>_transform(chunk, encoding, cb)</code> to modify data.</li>
+        <li><span class="emoji">💡</span>Common use: encryption, compression, or simple pass-through (<em>PassThrough</em>).</li>
+      </ul>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2>📌 Best Practices</h2>
+      <ul>
+        <li><span class="emoji">⚠️</span>Only implement underscored methods: <code>_construct</code>, <code>_read</code>, <code>_write</code>, <code>_transform</code>, <code>_destroy</code>.</li>
+        <li><span class="emoji">🛡️</span>Always call callbacks: <code>cb()</code> or <code>cb(err)</code> to avoid hanging streams.</li>
+        <li><span class="emoji">📚</span>Use Node’s built-in streams unless you need deep customization.</li>
+        <li><span class="emoji">🚀</span>Explore <code>Duplex</code> and <code>Transform</code> for advanced scenarios like protocol parsing.</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

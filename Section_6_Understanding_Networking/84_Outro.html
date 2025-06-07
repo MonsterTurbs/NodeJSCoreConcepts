@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Networking Recap – Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.5;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .emoji {
+      font-size: 1.3em;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">🌐</span>IP Addresses</h2>
+    <p>Every device on a network needs a unique address:</p>
+    <ul>
+      <li><strong>IPv4:</strong> 32-bit, ~4 billion addresses, dotted-decimal (e.g. 192.168.0.1)</li>
+      <li><strong>IPv6:</strong> 128-bit, huge space, hex notation (e.g. <code>2001:db8::1</code>)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🏠</span>Subnet &amp; Routing</h2>
+    <p>Addresses split into:</p>
+    <ul>
+      <li><strong>Network portion:</strong> which LAN you’re on</li>
+      <li><strong>Host portion:</strong> which device</li>
+    </ul>
+    <p>Routers use network bits to forward packets between LANs.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔍</span>DNS (Domain Name System)</h2>
+    <p>Humans use names (e.g. google.com), computers use IPs. DNS servers map:</p>
+    <pre><code>your-app.com ↔ 203.0.113.42</code></pre>
+    <p>Lookup process:</p>
+    <ol>
+      <li>Your computer → DNS server</li>
+      <li>DNS returns IP</li>
+      <li>Your app connects to IP</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔗</span>TCP vs. UDP</h2>
+    <table>
+      <tr><th>Feature</th><th>TCP</th><th>UDP</th></tr>
+      <tr><td>Connection</td><td>Yes (handshake)</td><td>No</td></tr>
+      <tr><td>Reliability</td><td>Acks, retransmit</td><td>No guarantees</td></tr>
+      <tr><td>Use cases</td><td>Web, file transfer</td><td>Streaming, gaming</td></tr>
+      <tr><td>Header size</td><td>Large</td><td>Small</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">💻</span>Node.js Tools</h2>
+    <ul>
+      <li><code>net</code> module ⇒ build TCP servers/clients</li>
+      <li><code>dgram</code> module ⇒ build UDP sockets</li>
+      <li><code>fs</code> + streams ⇒ read/write files, handle back-pressure</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🚀</span>Going Further</h2>
+    <p>You now understand low-level networking. In the next section, we’ll dive into HTTP—  
+    the high-level protocol that handles much of this work for you. Get ready to build on your foundation!</p>
+  </div>
+
+</body>
+</html>

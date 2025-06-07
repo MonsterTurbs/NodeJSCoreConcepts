@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Key Derivation Functions (KDF) 🔑</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      padding: 15px 20px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .emoji {
+      font-size: 1.3em;
+      margin-right: 6px;
+    }
+    code {
+      background: #eef2f5;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    pre {
+      background: #eef2f5;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">🛣️</span>Roadmap Problem</h2>
+    <p>We need to derive strong keys (AES, RSA) from simple passwords or small PINs, and also securely hash user passwords before storing. 💾🔐</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔑</span>What Is a KDF?</h2>
+    <p>A <strong>Key Derivation Function</strong> takes a low‐entropy secret (like a password) plus a random <em>salt</em> and produces a high‐entropy key. It’s slow by design to resist brute‐force. 🐢</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🧩</span>PBKDF2</h2>
+    <p><strong>Password-Based Key Derivation Function 2</strong> is widely used (iOS, macOS, password managers).</p>
+    <pre><code>crypto.pbkdf2(
+  password, 
+  salt, 
+  iterations, 
+  keyLen, 
+  'sha512',
+  (err, derivedKey) => {
+    // use derivedKey (Buffer)
+  }
+);</code></pre>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🌊</span>Salt & Iterations</h2>
+    <ul>
+      <li><strong>Salt</strong> – random bytes (e.g. <code>crypto.randomBytes(16)</code>) 💧</li>
+      <li><strong>Iterations</strong> – how many hash rounds (e.g. 100 000) 🔄</li>
+      <li>Higher = slower but stronger vs. brute‐force</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📏</span>Key Length & Digest</h2>
+    <ul>
+      <li><strong>keyLen</strong> – desired byte length (e.g. 32 bytes for AES-256)</li>
+      <li><strong>digest</strong> – hashing algorithm (“sha256” or “sha512”) 🛡️</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">💻</span>Demo Code</h2>
+    <pre><code>const crypto = require('crypto');
+const password   = 'myPassword';
+const salt       = crypto.randomBytes(16);
+const iterations = 100000;
+const keyLen     = 32;            // 256 bits
+const digest     = 'sha512';
+
+crypto.pbkdf2(password, salt, iterations, keyLen, digest, (err, key) => {
+  if (err) throw err;
+  console.log('Derived key:', key.toString('hex'));
+  console.log('Salt:', salt.toString('hex'));
+});</code></pre>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🌟</span>Other KDFs to Know</h2>
+    <ul>
+      <li><strong>scrypt</strong> – better for weak passwords 🚀</li>
+      <li><strong>HKDF</strong> – HMAC-based KDF, good for protocol keys 🔗</li>
+      <li><strong>Argon2</strong> – winner of the 2015 password hash contest 🥇</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📂</span>Storing Passwords</h2>
+    <p>Use a KDF (e.g. PBKDF2 or Argon2) + unique salt for each user. Store <em>both</em> derived hash + salt. On login, re-derive and compare. No plain SHA‐256 please! 🚫🔓</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">➡️</span>Next Steps</h2>
+    <p>With KDFs in hand, next we’ll tackle <strong>secure key exchange</strong> using asymmetric cryptography. Stay tuned! 🌐🔐</p>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Node.js &amp; HTTP Docs – Study Notes</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .card {
+      border: 1px solid #ddd; border-radius: 8px;
+      padding: 16px; margin-bottom: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      max-width: 800px;
+    }
+    .card h2 { margin-top: 0; font-size: 1.2em; }
+    .emoji { font-size: 1.4em; margin-right: 6px; }
+    code { background: #f9f9f9; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">📚</span>HTTP Module Variants</h2>
+    <ul>
+      <li><strong>http</strong> – basic HTTP/1.1 (we use this)</li>
+      <li><strong>http2</strong> – HTTP/2 (later)</li>
+      <li><strong>https</strong> – HTTP over TLS (later)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔍</span>Key Node.js HTTP Objects</h2>
+    <p>Two “modes”: <strong>Server</strong> vs <strong>Client</strong></p>
+    <h3>Server side</h3>
+    <ul>
+      <li><code>http.createServer()</code> → <code>HttpServer</code></li>
+      <li><code>HttpServerResponse</code> – the outgoing response message</li>
+      <li><code>IncomingMessage</code> – request streamed in</li>
+    </ul>
+    <h3>Client side</h3>
+    <ul>
+      <li><code>http.request()</code> → <code>ClientRequest</code></li>
+      <li><code>Agent</code> – manages underlying TCP connections</li>
+      <li><code>IncomingMessage</code> – response streamed in</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">⚙️</span>Streams, Not Buffers</h2>
+    <p>Node says: “never buffer entire requests or responses.”<br>
+      ● Body comes in via streams (<code>‘data’</code>, <code>‘end’</code>), not as one giant Buffer.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🗂️</span>Docs: Mozilla HTTP Guide</h2>
+    <ul>
+      <li><strong>HTTP</strong> at application layer, stateless protocol</li>
+      <li>Core concepts: requests, responses, headers, methods, URLs, status codes</li>
+      <li>Headers = conventions (caching, compression, auth, CORS, etc.)</li>
+      <li>URLs structure: <code>scheme://host:port/path?query#fragment</code></li>
+      <li>Learn MIME types, compression, caching, cookies, CORS, etc.</li>
+    </ul>
+  </div>
+
+</body>
+</html>

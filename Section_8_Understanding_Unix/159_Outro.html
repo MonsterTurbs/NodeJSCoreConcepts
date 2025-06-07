@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🎉 Unix Mastery: Next Steps – Study Notes</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f0f4f8; color:#333; }
+    h1 { text-align:center; margin-bottom:1em; }
+    .container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      max-width:700px;
+      margin:auto;
+    }
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      padding:20px;
+    }
+    .card h2 { margin-top:0; color:#1e3a8a; }
+    ul { padding-left:1.2em; }
+    @media print {
+      body { background:#fff; }
+      .card { box-shadow:none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎉 Unix Mastery: Next Steps</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>🔑 Section Recap</h2>
+      <ul>
+        <li>Learned Unix basics: <em>streams, process</em>, <em>cluster</em>, <em>IPC</em>.</li>
+        <li>Built a video-editor API: upload, thumbnail, audio, resize with <code>ffmpeg</code> and job queue.</li>
+        <li>Discovered how to spawn & communicate with external tools from Node.js.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🛠️ Other Powerful CLI Tools</h2>
+      <ul>
+        <li><strong>ImageMagick</strong> – image convert/resize/crop:<br/>
+          <code>convert input.heic output.jpg</code>,<br/>
+          <code>convert input.jpg -resize 800x600 out.jpg</code></li>
+        <li><strong>Poppler-utils</strong> – PDF merge/text extract:<br/>
+          <code>pdfunite a.pdf b.pdf merged.pdf</code>,<br/>
+          <code>pdftotext file.pdf out.txt</code></li>
+        <li><strong>OpenCV</strong> (via Python) – face-detect, vision:<br/>
+          draws boxes around faces using <code>cv2</code>.</li>
+        <li><strong>Whisper</strong> – speech→text in Python:<br/>
+          transcribe audio to text with ML.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🚀 Extend Your Unix Skills</h2>
+      <ul>
+        <li>📝 <strong>Vim</strong> – ultra-fast terminal editor. Learn a few key shortcuts!</li>
+        <li>💻 <strong>C Programming</strong> – many Unix tools are written in C. Deepen your understanding.</li>
+        <li>🐚 <strong>Bash Scripting</strong> – automate tasks, loops, conditionals, functions.</li>
+        <li>🔍 <strong>Regex</strong> – pattern matching for routing, logs, text processing.</li>
+        <li>🛠️ <strong>Linux Sysadmin</strong> – users, services, monitoring, security.</li>
+        <li>🔎 <strong>More CLI Commands</strong> – focus on <code>grep</code> &amp; <code>awk</code>, plus 50+ others.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📝 Study Notes: Basic Networking & TCP Server in Node.js</title>
+  <style>
+    body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; margin:0; padding:20px; color:#2d3748; }
+    h1 { text-align:center; color:#2c5282; margin-bottom:30px; }
+    .container { display:grid; grid-template-columns:1fr; gap:20px; }
+    .card { background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); padding:20px; transition:transform .2s; }
+    .card:hover { transform:translateY(-4px); box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+    .card h2 { font-size:1.3rem; margin-bottom:12px; color:#2c5282; }
+    .card ul { list-style:none; padding-left:0; }
+    .card li { margin-bottom:10px; line-height:1.6; }
+    .emoji { margin-right:6px; }
+    pre { background:#eef2f7; padding:10px; border-radius:4px; overflow-x:auto; }
+    @media print { body { background:#fff; color:#000; } .card { box-shadow:none; margin-bottom:20px; } pre { background:transparent; } }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Networking & TCP Server in Node.js</h1>
+  <div class="container">
+    <!-- ... previous cards omitted for brevity ... -->
+
+    <!-- New Card: Creating a Simple TCP Server -->
+    <div class="card">
+      <h2>🖥️ Simple TCP Server Setup</h2>
+      <ul>
+        <li><span class="emoji">📁</span>Create folder <code>networking</code>, then file <code>simple-server.js</code>.</li>
+        <li><span class="emoji">📦</span>Import module: <pre><code>const net = require('net');</code></pre></li>
+        <li><span class="emoji">🚀</span>Make server:<pre><code>const server = net.createServer(socket =&gt; {
+  socket.on('data', data =&gt; {
+    console.log(data.toString('utf8'));
+  });
+});
+server.listen(3099, '127.0.0.1', () =&gt; {
+  console.log('Server listening on', server.address());
+});</code></pre></li>
+        <li><span class="emoji">🔗</span>Run with <code>node simple-server.js</code>. It listens on port <code>3099</code> of loopback.</li>
+      </ul>
+    </div>
+
+    <!-- New Card: Sending Data to TCP Server -->
+    <div class="card">
+      <h2>📨 Simple TCP Client (Sender)</h2>
+      <ul>
+        <li><span class="emoji">📦</span>In <code>simple-sender.js</code>, import same module and connect:</li>
+        <pre><code>const net = require('net');
+const client = net.createConnection({ host:'127.0.0.1', port:3099 }, () =&gt; {
+  client.write('Hello from sender!');
+});</code></pre>
+        <li><span class="emoji">▶️</span>Run after server: <code>node simple-sender.js</code>. Server logs the message.</li>
+        <li><span class="emoji">🔄</span>Socket is a duplex stream: you can <code>socket.on('data')</code> and <code>socket.write()</code>.</li>
+      </ul>
+    </div>
+
+    <!-- New Card: Viewing Packets in Wireshark -->
+    <div class="card">
+      <h2>🔍 Inspecting with Wireshark</h2>
+      <ul>
+        <li><span class="emoji">💻</span>Open Wireshark and select interface <code>Loopback</code> for <code>127.0.0.1</code>.</li>
+        <li><span class="emoji">⚡</span>Run server & sender, then stop capture to view packets.</li>
+        <li><span class="emoji">📑</span>Look for Protocol <code>TCP</code> and Port <code>3099</code>.</li>
+        <li><span class="emoji">📊</span>Right-click a packet &gt; Follow &gt; TCP Stream to see payload.</li>
+        <li><span class="emoji">🔎</span>Expand layers: Frame &gt; Ethernet II &gt; Internet Protocol &gt; TCP to view headers.</li>
+      </ul>
+    </div>
+
+    <!-- New Card: Observing Packet Details -->
+    <div class="card">
+      <h2>🔧 Packet Details Explained</h2>
+      <ul>
+        <li><span class="emoji">📐</span>Frame length includes headers + data (often > payload size).</li>
+        <li><span class="emoji">📝</span>Headers contain source/destination MAC, IP, ports, sequence numbers.</li>
+        <li><span class="emoji">📶</span>Actual data appears under TCP payload in hex and ASCII.</li>
+        <li><span class="emoji">💡</span>Activity Monitor shows only payload bytes, not header overhead.</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

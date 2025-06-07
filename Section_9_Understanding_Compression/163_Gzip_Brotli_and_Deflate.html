@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🛠️ Trying gzip, Brotli & Deflate – Study Notes</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f3f4f6; color:#333; }
+    h1 { text-align:center; margin-bottom:1em; color:#1e3a8a; }
+    .container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      max-width:700px;
+      margin:auto;
+    }
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      padding:20px;
+    }
+    .card h2 { margin-top:0; color:#0f5132; }
+    ul { padding-left:1.2em; }
+    code { background:#eef; padding:2px 4px; border-radius:4px; }
+    @media print {
+      body { background:#fff; }
+      .card { box-shadow:none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🛠️ Benchmarking gzip, Brotli & Deflate</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>🔗 zlib & Brotli Dependencies</h2>
+      <ul>
+        <li>Node’s <code>zlib</code> module wraps two C‐libs: <code>zlib</code> (gzip/deflate) and <code>brotli</code> 💪</li>
+        <li>Use <code>zlib.createGzip()</code>, <code>zlib.createDeflate()</code> and <code>zlib.createBrotliCompress()</code> streams</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📑 Benchmark Script</h2>
+      <ul>
+        <li>Loop over a <code>files/</code> folder, compress each with <strong>gzip</strong>, <strong>deflate</strong> or <strong>Brotli</strong> 🔄</li>
+        <li>Measure time (via <code>performance.now()</code>) and ratio (<code>origSize ÷ newSize</code>) 📊</li>
+        <li>Play with options:  
+          <ul>
+            <li><code>level</code> / <code>quality</code> (1–9 or 0–11) → speed ↔ ratio ⚖️</li>
+            <li><code>windowBits</code> → memory/trade-off 🔍</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>⚖️ Results & Trade-Offs</h2>
+      <ul>
+        <li><strong>Repetitive data</strong> (AAAA…) → huge ratios (×1000+) but simple custom method could beat all ❕</li>
+        <li><strong>Unique data</strong> (ABCD…) → compressing can enlarge it → skip compression 🚫</li>
+        <li><strong>JSON/text</strong> often compresses (×4–5) in ms → worthwhile 👍</li>
+        <li><strong>Speed vs ratio:</strong> more CPU → better shrink, but costs time → pick balance for your app ⏱️</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>💡 Default Advice</h2>
+      <ul>
+        <li>For a simple web server: use <code>gzip</code> with default options (broad browser support) 🌐</li>
+        <li>For heavy traffic or large assets: benchmark your real data, tune <code>level</code>/<code>quality</code> and consider Brotli 💼</li>
+        <li>Always test on single-core basis to compare true CPU cost &amp; latency ⚙️</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

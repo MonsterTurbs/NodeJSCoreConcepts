@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Node Versions &amp; NVM – Beginner-Friendly Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8fafc;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #1abc9c;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🛠️ Node Versions &amp; NVM – Beginner-Friendly Study Notes</h1>
+  <div class="container">
+    <!-- Card 1: Overview -->
+    <div class="card">
+      <h2>👋 Welcome &amp; Overview</h2>
+      <ul>
+        <li><span class="emoji">🐢</span>This video explains all the different Node.js versions (LTS vs. Current).</li>
+        <li><span class="emoji">⚡</span>Learn about NVM (Node Version Manager) to switch Node versions easily.</li>
+        <li><span class="emoji">🎯</span>By the end, you’ll know:
+          <ul>
+            <li>What “LTS” (Long Term Support) means</li>
+            <li>How to check Node’s release schedule</li>
+            <li>How to install, switch, and set default Node versions with NVM</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Node Version Types -->
+    <div class="card">
+      <h2>🔍 Node Version Types</h2>
+      <ul>
+        <li><span class="emoji">📦</span><strong>LTS (Long Term Support)</strong>
+          <ul>
+            <li>Even-numbered versions (e.g., v18, v20, v22)</li>
+            <li>Stable for production; supported for ~30 months</li>
+            <li>Receive critical bug fixes and security patches</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🚀</span><strong>Current (Latest)</strong>
+          <ul>
+            <li>Gets new features first</li>
+            <li>Supported for ~6 months only</li>
+            <li>Good for experimentation, not recommended for production</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🗓️</span>Check support dates:
+          <ul>
+            <li>On <code>nodejs.org</code> → “Release Schedule” or “Previous Releases”</li>
+            <li>Example: v20 (Iron) is active LTS until April 2026</li>
+            <li>Next LTS: v22 (supports ~30 months starting April 2024)</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Release Schedule & Impact -->
+    <div class="card">
+      <h2>📅 Release Schedule &amp; Impact</h2>
+      <ul>
+        <li><span class="emoji">🔢</span>Versions and Support:
+          <ul>
+            <li><strong>v18</strong> (Hydrogen) – supported until April 2025</li>
+            <li><strong>v20</strong> (Iron) – supported until April 2026</li>
+            <li><strong>v22</strong> (NextIron) – begins April 2024, supported ~30 months</li>
+          </ul>
+        </li>
+        <li><span class="emoji">✅</span>Production apps → always use <strong>Active LTS</strong> or <strong>Maintenance LTS</strong>.</li>
+        <li><span class="emoji">🔜</span>When support ends for your version (e.g., April 2025 for v18), plan to upgrade to newer LTS (v20 or v22).</li>
+        <li><span class="emoji">🔗</span>Visit <code>nodejs.org</code> → “Release Schedule” for details on every release’s timeline.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Introduction to NVM -->
+    <div class="card">
+      <h2>🧰 What Is NVM?</h2>
+      <ul>
+        <li><span class="emoji">💡</span>NVM = Node Version Manager</li>
+        <li><span class="emoji">🎯</span>Allows installing multiple Node versions side-by-side</li>
+        <li><span class="emoji">🔄</span>Switch versions instantly with a single command</li>
+        <li><span class="emoji">🌍</span>Works on macOS &amp; Linux (Windows alternative: nvm-windows)</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: NVM – Listing & Installing -->
+    <div class="card">
+      <h2>📥 Listing &amp; Installing Versions</h2>
+      <ul>
+        <li><span class="emoji">📃</span><code>nvm ls</code> → List installed versions and show available LTS/Current</li>
+        <li><span class="emoji">🔍</span><code>nvm ls-remote</code> → Display all remote versions you can install</li>
+        <li><span class="emoji">⬇️</span>Install a specific version:
+          <ul>
+            <li><code>nvm install 20</code> → Installs latest v20.x.x (e.g., v20.9.0)</li>
+            <li><code>nvm install 14.20.1</code> → Installs exactly v14.20.1</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔍</span>Installed versions stored under <code>~/.nvm/versions/node/</code></li>
+        <li><span class="emoji">🔢</span>Each installed Node version has its own npm (e.g., v14 uses npm 6, v20 uses npm 10).</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Switching & Default Version -->
+    <div class="card">
+      <h2>🔄 Switching Versions &amp; Defaults</h2>
+      <ul>
+        <li><span class="emoji">🎛️</span><code>nvm use 16</code> → Switches your shell to Node v16 (e.g., v16.16.0)</li>
+        <li><span class="emoji">📦</span>Verify with <code>node -v</code> and <code>npm -v</code></li>
+        <li><span class="emoji">⭐</span>Set a default version:
+          <ul>
+            <li><code>nvm alias default 20</code> → New shells load Node v20 by default</li>
+            <li>After closing terminal or opening new tab, <code>node -v</code> shows default version</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🗑️</span>Uninstall an old version:
+          <ul>
+            <li><code>nvm uninstall 20.4.0</code> → Removes that exact version</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Real-World Example – Per-Project Versions -->
+    <div class="card">
+      <h2>📂 Per-Project Node Versions</h2>
+      <ul>
+        <li><span class="emoji">📁</span>Imagine two projects on your desktop:
+          <ul>
+            <li><code>~/Desktop/project-1</code> (uses Node v18)</li>
+            <li><code>~/Desktop/project-2</code> (uses Node v20)</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📄</span>Create a <code>.nvmrc</code> file inside each project:
+          <ul>
+            <li><code>cd ~/Desktop/project-1</code><br /><code>echo "18" &gt; .nvmrc</code> (specifies “18”)</li>
+            <li><code>cd ~/Desktop/project-2</code><br /><code>echo "20" &gt; .nvmrc</code> (specifies “20”)</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🚀</span>Now, whenever you enter a project folder and run <code>nvm use</code> (with no version), NVM:
+          <ul>
+            <li>Reads <code>.nvmrc</code> → sees “18” or “20”</li>
+            <li>Automatically switches to that Node version</li>
+          </ul>
+        </li>
+        <li><span class="emoji">👍</span>This ensures each project always runs on its correct Node version, preventing conflicts.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Upgrading Node Versions -->
+    <div class="card">
+      <h2>⬆️ Upgrading Node Versions</h2>
+      <ul>
+        <li><span class="emoji">🔄</span>To upgrade from v20.4.0 → latest v20.x.x:
+          <ul>
+            <li><code>nvm install 20.9.0</code> → Installs newest v20.9.0</li>
+            <li><code>nvm uninstall 20.4.0</code> → Removes old v20.4.0</li>
+            <li><code>nvm alias default 20.9.0</code> → Set new default</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📥</span>Verify installed versions again with <code>nvm ls</code></li>
+        <li><span class="emoji">⚠️</span>When upgrading, test your project thoroughly—some code may break on newer Node versions.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Tips & Recap -->
+    <div class="card">
+      <h2>🌟 Tips &amp; Recap</h2>
+      <ul>
+        <li><span class="emoji">🔑</span>Always pick the right Node version for your project:
+          <ul>
+            <li>Production → use Active LTS (even-numbered) or Maintenance LTS</li>
+            <li>Experimentation → can try Current versions (odd-numbered during active period)</li>
+          </ul>
+        </li>
+        <li><span class="emoji">⚙️</span>Key NVM commands:
+          <ul>
+            <li><code>nvm ls</code>: show installed versions</li>
+            <li><code>nvm ls-remote</code>: show all available remote versions</li>
+            <li><code>nvm install &lt;version&gt;</code>: install version (e.g., “18”, “20.9.0”)</li>
+            <li><code>nvm use &lt;version&gt;</code>: switch to that version</li>
+            <li><code>nvm alias default &lt;version&gt;</code>: set default version</li>
+            <li><code>nvm uninstall &lt;version&gt;</code>: remove a version</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🏁</span>Per-project: place a <code>.nvmrc</code> file with version number → just run <code>nvm use</code> when inside that folder.</li>
+        <li><span class="emoji">📚</span>Continuously check <code>nodejs.org/release-schedule</code> to plan future upgrades.</li>
+        <li><span class="emoji">🚀</span>Mastering NVM &amp; Node versions ensures smooth development and deployment in real-world projects!</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

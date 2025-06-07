@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Installing NVM – Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.4;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.3em;
+    }
+    .emoji {
+      font-size: 1.2em;
+      margin-right: 8px;
+    }
+    pre {
+      background: #f9f9f9;
+      padding: 12px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">💻</span>How to Install nvm on Amazon Linux 2</h2>
+    <p>💡 <strong>nvm</strong> lets you install and switch Node.js versions easily.</p>
+    <p>Follow these steps:</p>
+    <ol>
+      <li>Install nvm script via <code>curl</code>:
+        <pre>curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash</pre>
+      </li>
+      <li>Activate nvm in your shell:
+        <pre>. ~/.nvm/nvm.sh</pre>
+      </li>
+      <li>Install Node.js v16 (or any version you need):
+        <pre>nvm install 16</pre>
+      </li>
+    </ol>
+    <p>🔗 Script source: <a href="https://github.com/nvm-sh/nvm" target="_blank">github.com/nvm-sh/nvm</a></p>
+    <p>⚙️ <em>On Ubuntu:</em> You may need to <code>sudo apt install curl</code> first.</p>
+  </div>
+
+</body>
+</html>

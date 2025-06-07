@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Beginner-Friendly Study Notes – Defining “Delete,” “Rename,” and “Add to File” Commands</title>
+  <style>
+    /* Base styles */
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+
+    /* Container for cards */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr; /* One card per row */
+      gap: 20px;
+    }
+
+    /* Individual card styles */
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+
+    /* Print-friendly adjustments */
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Beginner-Friendly Study Notes: Defining Additional Commands</h1>
+
+  <div class="container">
+
+    <!-- Card 1: Overview -->
+    <div class="card">
+      <h2>📋 Overview</h2>
+      <ul>
+        <li><span class="emoji">🎯</span>We already implemented “create a file.” Now we define 3 more commands: “delete a file,” “rename a file,” and “add to the file.”</li>
+        <li><span class="emoji">🛠️</span>In this lesson, we set up the checks (if statements) and placeholders for each function. Actual implementation is a challenge for you to complete.</li>
+        <li><span class="emoji">🚀</span>By the end, you’ll have basic code that recognizes these 3 commands and calls the right functions with the correct arguments.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Defining Command Keywords -->
+    <div class="card">
+      <h2>🔤 Step 1: List Your Command Phrases</h2>
+      <ul>
+        <li><span class="emoji">✏️</span>At the top of your code, define each command string:
+          <pre><code>const createFileCmd = "create a file";
+const deleteFileCmd = "delete a file";
+const renameFileCmd = "rename a file";
+const addToFileCmd = "add to the file";</code></pre>
+        </li>
+        <li><span class="emoji">🔍</span>These variables store the exact phrase to look for in <code>command.txt</code>.</li>
+        <li><span class="emoji">✅</span>Using variables avoids repeating the literal string in multiple places and reduces typos.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: “Delete a File” – Extract Path -->
+    <div class="card">
+      <h2>🗑️ Step 2: Check for “Delete a File” and Get Its Path</h2>
+      <ul>
+        <li><span class="emoji">🔎</span>When you read <code>command.txt</code>, check:
+          <pre><code>if (command.includes(deleteFileCmd)) {
+  // 1) Find where “delete a file” ends
+  const startIndex = command.indexOf(deleteFileCmd) + deleteFileCmd.length + 1;
+  // 2) Extract everything after that as the path
+  const filePath = command.substring(startIndex).trim();
+  deleteFile(filePath);
+}</code></pre>
+        </li>
+        <li><span class="emoji">📏</span>Explanation:
+          <ul>
+            <li><code>command.includes(deleteFileCmd)</code> → true if phrase is present.</li>
+            <li><code>command.indexOf(...) + deleteFileCmd.length + 1</code> → position right after “delete a file ” (including space).</li>
+            <li><code>substring(startIndex)</code> → takes from that position to the end, giving the file path.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🚨</span>Now call <code>deleteFile(filePath)</code> to handle removing the file.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: “Delete File” Function Placeholder -->
+    <div class="card">
+      <h2>⚙️ Step 3: Placeholder for <code>deleteFile()</code></h2>
+      <ul>
+        <li><span class="emoji">📝</span>Define the function signature near the top or bottom of your file:
+          <pre><code>async function deleteFile(path) {
+  // TODO: Implement file deletion using fs module
+  console.log(`Deleting file: ${path}`);
+}</code></pre>
+        </li>
+        <li><span class="emoji">🔧</span>When you implement it, you will use something like <code>fs.unlink(path)</code> or <code>fs.open(path, 'r')</code> plus <code>fs.unlink</code>.</li>
+        <li><span class="emoji">🔒</span>Be sure to handle errors (e.g., if the file doesn’t exist, log a friendly message instead of crashing).</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: “Rename a File” – Extract Old and New Paths -->
+    <div class="card">
+      <h2>🔄 Step 4: Check for “Rename a File” and Extract Paths</h2>
+      <ul>
+        <li><span class="emoji">🔎</span>Check if the command includes the phrase:
+          <pre><code>if (command.includes(renameFileCmd)) {
+  // 1) Find where “rename a file” ends
+  const partsIndex = command.indexOf(" to ");
+  // 2) Old path is the text between “rename a file ” and “ to ”
+  const oldPathStart = command.indexOf(renameFileCmd) + renameFileCmd.length + 1;
+  const oldPath = command.substring(oldPathStart, partsIndex).trim();
+  // 3) New path is everything after “ to ”
+  const newPath = command.substring(partsIndex + 4).trim();
+  renameFile(oldPath, newPath);
+}</code></pre>
+        </li>
+        <li><span class="emoji">📏</span>Explanation:
+          <ul>
+            <li><code>partsIndex = command.indexOf(" to ")</code> finds where the “ to ” (with spaces) occurs.</li>
+            <li><code>oldPath = substring(from end of “rename a file ” up to partsIndex)</code>.</li>
+            <li><code>newPath = substring(partsIndex + 4)</code> skips over “ to ” (3 letters + 1 space).</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🚨</span>Call <code>renameFile(oldPath, newPath)</code> to handle renaming.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: “Rename File” Function Placeholder -->
+    <div class="card">
+      <h2>⚙️ Step 5: Placeholder for <code>renameFile()</code></h2>
+      <ul>
+        <li><span class="emoji">📝</span>Define the function like:
+          <pre><code>async function renameFile(oldPath, newPath) {
+  // TODO: Implement file renaming using fs module
+  console.log(`Renaming file from ${oldPath} to ${newPath}`);
+}</code></pre>
+        </li>
+        <li><span class="emoji">🔧</span>When you implement it, you will use <code>fs.rename(oldPath, newPath)</code> or <code>fs.open</code> plus <code>fs.unlink</code> and so on.</li>
+        <li><span class="emoji">🔒</span>Handle errors: if <code>oldPath</code> doesn’t exist or <code>newPath</code> is invalid, log a clear message.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: “Add to File” – Extract Path and Content -->
+    <div class="card">
+      <h2>✍️ Step 6: Check for “Add to the File” and Extract Path & Text</h2>
+      <ul>
+        <li><span class="emoji">🔎</span>Check the command:
+          <pre><code>if (command.includes(addToFileCmd)) {
+  // 1) Find where “add to the file” ends
+  const contentIndex = command.indexOf(" content ");
+  // 2) File path is between end of phrase and “ content ”
+  const pathStart = command.indexOf(addToFileCmd) + addToFileCmd.length + 1;
+  const filePath = command.substring(pathStart, contentIndex).trim();
+  // 3) Text content is everything after “ content ”
+  const textStart = contentIndex + " content ".length;
+  const contentText = command.substring(textStart).trim();
+  addToFile(filePath, contentText);
+}</code></pre>
+        </li>
+        <li><span class="emoji">📏</span>Explanation:
+          <ul>
+            <li><code>contentIndex = command.indexOf(" content ")</code> finds where “ content ” occurs (with spaces).</li>
+            <li><code>filePath = substring(from end of “add to the file ” up to contentIndex)</code>.</li>
+            <li><code>contentText = substring(contentIndex + length of “ content ”)</code> → the actual text to append.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🚨</span>Call <code>addToFile(filePath, contentText)</code> to handle appending.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: “Add to File” Function Placeholder -->
+    <div class="card">
+      <h2>⚙️ Step 7: Placeholder for <code>addToFile()</code></h2>
+      <ul>
+        <li><span class="emoji">📝</span>Define the function like:
+          <pre><code>async function addToFile(path, text) {
+  // TODO: Implement appending text to the file
+  console.log(`Adding to ${path}: ${text}`);
+}</code></pre>
+        </li>
+        <li><span class="emoji">🔧</span>When you implement it, you will use <code>fs.appendFile(path, text)</code> or <code>fs.open(path, 'a')</code> plus <code>fileHandle.write()</code>.</li>
+        <li><span class="emoji">🔒</span>Ensure that if <code>path</code> doesn’t exist, you log a friendly message instead of crashing.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Putting All Checks Together -->
+    <div class="card">
+      <h2>🔗 Step 8: Full if-Statement Structure</h2>
+      <ul>
+        <li><span class="emoji">📋</span>Inside your main handler (after you read <code>command</code>), include:
+
+<pre><code>// 1) Create File
+if (command.includes(createFileCmd)) {
+  const filePath = command.substring(
+    command.indexOf(createFileCmd) + createFileCmd.length + 1
+  ).trim();
+  createFile(filePath);
+}
+
+// 2) Delete File
+else if (command.includes(deleteFileCmd)) {
+  const filePath = command.substring(
+    command.indexOf(deleteFileCmd) + deleteFileCmd.length + 1
+  ).trim();
+  deleteFile(filePath);
+}
+
+// 3) Rename File (using “ to ”)
+else if (command.includes(renameFileCmd)) {
+  const partsIndex = command.indexOf(" to ");
+  const oldPathStart = command.indexOf(renameFileCmd) + renameFileCmd.length + 1;
+  const oldPath = command.substring(oldPathStart, partsIndex).trim();
+  const newPath = command.substring(partsIndex + 4).trim();
+  renameFile(oldPath, newPath);
+}
+
+// 4) Add to File (using “ content ”)
+else if (command.includes(addToFileCmd)) {
+  const contentIndex = command.indexOf(" content ");
+  const pathStart = command.indexOf(addToFileCmd) + addToFileCmd.length + 1;
+  const filePath = command.substring(pathStart, contentIndex).trim();
+  const textStart = contentIndex + " content ".length;
+  const contentText = command.substring(textStart).trim();
+  addToFile(filePath, contentText);
+}</code></pre>
+        </li>
+        <li><span class="emoji">✅</span>Make sure you use <code>else if</code> so that only one command runs per save of <code>command.txt</code>.</li>
+        <li><span class="emoji">🔍</span>If none of these phrases match, simply do nothing (or log “Command not recognized”).</li>
+      </ul>
+    </div>
+
+    <!-- Card 10: Challenge – Implement the Functions -->
+    <div class="card">
+      <h2>🏆 Step 9: Your Challenge</h2>
+      <ul>
+        <li><span class="emoji">💡</span>Now that you have placeholders, it’s time to write the actual code for each function:
+          <ul>
+            <li><strong><code>deleteFile(path)</code></strong> – Use <code>fs.unlink(path)</code> (or <code>fs.open</code> + <code>fs.unlink</code>) to delete the file. If the file doesn’t exist, log “File not found.”</li>
+            <li><strong><code>renameFile(oldPath, newPath)</code></strong> – Use <code>fs.rename(oldPath, newPath)</code> so the file gets its name changed. Handle errors if <code>oldPath</code> is missing.</li>
+            <li><strong><code>addToFile(path, text)</code></strong> – Use <code>fs.appendFile(path, text)</code> to add the given text. If <code>path</code> doesn’t exist, log “Cannot add to non-existent file.”</li>
+          </ul>
+        </li>
+        <li><span class="emoji">⏳</span>Spend 10–30 minutes trying each one. Look up the Node.js documentation for <code>fs.unlink</code>, <code>fs.rename</code>, and <code>fs.appendFile</code> if you need help.</li>
+        <li><span class="emoji">🎉</span>When you’re done, test each command by editing <code>command.txt</code> and saving:
+          <ul>
+            <li><code>delete a file /path/to/yourfile.txt</code></li>
+            <li><code>rename a file /path/oldname.txt to /path/newname.txt</code></li>
+            <li><code>add to the file /path/notes.txt content Hello, world!</code></li>
+          </ul>
+        </li>
+        <li><span class="emoji">🚀</span>In the next videos, you’ll see step-by-step solutions for each challenge.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

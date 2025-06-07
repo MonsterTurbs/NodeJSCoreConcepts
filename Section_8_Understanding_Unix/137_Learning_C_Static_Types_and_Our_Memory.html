@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🧠 Static Typing &amp; Memory in C - Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0; padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #1f618d;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    pre {
+      background: #ecf0f1;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code {
+      background: #dfe6e9;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🧠 Static Typing &amp; Memory in C</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>🔢 Static Typing</h2>
+      <ul>
+        <li>You must declare each variable’s type: <code>int a = 20;</code>, <code>float b = 3.14;</code> 🎯</li>
+        <li>C won’t guess for you—types are fixed at compile time.</li>
+        <li>Contrast with JS: <code>let x = 5;</code> works without type.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>💾 Memory as Bytes</h2>
+      <ul>
+        <li>📦 Memory is a sequence of 1-byte boxes, each with an address.</li>
+        <li>Addresses increase by 1 per byte:</li>
+        <pre><code>… [addr100] [addr101] [addr102] …</code></pre>
+        <li>You must tell C how to interpret those bytes (number, char, etc.).</li>
+      </ul>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>🔍 sizeof &amp; Type Sizes</h2>
+      <ul>
+        <li>Use <code>sizeof(type)</code> to see how many bytes a type uses:</li>
+        <pre><code>printf("int = %zu bytes\n", sizeof(int));   // often 4
+printf("long = %zu bytes\n", sizeof(long)); // often 8</code></pre>
+        <li>May vary by system—always check with <code>sizeof</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>📢 printf &amp; Format Specifiers</h2>
+      <ul>
+        <li>Print data with <code>printf()</code> after <code>#include &lt;stdio.h&gt;</li>
+        <li>Must use correct format:
+          <ul>
+            <li><code>%d</code> → <code>int</code></li>
+            <li><code>%zu</code> → <code>size_t</code></li>
+            <li><code>%f</code> → <code>float</code></li>
+            <li><code>%c</code> → <code>char</code></li>
+            <li><code>%p</code> → pointer/address</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>📍 Pointers &amp; Addresses</h2>
+      <ul>
+        <li>Pointer = variable that holds an address: <code>int *p = &amp;a;</code> 📫</li>
+        <li>“&amp;” → address-of, “*” → dereference (go to that box):</li>
+        <pre><code>int a = 10;
+int *p = &amp;a;
+printf("a = %d, *p = %d\n", a, *p);</code></pre>
+        <li>Pass just the address instead of copying large data—super efficient!</li>
+      </ul>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2>📜 Strings in C</h2>
+      <ul>
+        <li>C strings = array of chars ending with <code>'\0'</code> (null):</li>
+        <pre><code>char s[5+1] = {'H','e','l','l','o','\0'};</code></pre>
+        <li>Or easier:
+          <pre><code>char *s = "Hello";</code></pre>
+        </li>
+        <li>No built-in length—write your own or use <code>strlen()</code> from <code>&lt;string.h&gt;</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card">
+      <h2>✅ Key Takeaways</h2>
+      <ul>
+        <li>🛠️ In C you manage types &amp; memory yourself.</li>
+        <li>📦 Variables occupy fixed bytes you must choose.</li>
+        <li>🔗 Pointers let you pass addresses, not copy data.</li>
+        <li>📝 Strings are char arrays ending in <code>'\0'</code>.</li>
+      </ul>
+      <p>🌟 You now understand static typing &amp; memory basics in C!</p>
+    </div>
+
+  </div>
+</body>
+</html>

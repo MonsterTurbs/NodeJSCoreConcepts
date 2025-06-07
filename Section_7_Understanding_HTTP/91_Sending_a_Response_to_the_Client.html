@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTTP Server &amp; Response – Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.4;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      max-width: 800px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .emoji {
+      font-size: 1.5em;
+      margin-right: 8px;
+    }
+    code {
+      background: #f0f0f0;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">📝</span>Collect Request Body</h2>
+    <p>
+      1. Create a variable to accumulate data:<br>
+      <code>let body = '';</code><br>
+      2. On each data chunk:<br>
+      <code>req.on('data', chunk =&gt; body += chunk.toString());</code><br>
+      3. When finished:<br>
+      <code>req.on('end', () =&gt; { dataObj = JSON.parse(body); });</code> 😊
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔑</span>Read Custom Header</h2>
+    <p>
+      • Access any header from the request:<br>
+      <code>const user = req.headers.name;</code><br>
+      • Useful for simple auth (but not secure in real apps). 🔒
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📤</span>Respond with JSON</h2>
+    <p>
+      1. Send status and headers:<br>
+      <code>res.writeHead(200, { 'Content-Type': 'application/json' });</code><br>
+      2. Send body and end:<br>
+      <code>
+        res.end(JSON.stringify({<br>
+        &nbsp;&nbsp;message: `Post "${dataObj.title}" created by ${user}`<br>
+        }));
+      </code>
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📥</span>Handle Response on Client</h2>
+    <p>
+      1. Listen for server response:<br>
+      <code>req.on('response', res =&gt; { … });</code><br>
+      2. Read status &amp; headers:<br>
+      <code>console.log(res.statusCode, res.headers);</code><br>
+      3. Read body chunks:<br>
+      <code>
+        res.on('data', chunk =&gt; console.log(chunk.toString()));
+      </code><br>
+      4. On end:<br>
+      <code>res.on('end', () =&gt; console.log('Done'));</code> 🎉
+    </p>
+  </div>
+
+</body>
+</html>

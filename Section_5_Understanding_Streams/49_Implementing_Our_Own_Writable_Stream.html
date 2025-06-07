@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Study Notes – Custom Readable Streams</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr; /* one card per row */
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    pre {
+      background-color: #eef2f7;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Implementing a Custom Writable Stream</h1>
+  <div class="container">
+
+    <!-- Card 1: Why Create a Custom Stream? -->
+    <div class="card">
+      <h2>⚙️ Why Create a Custom Writable Stream?</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>Built‐in streams (like <code>fs.createWriteStream</code>) are convenient, but you may need extra control over how data is buffered or written.</li>
+        <li><span class="emoji">✏️</span>By extending Node’s <code>Writable</code> class, you decide:
+          <ul>
+            <li>• When &amp; how chunks are buffered</li>
+            <li>• When to flush all buffered chunks to the underlying resource</li>
+            <li>• Custom error handling and cleanup logic</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📚</span>This example builds a writable stream that gathers chunks in memory until a high‐watermark threshold, then writes them as one block to a file.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Including & Extending Writable -->
+    <div class="card">
+      <h2>➕ Including &amp; Extending <code>Writable</code></h2>
+      <ul>
+        <li><span class="emoji">📦</span>Import Node’s <code>Writable</code> base class:
+          <pre><code>const { Writable } = require('stream');</code></pre>
+        </li>
+        <li><span class="emoji">🏷️</span>Define your own class that <code>extends Writable</code>:
+          <pre><code>class FileWriteStream extends Writable {
+  constructor(options) {
+    super(options);
+    // … custom setup here …
+  }
+  // … must implement _write &amp; _final &amp; _destroy …
+}</code></pre>
+        </li>
+        <li><span class="emoji">🔄</span>Inside the subclass’s <code>constructor</code>, call <code>super()</code> to invoke the base class’s constructor:</li>
+          <pre><code>super({ highWaterMark: options.highWaterMark });</code></pre>
+        <li><span class="emoji">📝</span>Keep track of custom options (e.g., output filename, buffer array, current buffer size):</li>
+          <pre><code>this.fileName      = options.fileName;
+this.chunks        = [];
+this.chunksSize    = 0;
+this.writeCount    = 0;</code></pre>
+      </ul>
+    </div>
+
+    <!-- Card 3: Asynchronous Setup via _construct() -->
+    <div class="card">
+      <h2>🔧 Asynchronous Setup: <code>_construct()</code></h2>
+      <ul>
+        <li><span class="emoji">⏳</span>Optionally implement <code>_construct(callback)</code> if you need async setup (e.g., opening a file descriptor).</li>
+          <pre><code>_construct(cb) {
+  fs.open(this.fileName, 'w', (err, fd) => {
+    if (err) return cb(err);
+    this.fd = fd;           // Save file descriptor
+    cb();                   // Signal “ready to write”
+  });
+}</code></pre>
+        <li><span class="emoji">📁</span>Until <code>cb()</code> is called, <code>_write()</code> won’t run. If you pass an error to <code>cb(err)</code>, the stream errors out immediately.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Implementing <code>_write()</code> -->
+    <div class="card">
+      <h2>✍️ Implementing <code>_write(chunk, encoding, callback)</code></h2>
+      <ul>
+        <li><span class="emoji">📥</span>Signature:
+          <pre><code>_write(chunk, encoding, callback) {
+  // 1. Buffer the incoming chunk
+  // 2. If total buffer size &gt; highWaterMark → flush to file
+  // 3. Otherwise, just callback()
+}</code></pre>
+        </li>
+        <li><span class="emoji">➕</span>Each time Node calls <code>_write</code>, you receive:
+          <ul>
+            <li>• <code>chunk</code>: a <code>Buffer</code> (or string if encoding is specified)</li>
+            <li>• <code>encoding</code>: character encoding (usually irrelevant for raw Buffers)</li>
+            <li>• <code>callback</code>: invoke this when you’re done (either with <code>callback()</code> or <code>callback(err)</code>)</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🗄️</span>Append each chunk to an in-memory array and track the combined size:
+          <pre><code>this.chunks.push(chunk);
+this.chunksSize += chunk.length;</code></pre>
+        </li>
+        <li><span class="emoji">🔄</span>When <code>this.chunksSize &gt; highWaterMark</code>:
+          <ul>
+            <li>• <span class="emoji">🔗</span>Concatenate buffered chunks into one buffer:</li>
+              <pre><code>const toWrite = Buffer.concat(this.chunks);</code></pre>
+            <li>• <span class="emoji">📂</span>Use <code>fs.write(fd, toWrite, …)</code> to write them at once:</li>
+              <pre><code>fs.write(this.fd, toWrite, 0, toWrite.length, (err) =&gt; {
+  if (err) return callback(err);
+  this.chunks = [];
+  this.chunksSize = 0;
+  this.writeCount++;
+  callback();
+});</code></pre>
+          </ul>
+        </li>
+        <li><span class="emoji">✔️</span>Otherwise (buffer still below threshold), simply <code>callback()</code> to let Node know you’re ready for the next chunk.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Implementing <code>_final()</code> to Flush Remainder -->
+    <div class="card">
+      <h2>🛑 Final Flush: <code>_final(callback)</code></h2>
+      <ul>
+        <li><span class="emoji">🏁</span>Once <code>stream.end()</code> is called by the user, Node invokes <code>_final()</code>:</li>
+          <pre><code>_final(callback) {
+  // 1. Write any leftover buffered chunks 
+  // 2. Reset buffer &amp; size, then callback()
+}</code></pre>
+        </li>
+        <li><span class="emoji">📥</span>If <code>this.chunks.length &gt; 0</code>:</li>
+          <pre><code>const lastBuf = Buffer.concat(this.chunks);
+fs.write(this.fd, lastBuf, 0, lastBuf.length, (err) =&gt; {
+  if (err) return callback(err);
+  this.chunks = [];
+  this.chunksSize = 0;
+  callback();
+});</code></pre>
+        </li>
+        <li><span class="emoji">🔚</span>After <code>callback()</code> in <code>_final</code>, Node emits a <code>'finish'</code> event on the writable stream.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Implementing <code>_destroy()</code> for Cleanup -->
+    <div class="card">
+      <h2>🧹 Cleanup: <code>_destroy(err, callback)</code></h2>
+      <ul>
+        <li><span class="emoji">⚠️</span>Method signature:
+          <pre><code>_destroy(error, callback) {
+  // 1. If needed, log or handle the incoming error
+  // 2. Close file descriptor
+  // 3. Invoke callback(errOrNull)
+}</code></pre>
+        </li>
+        <li><span class="emoji">🚪</span>Close the file descriptor (if open) inside <code>fs.close</code>:</li>
+          <pre><code>if (this.fd) {
+  fs.close(this.fd, (closeErr) =&gt; {
+    callback(closeErr || error);
+  });
+} else {
+  callback(error);
+}</code></pre>
+        </li>
+        <li><span class="emoji">🛡️</span>If an error occurred earlier (passed into <code>_destroy</code>), pass it to <code>callback(error)</code>. Otherwise, pass any <code>closeErr</code>.</li>
+        <li><span class="emoji">👀</span>Always call <code>callback()</code> (with either <code>error</code> or <code>null</code>) so Node knows cleanup is done.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Putting It All Together -->
+    <div class="card">
+      <h2>📦 Full Custom Writable Stream Class</h2>
+      <pre><code>const fs = require('fs');
+const { Writable } = require('stream');
+
+class FileWriteStream extends Writable {
+  constructor({ fileName, highWaterMark = 16 * 1024 }) {
+    super({ highWaterMark });
+    this.fileName    = fileName;
+    this.chunks      = [];
+    this.chunksSize  = 0;
+    this.writeCount  = 0;
+    this.fd          = null; // file descriptor
+  }
+
+  // 1. Async setup: open the file before writing
+  _construct(callback) {
+    fs.open(this.fileName, 'w', (err, fd) => {
+      if (err) return callback(err);
+      this.fd = fd;
+      callback();
+    });
+  }
+
+  // 2. Buffer or flush when highWaterMark exceeded
+  _write(chunk, encoding, callback) {
+    this.chunks.push(chunk);
+    this.chunksSize += chunk.length;
+
+    if (this.chunksSize > this.writableHighWaterMark) {
+      const toWrite = Buffer.concat(this.chunks);
+      fs.write(this.fd, toWrite, 0, toWrite.length, (err) => {
+        if (err) return callback(err);
+        this.chunks = [];
+        this.chunksSize = 0;
+        this.writeCount++;
+        callback();
+      });
+    } else {
+      callback();
+    }
+  }
+
+  // 3. Final flush any leftover buffer
+  _final(callback) {
+    if (this.chunks.length > 0) {
+      const lastBuf = Buffer.concat(this.chunks);
+      fs.write(this.fd, lastBuf, 0, lastBuf.length, (err) => {
+        if (err) return callback(err);
+        this.chunks = [];
+        this.chunksSize = 0;
+        callback();
+      });
+    } else {
+      callback();
+    }
+  }
+
+  // 4. Cleanup: close file descriptor
+  _destroy(err, callback) {
+    if (this.fd) {
+      fs.close(this.fd, (closeErr) => {
+        callback(closeErr || err);
+      });
+    } else {
+      callback(err);
+    }
+  }
+}
+
+// Export or use directly
+module.exports = FileWriteStream;</code></pre>
+    </div>
+
+    <!-- Card 8: Using the Custom Stream in Practice -->
+    <div class="card">
+      <h2>🚀 Using <code>FileWriteStream</code> to Write Millions of Lines</h2>
+      <ul>
+        <li><span class="emoji">📂</span>Example script writes numbers 0…N–1 into <code>test.txt</code> efficiently:</li>
+          <pre><code>const fsPromises   = require('fs').promises;
+const FileWriteStream = require('./FileWriteStream');
+
+(async () =&gt; {
+  const N = 1_000_000;
+  const stream = new FileWriteStream({ fileName: 'test.txt' });
+
+  console.time('writeTime');
+  // Write lines 0 … N–1, each followed by a space
+  for (let i = 0; i &lt; N; i++) {
+    if (!stream.write(Buffer.from(i.toString() + ' '))) {
+      // Backpressure: wait for 'drain'
+      await new Promise((res) =&gt; stream.once('drain', res));
+    }
+  }
+  stream.end(); // Triggers _final and then 'finish'
+  stream.on('finish', () =&gt; {
+    console.log('Number of flushes:', stream.writeCount);
+    console.timeEnd('writeTime'); // e.g. ~2.7s on 10M writes
+  });
+})();</code></pre>
+        <li><span class="emoji">⚙️</span>Key points:
+          <ul>
+            <li>• <strong>Backpressure:</strong> <code>.write()</code> returns <code>false</code> when buffer is full; await <code>'drain'</code> before continuing.</li>
+            <li>• <strong>High‐watermark:</strong> default is 16 KB. Can pass custom value (e.g. <code>16 * 1024</code>).</li>
+            <li>• <strong>Flush count:</strong> <code>writeCount</code> shows how many times buffer was flushed to disk.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Best Practices & Key Takeaways -->
+    <div class="card">
+      <h2>📌 Best Practices &amp; Key Takeaways</h2>
+      <ul>
+        <li><span class="emoji">⚠️</span>Never manually call or overwrite internal methods like <code>_write</code> or emit events yourself—follow Node’s documented hooks.</li>
+        <li><span class="emoji">🔔</span>Always call <code>callback()</code> (or <code>callback(err)</code>) inside <code>_write</code>, <code>_final</code>, <code>_destroy</code> so Node can manage state &amp; backpressure.</li>
+        <li><span class="emoji">🛡️</span><strong>Error Handling:</strong> If any filesystem call errors, pass the <code>err</code> to <code>callback(err)</code>, and Node will emit <code>'error'</code> on your stream.</li>
+        <li><span class="emoji">💨</span><strong>Backpressure:</strong> If <code>.write()</code> returns <code>false</code>, await the <code>'drain'</code> event before writing more to avoid unbounded memory usage.</li>
+        <li><span class="emoji">🔍</span>Implement <code>_construct</code> for any async setup (e.g. opening/locking resources). The stream will wait until <code>cb()</code> is called.</li>
+        <li><span class="emoji">🏁</span>Use <code>_final()</code> to handle the last buffered data when <code>.end()</code> is invoked. Then Node emits <code>'finish'</code>.</li>
+        <li><span class="emoji">🧹</span>Implement <code>_destroy(err, cb)</code> to clean up resources (close file descriptors). Ensure <code>cb()</code> is always called.</li>
+        <li><span class="emoji">📚</span>Reading Node’s <code>stream</code> docs thoroughly helps you avoid pitfalls and follow built‐in conventions.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

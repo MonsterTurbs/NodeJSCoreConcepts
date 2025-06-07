@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Study Notes – Handling Partial Numbers in Stream Chunks</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr; /* one card per row */
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    pre {
+      background-color: #eef2f7;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Study Notes: Handling Partial Numbers in Stream Chunks</h1>
+
+  <div class="container">
+
+    <!-- Card 1: Context & Why Partial Numbers Occur -->
+    <div class="card">
+      <h2>🔍 Context & Why Partial Numbers Occur</h2>
+      <ul>
+        <li><span class="emoji">📂</span>We read a huge file (e.g., <code>textGigantic.txt</code>) of numbers separated by two spaces, using a Readable Stream in Node.js.</li>
+        <li><span class="emoji">🌊</span>Data arrives in <strong>chunks</strong> (buffers) of fixed byte size (e.g., 64 KB). A chunk might split a multi‐digit number in half.</li>
+        <li><span class="emoji">⚠️</span>Example: number “<code>32182</code>” could be split into “<code>32</code>” in one chunk and “<code>182</code>” in the next, causing both pieces to appear incomplete.</li>
+        <li><span class="emoji">❗</span>If we naively split each chunk on two spaces, some partial numbers at chunk edges become incorrect (e.g., leading/trailing digits lost).</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Basics of Buffer & UTF-8 Representations -->
+    <div class="card">
+      <h2>💡 Buffer & UTF-8 Basics</h2>
+      <ul>
+        <li><span class="emoji">🧩</span>In Node.js, a <code>Buffer</code> is a sequence of bytes. Each element holds 8 bits (1 byte).</li>
+        <li><span class="emoji">🔢</span>UTF-8 encoding: each ASCII character (digits, space, newline) uses exactly 8 bits (1 byte). So “<code>3</code>” or “<code> </code>” each occupies 1 byte in the buffer.</li>
+        <li><span class="emoji">🔍</span>When you print a buffer, Node.js shows each byte as a two-character hexadecimal value, because 1 hex = 4 bits, so 2 hex = 8 bits.</li>
+        <li><span class="emoji">📏</span>Chunk size (buffer length) might be 65,536 bytes (64 KB) by default. That many bytes ≈ 65,536 characters, but may cut numbers in half at boundaries.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Example of Splitting Incomplete Numbers -->
+    <div class="card">
+      <h2>✂️ Splitting Incomplete Numbers Example</h2>
+      <ul>
+        <li><span class="emoji">🔀</span>Imagine chunk A ends with “<code>... 3302</code>” but the next chunk B starts “<code>000182 ...</code>”. Together they form “<code>3302000182</code>”, but splitting each chunk alone gives “<code>3302</code>” and “<code>000182</code>”.</li>
+        <li><span class="emoji">⚠️</span>Chunk A’s last number “<code>3302??</code>” is incomplete, Chunk B’s first “<code>??000182</code>” is incomplete. Naive split loses digits.</li>
+        <li><span class="emoji">🔍</span>We must detect incomplete numbers at the start/end of each chunk and stitch them together before converting to numeric values.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Detecting Partial Numbers at Chunk Edges -->
+    <div class="card">
+      <h2>🔧 Detecting Partial Numbers at Chunk Edges</h2>
+      <ul>
+        <li><span class="emoji">➡️</span>After converting chunk to a string (<code>chunk.toString('utf8')</code>), split by two spaces:  
+          <pre><code>let parts = text.split('  ');</code></pre>
+        </li>
+        <li><span class="emoji">🏷️</span>The first element <code>parts[0]</code> may be a <strong>continuation</strong> of a number from the previous chunk. Save that as <code>leftover</code> and prepend it to <code>parts[0]</code>.</li>
+        <li><span class="emoji">🔖</span>The last element <code>parts.pop()</code> may be <strong>truncated</strong>. Store it in <code>nextLeftover</code> and do not process it until the next chunk arrives.  
+          <pre><code>let nextLeftover = parts.pop();</code></pre>
+        </li>
+        <li><span class="emoji">🔄</span>Between chunks, carry <code>leftover</code> forward so each number becomes whole before checking it.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Stitching Partial Pieces Together -->
+    <div class="card">
+      <h2>🔗 Stitching Partial Pieces Together</h2>
+      <ul>
+        <li><span class="emoji">🧵</span>Suppose <code>leftover</code> from previous chunk = “<code>3302</code>”. New chunk starts → “<code>000182</code>...”. Combine:  
+          <pre><code>const fullNumber = leftover + parts[0];
+// fullNumber = "3302000182"</code></pre>
+        </li>
+        <li><span class="emoji">✔️</span>Then convert <code>fullNumber</code> to a Number and test evenness:</li>
+          <pre><code>const num = Number(fullNumber);
+if (num % 2 === 0) {
+  writeStream.write(fullNumber + '  ');
+}</code></pre>
+        </li>
+        <li><span class="emoji">➡️</span>After stitching, clear <code>leftover</code> and continue processing the rest of <code>parts</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Handling Each Chunk in Code -->
+    <div class="card">
+      <h2>🖥️ Code Outline for Each Chunk</h2>
+      <ul>
+        <li><span class="emoji">1️⃣</span>Start with <code>leftover = ''</code> before reading any data.</li>
+        <li><span class="emoji">2️⃣</span>On <code>'data'</code> event:  
+          <pre><code>readStream.on('data', (chunk) => {
+  // Convert to string & prepend leftover
+  let text = leftover + chunk.toString('utf8');
+  // Split by two spaces
+  let parts = text.split('  ');
+  // Save last potentially truncated piece
+  leftover = parts.pop(); 
+  // Process every complete part
+  for (let str of parts) {
+    let num = Number(str);
+    if (!isNaN(num) && num % 2 === 0) {
+      if (!writeStream.write(str + '  ')) {
+        readStream.pause(); // handle backpressure
+      }
+    }
+  }
+});</code></pre>
+        </li>
+        <li><span class="emoji">3️⃣</span>On <code>'drain'</code> of write stream:  
+          <pre><code>writeStream.on('drain', () => {
+  readStream.resume();
+});</code></pre>
+        </li>
+        <li><span class="emoji">4️⃣</span>On <code>'end'</code> of read stream:  
+          <pre><code>readStream.on('end', () => {
+  // Last leftover might form a full number now
+  if (leftover) {
+    let num = Number(leftover);
+    if (!isNaN(num) && num % 2 === 0) {
+      writeStream.write(leftover);
+    }
+  }
+  writeStream.end();
+});</code></pre>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Why This Solution Works -->
+    <div class="card">
+      <h2>✅ Why This Solution Works</h2>
+      <ul>
+        <li><span class="emoji">🏗️</span>By carrying <code>leftover</code> to the next chunk, we ensure no digits are lost when a number is split across buffers.</li>
+        <li><span class="emoji">⚖️</span>We only call <code>writeStream.write()</code> for complete even numbers, preserving correct data order.</li>
+        <li><span class="emoji">🔧</span>The <code>pause()</code> / <code>resume()</code> pattern prevents memory overload—once the write buffer is full, we pause reading until it drains.</li>
+        <li><span class="emoji">🚀</span>This lets us process very large files (GBs or more) with stable, low memory usage (~30 MB) and correct numeric results.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Key Points & Emoji Recap -->
+    <div class="card">
+      <h2>🔑 Key Points & Emoji Recap</h2>
+      <ul>
+        <li><span class="emoji">🧩</span><strong>Buffers hold bytes:</strong> Each byte = 8 bits = 1 UTF-8 character (ASCII).</li>
+        <li><span class="emoji">✂️</span><strong>Chunks split data:</strong> When streaming, a number can be cut between two chunks.</li>
+        <li><span class="emoji">🔗</span><strong>Stitch partial numbers:</strong> Carry the truncated tail (<code>leftover</code>) to the next chunk to reassemble the full number.</li>
+        <li><span class="emoji">⚠️</span><strong>Backpressure:</strong> If <code>write()</code> returns <code>false</code>, call <code>readStream.pause()</code> and wait for <code>'drain'</code> before <code>resume()</code>.</li>
+        <li><span class="emoji">🎯</span><strong>Filter logic:</strong> Convert each complete string to a Number; if even, write to <code>dest.txt</code>; else, skip.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Next Steps -->
+    <div class="card">
+      <h2>➡️ Next Steps</h2>
+      <ul>
+        <li><span class="emoji">📈</span>Try modifying to filter <strong>prime numbers</strong> instead of even numbers.</li>
+        <li><span class="emoji">📖</span>Apply same pattern to other data types (e.g., comma-separated floats).</li>
+        <li><span class="emoji">🔧</span>Experiment with different <code>highWaterMark</code> values to see performance differences.</li>
+        <li><span class="emoji">🚀</span>Explore Node.js <code>pipeline()</code> for simpler stream error handling.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

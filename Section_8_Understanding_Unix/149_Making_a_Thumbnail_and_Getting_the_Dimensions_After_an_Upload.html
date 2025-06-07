@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🎬 FFmpeg Thumbnail &amp; Dimensions – Study Notes</title>
+  <style>
+    body {
+      margin: 0; padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .card p, .card ul {
+      margin: 0.5em 0;
+      line-height: 1.4;
+    }
+    .card code {
+      background: #e8eff4;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎥 Upload, Thumbnail &amp; Dimensions 📏</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ Routes &amp; spawn()</h2>
+      <ul>
+        <li>Use Node’s <code>child_process.spawn</code> to run FFmpeg/FFprobe.</li>
+        <li>Create a helper file <code>lib/f.js</code> with functions:</li>
+        <ul>
+          <li><code>makeThumbnail(inputPath, thumbPath)</code></li>
+          <li><code>getDimensions(inputPath) → {width, height}</code></li>
+        </ul>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ Thumbnail Path 📁</h2>
+      <p>Store thumbnail in the video’s folder:</p>
+      <pre><code>const thumbPath = `storage/${videoId}/thumbnail.jpg`;</code></pre>
+      <p>This keeps each video’s assets together.</p>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ FFmpeg Command for Thumbnail 📷</h2>
+      <p>Example shell command:</p>
+      <pre><code>ffmpeg -i video.mp4 -ss 5 -vframes 1 thumbnail.jpg</code></pre>
+      <ul>
+        <li><code>-i</code>: input file</li>
+        <li><code>-ss 5</code>: seek to 5 sec</li>
+        <li><code>-vframes 1</code>: capture 1 frame</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ makeThumbnail() Function ✂️</h2>
+      <p>In <code>lib/f.js</code>:</p>
+      <pre><code>
+async function makeThumbnail(inPath, outPath) {
+  return new Promise((res, rej) => {
+    const ff = spawn('ffmpeg', ['-i', inPath, '-ss','5','-vframes','1', outPath]);
+    ff.on('close', code => code===0 ? res() : rej());
+    ff.on('error', err => rej(err));
+  });
+}
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ FFprobe Command for Dimensions 📐</h2>
+      <p>Example shell command:</p>
+      <pre><code>ffprobe -v error -select_streams v:0 \
+-show_entries stream=width,height \
+-of csv=p=0 video.mp4</code></pre>
+      <p>Outputs <code>"1920,1080"</code></p>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ getDimensions() Function 🔢</h2>
+      <pre><code>
+async function getDimensions(path) {
+  return new Promise((res, rej) => {
+    let dims = '';
+    const fp = spawn('ffprobe', [ /* args above */, path ]);
+    fp.stdout.on('data', d=> dims += d.toString());
+    fp.on('close', code => {
+      if (code===0) {
+        dims = dims.replace(/\s+/g,'');
+        const [w,h] = dims.split(',');
+        res({ width: +w, height: +h });
+      } else rej(new Error(`ffprobe exit ${code}`));
+    });
+    fp.on('error', err=> rej(err));
+  });
+}
+      </code></pre>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Error Handling &amp; Cleanup 🚨</h2>
+      <ul>
+        <li>On <code>spawn</code> <code>error</code> or non-zero <code>close</code> code, reject promise.</li>
+        <li>In controller <code>catch</code>, delete folder if thumbnail failed:</li>
+      </ul>
+      <pre><code>await fs.rm(folderPath, { recursive:true });</code></pre>
+    </div>
+
+    <div class="card">
+      <h2>8️⃣ Validate &amp; Status Codes ✅</h2>
+      <ul>
+        <li>Check file extension against allowed array (e.g. <code>['mov','mp4']</code>).</li>
+        <li>Return <code>400 Bad Request</code> on unsupported format.</li>
+        <li>Return <code>201 Created</code> on successful upload + thumbnail.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🧠 Memory Allocation in C - Study Notes</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #1f618d;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    pre {
+      background: #ecf0f1;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code {
+      background: #dfe6e9;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🧠 Memory Allocation in C</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>📦 Stack vs. Heap</h2>
+      <ul>
+        <li><strong>Stack:</strong> Auto‐managed, small (MBs), variables live only inside functions.</li>
+        <li><strong>Heap:</strong> Manually managed with <code>malloc()</code>/<code>free()</code>, large (GBs).</li>
+        <li>Use heap when you need big or dynamic memory at runtime. 🌱</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>🔗 malloc() &amp; free()</h2>
+      <ul>
+        <li>Reserve N bytes on the heap: <code>int *p = malloc(12);</code> (12 bytes → 3 ints if each is 4 bytes)</li>
+        <li>Always <code>free(p);</code> when done to avoid memory leaks. 🚰</li>
+        <li><code>malloc()</code> returns a pointer (address)—you index like an array:</li>
+      </ul>
+      <pre><code>for(int i=0; i<3; i++){
+  p[i] = i*10;    // store in each 4-byte slot
+}
+for(int i=0; i<3; i++){
+  printf("%d\n", p[i]);
+}</code></pre>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>🧮 Bytes &amp; Binary</h2>
+      <ul>
+        <li>Every variable’s bits ≔ zeros &amp; ones. 1 byte = 8 bits. 🎯</li>
+        <li>See exact bit patterns at <a href="https://www.simonhearne.com/tools/types-convert" target="_blank">Simon’s types-convert</a>.</li>
+        <li>Example: storing <code>int a = 3500;</code> uses 4 bytes → specific 32-bit pattern.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>🔄 Typecasting Pointers</h2>
+      <ul>
+        <li>You can reinterpret the same bits as different types with casts:</li>
+      </ul>
+      <pre><code>int *pi = malloc(4);
+*pi = 500;
+char *pc = (char*)pi;
+printf("%c\n", pc[0]);   // reads first byte as a char
+</code></pre>
+      <ul>
+        <li>⭐ Treats pointer <code>pi</code> (an int*) as <code>char*</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>🌐 C vs. JavaScript</h2>
+      <ul>
+        <li><strong>C:</strong> Scalars (ints, floats) are bits; objects/arrays use heap &amp; pass pointer → fast.</li>
+        <li><strong>JS:</strong> Primitives (numbers) copied by value; objects/arrays passed by reference (under-the-hood pointers).</li>
+        <li>In C you control &amp; free heap; JS hides malloc/free inside engine. 🤖</li>
+      </ul>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2>✅ Key Points</h2>
+      <ul>
+        <li>🚀 Use <code>malloc(N)</code> for large/dynamic data → returns pointer.</li>
+        <li>🔒 Free heap with <code>free()</code> when done.</li>
+        <li>📐 Bits belong to stack (auto) or heap (manual) regions.</li>
+        <li>🔄 Cast pointers to reinterpret raw bytes as different types.</li>
+      </ul>
+      <p>🎉 You’ve got the basics of C memory allocation!</p>
+    </div>
+
+  </div>
+</body>
+</html>

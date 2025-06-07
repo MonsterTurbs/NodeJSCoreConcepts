@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🛠️ Worker Pool Blocking: Beginner-Friendly Study Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9fbfc;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2d6a4f;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #1b4332;
+      font-size: 1.3rem;
+    }
+    .card ul {
+      padding-left: 20px;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🛠️ Don’t Block the Worker Pool</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>❓ What Is “Blocking”?</h2>
+      <ul>
+        <li><span class="emoji">🛑</span><strong>Blocking</strong> means your code keeps scheduling tasks so fast that the worker pool’s queue grows huge.</li>
+        <li><span class="emoji">⏳</span>Long‐running tasks fill every thread; then tiny tasks must wait for all big ones to finish before running.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>⚠️ Why Blocking Is Bad</h2>
+      <ul>
+        <li><span class="emoji">🐢</span>Users with quick requests (milliseconds) get stuck waiting minutes or hours until heavy tasks finish.</li>
+        <li><span class="emoji">💥</span>Server performance degrades; memory may spike and crash the app.</li>
+        <li><span class="emoji">🚫</span>Denial-of-Service risk: attackers submit many heavy tasks to starve out normal requests.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>🔍 Common Blocking Scenarios</h2>
+      <ul>
+        <li><span class="emoji">🔒</span>Scheduling millions of CPU‐heavy jobs (e.g., large file processing, big computations) without batching.</li>
+        <li><span class="emoji">🧩</span>Using slow NPM modules or regex patterns that block threads unpredictably.</li>
+        <li><span class="emoji">📦</span>JSON.parse/stringify on enormous payloads blocks both event loop and worker pool.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>🚀 How to Avoid Blocking</h2>
+      <ul>
+        <li><span class="emoji">📦</span><strong>Batching:</strong> split huge jobs into smaller batches so workers finish in bursts and free up threads.</li>
+        <li><span class="emoji">🗄️</span><strong>Caching:</strong> reuse previous results rather than recomputing every time.</li>
+        <li><span class="emoji">📡</span><strong>Offload:</strong> send very long tasks (video/audio processing) to dedicated services or servers.</li>
+        <li><span class="emoji">⛔️</span><strong>Rate-limit:</strong> throttle per-user or per-IP to prevent flood of heavy tasks.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>📚 Further Reading</h2>
+      <ul>
+        <li><span class="emoji">🔗</span><a href="https://nodejs.org/en/learn/dont-block-the-event-loop/" target="_blank" rel="noopener noreferrer">Node.js: Don’t Block the Event Loop & Worker Pool</a></li>
+        <li><span class="emoji">📝</span>Understand how <strong>libuv thread pool</strong> schedules I/O vs. CPU tasks.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+Gawin ang mga sumusunod: 
+*Study notes para Transcript na ito na kayang intindihin ng bata or beginner
+*Lagyan ng emoji
+*Naka .HTML para pedeng isave as PDF
+*Gawan ng maayos na layout, 
+ beginner-friendly study notes mo in HTML format, nakaayos na parang card layout at pwede nang i-save as PDF:
+*In english
+*One card in a row
+
+
+..
+
+ 

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Understanding Media Types (MIME) – Study Notes</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+      max-width: 800px;
+    }
+    .card h2 { margin-top: 0; font-size: 1.2em; }
+    .emoji { font-size: 1.4em; margin-right: 6px; }
+    code { background: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <!-- Card 1 -->
+  <div class="card">
+    <h2><span class="emoji">🗂️</span>What Are Media (MIME) Types?</h2>
+    <p>Just like your operating system uses file extensions (e.g. <code>.pdf</code>, <code>.jpg</code>) to know how to open files, HTTP uses the <code>Content-Type</code> header to tell the other end “how to read” the message body bits.</p>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card">
+    <h2><span class="emoji">⚙️</span>Media Type Format</h2>
+    <p>Every media type has this exact format:</p>
+    <pre><code>type/subtype[; parameter=value]</code></pre>
+    <ul>
+      <li><strong>type</strong>: general category (e.g. <code>text</code>, <code>image</code>, <code>application</code>)</li>
+      <li><strong>subtype</strong>: specific format (e.g. <code>css</code>, <code>png</code>, <code>json</code>)</li>
+      <li><strong>parameter</strong> (optional): extra info like charset (<code>;charset=utf-8</code>)</li>
+    </ul>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="card">
+    <h2><span class="emoji">📚</span>Discrete vs. Multipart</h2>
+    <p>Media types belong to two classes:</p>
+    <ul>
+      <li><strong>Discrete</strong> – a single file, e.g. <code>text/css</code> or <code>image/jpeg</code></li>
+      <li><strong>Multipart</strong> – multiple parts in one message, e.g. <code>multipart/form-data; boundary=…</code> for file uploads</li>
+    </ul>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="card">
+    <h2><span class="emoji">🔍</span>Finding the Right Type</h2>
+    <p>Go to the IANA registry to see official media types:</p>
+    <p><a href="https://www.iana.org/assignments/media-types/media-types.xhtml" target="_blank">iana.org/media-types</a></p>
+    <p>Search for your subtype. For example:</p>
+    <ul>
+      <li><code>image/png</code> for PNG images</li>
+      <li><code>text/javascript</code> <em>(preferred)</em> for JS files</li>
+      <li><code>application/json</code> for JSON data</li>
+    </ul>
+  </div>
+
+  <!-- Card 5 -->
+  <div class="card">
+    <h2><span class="emoji">📦</span>Example: File Upload (Multipart)</h2>
+    <p>Sending two items (a text and a file) in one request:</p>
+    <pre><code>Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryXYZ
+
+------WebKitFormBoundaryXYZ
+Content-Disposition: form-data; name="username"
+
+Alice
+------WebKitFormBoundaryXYZ
+Content-Disposition: form-data; name="avatar"; filename="pic.png"
+Content-Type: image/png
+
+(binary data…)
+------WebKitFormBoundaryXYZ--
+</code></pre>
+  </div>
+
+  <!-- Card 6 -->
+  <div class="card">
+    <h2><span class="emoji">🔒</span>Bonus: Magic Numbers</h2>
+    <p>Some servers check file “magic numbers” (first bytes) to verify type, e.g. PNG files start with <code>89 50 4E 47</code>. This guards against wrong extensions.</p>
+  </div>
+
+</body>
+</html>

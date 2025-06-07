@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🗜️ How Lossless Compression Works – Study Notes</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f0f4f8; color:#333; }
+    h1 { text-align:center; margin-bottom:1em; }
+    .container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      max-width:700px;
+      margin:auto;
+    }
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      padding:20px;
+    }
+    .card h2 { margin-top:0; color:#1e3a8a; }
+    ul { padding-left:1.2em; }
+    code { background:#eef; padding:2px 4px; border-radius:4px; }
+    @media print {
+      body { background:#fff; }
+      .card { box-shadow:none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🗜️ How Lossless Compression Works</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>🔧 Compression Methods</h2>
+      <ul>
+        <li><strong>gzip</strong> (built on deflate)</li>
+        <li><strong>brotli</strong> (often better ratio but slower)</li>
+        <li><strong>deflate</strong> (core algorithm)</li>
+        <li>All return transform streams in Node’s <code>zlib</code></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📦 LZ77 (Lempel–Ziv)</h2>
+      <ul>
+        <li>Idea: replace repeated chunks with “<em>pointer</em>” back to first occurrence</li>
+        <li>Example: “Mr. Bingley” appears 3× → store once + 3 pointers</li>
+        <li>Pointers encode <em>distance back</em> + <em>length</em> (e.g. 16-bit distance + 4-bit length)</li>
+        <li>Saves bytes by not re-storing repeated data</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🧮 Huffman Coding</h2>
+      <ul>
+        <li>Assign shorter codes to common symbols, longer to rare ones</li>
+        <li>Compute symbol frequencies (e.g. “t” appears 83×, “v” 9× in text)</li>
+        <li>Build a binary tree to generate prefix codes</li>
+        <li>Example: “t” → 4 bits, “v” → 8 bits → big savings over fixed 8 bits/char</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔗 Combining LZ77 + Huffman</h2>
+      <ul>
+        <li>gzip, brotli, deflate use LZ77 then Huffman on those pointers/data</li>
+        <li>Result: transform stream that outputs fewer bits, exactly reversible</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📄 Text Example</h2>
+      <ul>
+        <li>Original text: 1 164 bytes</li>
+        <li>gzip via <code>zlib.createGzip()</code> → ~684 bytes (≈1.7× smaller)</li>
+        <li>Shows real-world half-size savings on random novel excerpt!</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

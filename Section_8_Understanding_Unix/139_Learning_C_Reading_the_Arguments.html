@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>📥 Reading Command-Line Arguments in C</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f7f9fc;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #34495e;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    pre {
+      background: #ecf0f1;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: monospace;
+    }
+    code {
+      background: #dfe6e9;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📥 Reading Command-Line Arguments in C</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>✨ What Are Arguments?</h2>
+      <ul>
+        <li>When you run <code>./app arg1 arg2</code>, those words after the program name are <strong>arguments</strong>. 🎯</li>
+        <li>C programs receive them in <code>main()</code> automatically from the shell.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>🖋️ main Signature</h2>
+      <pre><code>int main(int argc, char *argv[]) {
+    // ...
+    return 0;
+}</code></pre>
+      <ul>
+        <li><code>argc</code> = argument count (number of tokens passed).</li>
+        <li><code>argv</code> = argument vector (array of strings).</li>
+      </ul>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>🔢 argc (Count)</h2>
+      <ul>
+        <li>Type <code>int</code>, holds how many items were passed.</li>
+        <li>Always at least <code>1</code> (the program name itself). 🎒</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>📝 argv (Strings)</h2>
+      <ul>
+        <li>An array of C-strings (<code>char*</code>), one per argument.</li>
+        <li><code>argv[0]</code> = program name, <code>argv[1]</code> = first user argument, etc.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>🔄 Looping Through Them</h2>
+      <pre><code>for(int i = 0; i < argc; i++) {
+  printf("arg %d: %s\n", i, argv[i]);
+}</code></pre>
+      <ul>
+        <li>Prints each argument in order.</li>
+        <li>Uses <code>%d</code> for the index, <code>%s</code> for the string. 💬</li>
+      </ul>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2>🚀 Example Run</h2>
+      <pre><code>$ gcc -o show args.c
+$ ./show apple banana 123
+arg 0: ./show
+arg 1: apple
+arg 2: banana
+arg 3: 123</code></pre>
+      <ul>
+        <li>Arguments are split by spaces in the shell.</li>
+        <li>Dashes (<code>-f</code>, <code>--help</code>) are just more strings, handled the same way.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card">
+      <h2>👍 Key Takeaways</h2>
+      <ul>
+        <li>✨ <code>argc</code> = count, <code>argv</code> = array of C-strings.</li>
+        <li>🔍 <code>argv[0]</code> is always your program’s name.</li>
+        <li>📚 Loop from <code>0…argc-1</code> to access all arguments.</li>
+        <li>🛡️ Always check <code>argc</code> before using <code>argv[i]</code> to avoid out-of-bounds errors.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

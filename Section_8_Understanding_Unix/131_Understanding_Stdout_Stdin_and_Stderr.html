@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🐾 Beginner Notes: Unix Data Streams</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f7fafc;
+      color: #2d3748;
+      margin: 0; padding: 24px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+    }
+    .container {
+      max-width: 720px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #3182ce;
+    }
+    .emoji { margin-right: 6px; }
+    pre {
+      background: #edf2f7;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code {
+      background: #e2e8f0;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔗 Unix Data Streams Explained</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2><span class="emoji">🔌</span>Three Standard Streams</h2>
+      <ul>
+        <li><strong>stdin (fd 0):</strong> Input into a process (keyboard by default).</li>
+        <li><strong>stdout (fd 1):</strong> Regular output from a process (screen by default).</li>
+        <li><strong>stderr (fd 2):</strong> Error &amp; diagnostic messages (screen by default).</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2><span class="emoji">🖥️</span>Default Connections</h2>
+      <p>
+        • <code>stdin</code> → TTY (terminal reads your keyboard).<br/>
+        • <code>stdout</code> → TTY (shows on your monitor).<br/>
+        • <code>stderr</code> → TTY (also shows on monitor).
+      </p>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2><span class="emoji">📥</span>Reading stdin in Node.js</h2>
+      <pre><code>process.stdin.on('data', chunk =&gt; {
+  console.log('Got stdin:', chunk.toString())
+});</code></pre>
+      <p>Hit <code>Enter</code> in terminal to send keyboard text into your script.</p>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2><span class="emoji">📤</span>Writing stdout &amp; stderr in Node.js</h2>
+      <pre><code>process.stdout.write('Hello stdout\n');
+process.stderr.write('Warning on stderr\n');</code></pre>
+      <p><code>console.log()</code> writes to <code>stdout</code> with a newline.</p>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2><span class="emoji">🔗</span>Piping Between Processes</h2>
+      <p>
+        Chain apps: <code>app1 | app2</code> passes <code>app1</code>’s <code>stdout</code> into <code>app2</code>’s <code>stdin</code>.<br/>
+        You can link many processes: <code>a | b | c</code>.
+      </p>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2><span class="emoji">💾</span>Redirecting Output &amp; Errors</h2>
+      <ul>
+        <li><code>command > out.txt</code> saves <code>stdout</code> to file.</li>
+        <li><code>command 2&gt; err.txt</code> saves <code>stderr</code> to file.</li>
+        <li><code>command &gt;&amp; file</code> (or <code>&gt;&gt;</code>) can merge streams.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card">
+      <h2><span class="emoji">🚀</span>Streams in C</h2>
+      <pre><code>#include &lt;stdio.h&gt;
+int main(){
+  char c;
+  while((c = fgetc(stdin)) != EOF){
+    fputc(c, stdout);  // echo input
+  }
+  return 0;
+}</code></pre>
+      <p>Uses <code>stdin</code>, <code>stdout</code> like Node.js streams.</p>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="card">
+      <h2><span class="emoji">🎯</span>Why Streams Matter</h2>
+      <ul>
+        <li>🎬 Build small tools that chain together.</li>
+        <li>📂 Handle gigabytes of data without big memory use.</li>
+        <li>🛠️ Filter, transform, and log info flexibly.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

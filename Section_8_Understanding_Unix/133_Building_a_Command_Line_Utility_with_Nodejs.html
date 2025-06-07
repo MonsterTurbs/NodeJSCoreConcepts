@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🐱 Build a Cat-Style CLI Tool in Node</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7fafc;
+      margin: 0; padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #3182ce;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c5282;
+    }
+    pre {
+      background: #edf2f7;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code {
+      background: #e2e8f0;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🐱 Build “cat” CLI Tool in Node</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>📋 What “cat” Does</h2>
+      <ul>
+        <li>Reads file(s) or <code>stdin</code></li>
+        <li>Writes contents to <code>stdout</code></li>
+        <li>Keeps streaming until end-of-file</li>
+      </ul>
+      <p>Can also pipe: <code>echo "hi" | cat</code> → outputs <em>hi</em>.</p>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>⚙️ Setup &amp; Modules</h2>
+      <p>Start <code>cat.js</code> with:</p>
+      <pre><code>const fs = require('fs');
+const { stdin, stdout, exit } = require('process');</code></pre>
+      <p>Use <code>stdin</code> for piped input, <code>fs</code> for files.</p>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>🔄 Reading from stdin</h2>
+      <pre><code>stdin.on('data', chunk =&gt; {
+  stdout.write(chunk);
+});
+</code></pre>
+      <p>Streams data from keyboard or pipe until <code>EOF</code>.</p>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>📂 Handling File Argument</h2>
+      <pre><code>const fp = process.argv[2];
+if (fp) {
+  const rs = fs.createReadStream(fp);
+  rs.pipe(stdout);
+  rs.on('end', () =&gt; exit(0));
+}</code></pre>
+      <p>Reads file if an argument is given, then exits with code <code>0</code>.</p>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>✨ Putting It Together</h2>
+      <pre><code>if (!fp) {
+  stdin.pipe(stdout);
+} else {
+  // file code above…
+}</code></pre>
+      <p>Supports both piping <code>stdin</code> and file-reading.</p>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2>🔧 Usage Examples</h2>
+      <pre><code>node cat.js somefile.txt           # read file
+echo "hello" | node cat.js            # read stdin
+node cat.js file.txt | tr a-z A-Z     # pipe into TR</code></pre>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="card">
+      <h2>🎗️ Add an Alias</h2>
+      <p>In your <code>~/.bashrc</code> or <code>~/.zshrc</code>:</p>
+      <pre><code>alias mycat='node /path/to/cat.js'</code></pre>
+      <p>You can then run: <code>mycat file.txt</code></p>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="card">
+      <h2>🚀 Why This Matters</h2>
+      <ul>
+        <li>🔹 Learn streams, args &amp; exit codes</li>
+        <li>🔹 Build custom CLI tools in Node</li>
+        <li>🔹 Combine with pipes &amp; redirection</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

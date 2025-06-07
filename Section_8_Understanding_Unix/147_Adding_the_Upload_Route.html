@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>📤 Video Upload Route – Study Notes</title>
+  <style>
+    body {
+      margin: 0; padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .card p, .card ul {
+      margin: 0.5em 0;
+      line-height: 1.4;
+    }
+    .card code {
+      background: #eef3f7;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>📤 Adding Video Upload Route</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ Client Request 🖥️</h2>
+      <p>Frontend sends a <code>POST /api/upload-video</code> with:</p>
+      <ul>
+        <li>Binary file in the body</li>
+        <li>Original filename in header <code>file-name</code></li>
+      </ul>
+      <p>You can test in Postman with “binary” body + file selector. 📥</p>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ Define New Route 📑</h2>
+      <p>In <code>src/routes.js</code> add:</p>
+      <pre><code>server.routes('post', '/api/upload-video', video.uploadVideo)</code></pre>
+      <p>Points to <code>uploadVideo</code> in <code>controllers/video.js</code>.</p>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ Read Filename &amp; Extension ✏️</h2>
+      <p>In controller:</p>
+      <pre><code>const originalName = req.headers['file-name'];
+const ext = path.extname(originalName).substring(1).toLowerCase();
+const name = path.parse(originalName).name;</code></pre>
+      <p>Grabs the header, splits off “.ext”, and file base name. 🗂️</p>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ Generate Unique Video ID 🎲</h2>
+      <p>Use Node.js <code>crypto</code>:</p>
+      <pre><code>const videoId = crypto.randomBytes(4).toString('hex');</code></pre>
+      <p>Produces a random hex string to name the folder. 🔑</p>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ Create Folder &amp; Save File 📂</h2>
+      <ol>
+        <li>Make directory: <code>await fs.mkdir(`storage/${videoId}`)</code></li>
+        <li>Open write-stream: <code>await fs.open(fullPath, 'w')</code></li>
+        <li>Pipe upload into file:
+          <pre><code>await pipeline(req, fileStream)</code></pre>
+        </li>
+      </ol>
+      <p>Saves to <code>storage/VIDEOID/original.${ext}</code>. 🎉</p>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Handle Canceled Uploads 🛑</h2>
+      <p>Wrap pipeline in <code>try…catch</code> and on error:</p>
+      <pre><code>await util.deleteFolder(`storage/${videoId}`);
+// then handleError(...)</code></pre>
+      <p>Removes incomplete folder if user cancels. 🗑️</p>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Update File-based DB 📝</h2>
+      <p>Store metadata in <code>data/videos.json</code>:</p>
+      <pre><code>db.update();
+db.videos.unshift({
+  id: db.videos.length,
+  videoId,
+  name, ext,
+  userId: req.userId,
+  extractedAudio: false,
+  resizes: {}
+});
+db.save();</code></pre>
+      <p>Keeps list of all uploaded videos. 💾</p>
+    </div>
+
+    <div class="card">
+      <h2>8️⃣ Send Success Response ✅</h2>
+      <p>Finally reply to client:</p>
+      <pre><code>res
+  .status(200)
+  .json({ status: 'success', message: 'File uploaded!' });</code></pre>
+      <p>Now upload route is done! 🎉</p>
+    </div>
+
+  </div>
+</body>
+</html>

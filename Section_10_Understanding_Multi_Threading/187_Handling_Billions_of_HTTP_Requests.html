@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🚀 Benchmarking HTTP Routes: Beginner-Friendly Study Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f2f6f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #1d3557;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #457b9d;
+      font-size: 1.3rem;
+    }
+    .card ul {
+      padding-left: 20px;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 Benchmarking HTTP Routes: Study Notes</h1>
+  <div class="container">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <h2>📋 Overview</h2>
+      <ul>
+        <li><span class="emoji">🎯</span>Goal: send large numbers of HTTP requests to an endpoint and measure speed.</li>
+        <li><span class="emoji">🧰</span>Tools: <code>worker_threads</code> to spawn “clients” sending requests in parallel.</li>
+        <li><span class="emoji">🔬</span>Compare performance: single thread, multi-thread, batching, clustering.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <h2>📝 Request-Sender Script</h2>
+      <ul>
+        <li><span class="emoji">⚙️</span><strong>calc.js</strong>: each worker sends N requests sequentially, awaiting each before next.</li>
+        <li><span class="emoji">🔄</span>Distributes total requests evenly: <code>count/threads</code> per worker.</li>
+        <li><span class="emoji">⏱️</span>Logs start/end times to compute total duration.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <h2>💻 IO Performance & Threads</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>HTTP is I/O-bound: Node’s async model excels at handling many concurrent requests.</li>
+        <li><span class="emoji">🔄</span>Adding threads still helps—while one thread awaits, others fire new requests.</li>
+        <li><span class="emoji">📊</span>Example: 100 K requests—single thread took 5 s; 4 threads took ~2 s.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <h2>🧩 Batching Requests</h2>
+      <ul>
+        <li><span class="emoji">📦</span><strong>calc_batch.js</strong>: send requests in small groups (e.g. 150 at once), <code>Promise.all</code>, then next batch.</li>
+        <li><span class="emoji">⚡️</span>One thread + batching matched multi-thread performance: Node handles I/O efficiently.</li>
+        <li><span class="emoji">🔧</span>Batching = group many small tasks &amp; await together (the reverse of CPU‐batching).</li>
+      </ul>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <h2>⚖️ Clustering for Scale</h2>
+      <ul>
+        <li><span class="emoji">🖥️</span>Cluster mode: spawn one Node instance per CPU core (e.g. 12 cores → 12 workers).</li>
+        <li><span class="emoji">📈</span>Example: 5 M requests—single machine, single thread ~60 s; 12 instances ~11 s.</li>
+        <li><span class="emoji">🔒</span>Ethics: only benchmark your own servers—unauthorized load tests can be illegal!</li>
+      </ul>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <h2>🔍 Insights & Next Steps</h2>
+      <ul>
+        <li><span class="emoji">🛠️</span>Use this testing to uncover hidden bugs (e.g. file-handle leaks under load).</li>
+        <li><span class="emoji">🌍</span>Try real-world scenarios: add DB lookups, auth flows, HTTPS → further optimize.</li>
+        <li><span class="emoji">🎓</span>Experiment on cloud VMs, compare CPU types, SSD speeds, CDN performance.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

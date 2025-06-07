@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🔤 Character Sets &amp; Encodings – Beginner Study Notes</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7fafc;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2b6cb0;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #2b6cb0;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    code {
+      background-color: #ebf8ff;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔤 Character Sets &amp; Encodings – Beginner Study Notes</h1>
+  <div class="container">
+
+    <!-- Card 1: What Is a Character Set? -->
+    <div class="card">
+      <h2>🗂️ What Is a Character Set?</h2>
+      <ul>
+        <li><span class="emoji">❓</span>A <strong>character set</strong> is a standard that maps each human‐readable character (letters, digits, symbols) to a unique number.</li>
+        <li><span class="emoji">🔢</span>Computers store only numbers (bits). To show text on screen, we use a character set to say “this number means ‘A’”, “that number means ‘あ’”, etc.</li>
+        <li><span class="emoji">🌐</span>Common examples:
+          <ul>
+            <li><strong>ASCII</strong> – maps 128 characters (English letters, digits, punctuation) to numbers 0–127.</li>
+            <li><strong>Unicode</strong> – a vast standard covering ~149,000 characters (all world languages, emojis, symbols).</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📝</span>Think: if “s” is mapped to number <code>115</code> in Unicode, then saving “s” means storing the number <code>115</code> in memory (in bits).</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: ASCII Character Set -->
+    <div class="card">
+      <h2>🔡 ASCII Character Set</h2>
+      <ul>
+        <li><span class="emoji">📜</span>ASCII = <em>American Standard Code for Information Interchange</em> → covers only English letters, digits, common symbols, and control codes.</li>
+        <li><span class="emoji">🔢</span>Total = 128 characters (numbers 0–127):
+          <ul>
+            <li><strong>0–31</strong> → control characters (e.g., newline <code>\n</code>, delete).</li>
+            <li><strong>32–47</strong> → punctuation and symbols (space, ! " # $ % &amp; ‘ ( ) *)</li>
+            <li><strong>48–57</strong> → digits <code>0–9</code>.</li>
+            <li><strong>65–90</strong> → uppercase letters <code>A–Z</code>.</li>
+            <li><strong>97–122</strong> → lowercase letters <code>a–z</code>.</li>
+            <li>More punctuation up to <code>127</code>.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">💾</span>ASCII is a <em>subset</em> of Unicode: same numeric values for these 128 characters, but Unicode goes far beyond (other languages, emojis).</li>
+        <li><span class="emoji">📖</span>To view the ASCII table on macOS/Linux:  
+          <code>man ascii</code> → lists each character with its:
+          <ul>
+            <li>Hex value (e.g. <code>0x41</code> for “A”)</li>
+            <li>Decimal value (<code>65</code> for “A”)</li>
+            <li>Binary value (<code>0100 0001₂</code> for “A”)</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Unicode Character Set -->
+    <div class="card">
+      <h2>🌍 Unicode Character Set</h2>
+      <ul>
+        <li><span class="emoji">📚</span>Unicode defines a universal mapping for <strong>149,000+</strong> characters (letters, symbols, emojis) from nearly every writing system.</li>
+        <li><span class="emoji">🔢</span>Each character has a unique code point, e.g.:
+          <ul>
+            <li>“s” → <code>U+0073</code> (decimal <code>115</code>).</li>
+            <li>“あ” → <code>U+3042</code> (decimal <code>12354</code>).</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🌱</span>Unicode grows over time (new emojis, new scripts). Version 15.1 (September 2023) already includes ~149 000 characters.</li>
+        <li><span class="emoji">🔎</span>See full list: <a href="https://unicode.org/standard/standard.html" target="_blank">Unicode Consortium</a> (<em>just a standard, not software</em>).</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Encoders &amp; Decoders -->
+    <div class="card">
+      <h2>🔄 Encoders &amp; Decoders</h2>
+      <ul>
+        <li><span class="emoji">⚙️</span>Computers only store bits (0s &amp; 1s). To save images, text, or audio, we use:
+          <ul>
+            <li><strong>Encoder</strong>: converts human‐readable data (text, image) → bits.</li>
+            <li><strong>Decoder</strong>: converts bits → human‐readable data (text, image).</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📷</span>Example: Image encoder turns a photo into a JPEG file (bits). A JPEG decoder (e.g., your phone’s photo app) converts bits back into the picture you see.</li>
+        <li><span class="emoji">📜</span>For text, <strong>character encodings</strong> map between characters ↔ sequences of bytes (bits). Without encoding, terminals can’t show letters!</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: What Is a Character Encoding? -->
+    <div class="card">
+      <h2>🔤 What Is a Character Encoding?</h2>
+      <ul>
+        <li><span class="emoji">💾</span>A <strong>character encoding</strong> assigns each character to a specific byte sequence (eight bits or more) so computers can store and transmit text.</li>
+        <li><span class="emoji">🌍</span>Common encodings:
+          <ul>
+            <li><strong>UTF-8</strong> → the most popular today, covers all of Unicode. Uses 1–4 bytes per character.</li>
+            <li><strong>UTF-16</strong> → another Unicode‐based encoding, uses 2 or 4 bytes per character.</li>
+            <li><strong>ISO-8859-1</strong> (Latin-1) → old standard for Western European languages (1 byte per char, covers 256 codes).</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔑</span>Example in UTF-8:
+          <ul>
+            <li>“s” → decimal 115 → binary <code>01110011₂</code> (one byte, because ASCII subset).</li>
+            <li>“😊” (emoji) → large code point → becomes 4 bytes: <code>11110000 10011111 10010000 10011110₂</code>.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🚨</span>If you decode bits with the wrong encoding (e.g., read UTF-16 bytes as UTF-8), you see garbled text (“�” or weird symbols).</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: How UTF-8 Works -->
+    <div class="card">
+      <h2>🧩 How UTF-8 Works</h2>
+      <ul>
+        <li><span class="emoji">🎯</span>UTF-8 stores each Unicode code point as 1–4 bytes:
+          <ul>
+            <li><strong>1 byte</strong> for ASCII subset (0–127): most common English characters.</li>
+            <li><strong>2 bytes</strong> for many Latin, Greek, Cyrillic characters, etc.</li>
+            <li><strong>3 bytes</strong> for most CJK (Chinese/Japanese/Korean) characters.</li>
+            <li><strong>4 bytes</strong> for emojis, historical scripts, rare symbols.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔍</span>Example: Lowercase “s” (Unicode <code>U+0073</code>) → <code>01110011₂</code> (1 byte).  
+            <code>115</code><sub>10</sub> = <code>0x73</code> in hex.
+        </li>
+        <li><span class="emoji">💡</span>All ASCII characters have a leading zero in UTF-8, so any value <128 is just that byte.</li>
+        <li><span class="emoji">✨</span>Many other characters need 2–4 bytes. E.g., “あ” (U+3042) → <code>E3 81 82</code> (3 bytes).</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: ASCII &amp; UTF-8 Relationship -->
+    <div class="card">
+      <h2>🔗 ASCII &amp; UTF-8 Relationship</h2>
+      <ul>
+        <li><span class="emoji">📦</span>ASCII is a subset of UTF-8:  
+          <ul>
+            <li>ASCII characters (<code>0–127</code>) always encode as a single byte in UTF-8.</li>
+            <li>Example: “A” = 65<sub>10</sub> = <code>01000001₂</code> = <code>0x41</code>. That same byte appears in UTF-8.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🎨</span>So any pure-ASCII text is automatically valid UTF-8.</li>
+        <li><span class="emoji">⚠️</span>If you mix ASCII with other languages in UTF-8, ASCII bytes stay as-is; non-ASCII use multi‐byte sequences.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Viewing Code Points in Calculator -->
+    <div class="card">
+      <h2>🔍 Viewing Code Points in Calculator</h2>
+      <ul>
+        <li><span class="emoji">🧮</span>Use your Programmer Calculator to see how numbers map to characters:
+          <ul>
+            <li>Select <code>Dec</code> mode and enter <code>115</code>.  
+                ↓  
+                The calculator’s char viewer shows: <em>“s”</em> (ASCII/Unicode).</li>
+            <li>Switch to <code>Hex</code>: you see <code>0x73</code>.  
+                That same <code>0x73</code> in UTF-8 → <code>01110011₂</code> as a single byte.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">👀</span>To confirm:  
+            <code>man ascii</code> (macOS/Linux) lists ASCII codes in octal, hex, and decimal.  
+            Scroll to <code>115</code> → letter “s”.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Why Encodings Matter -->
+    <div class="card">
+      <h2>❗ Why Encodings Matter</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>Without correct encoding, text becomes gibberish (e.g., reading UTF-16 bits as UTF-8 outputs “�”).</li>
+        <li><span class="emoji">📧</span>Web pages, APIs, and databases often specify “charset=UTF-8” so everyone decodes bytes the same way.</li>
+        <li><span class="emoji">🔑</span>As a back-end engineer, you’ll handle text in data storage &amp; network: always confirm encoding to avoid bugs!</li>
+      </ul>
+    </div>
+
+    <!-- Card 10: Checking File Encoding -->
+    <div class="card">
+      <h2>🔧 Checking File Encoding</h2>
+      <ul>
+        <li><span class="emoji">💻</span>On macOS/Linux, use <code>file</code> command to inspect a text file’s encoding:
+          <ul>
+            <li><code>file myfile.txt</code> → shows something like “UTF-8 Unicode text” or “ASCII text”.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔄</span>On Windows, many editors (Notepad++, VS Code) display file encoding at the bottom right. You can convert between encodings there.</li>
+        <li><span class="emoji">📘</span>Always save new source files as UTF-8 (with BOM off) unless you have a special reason.</li>
+      </ul>
+    </div>
+
+    <!-- Card 11: Common Pitfalls &amp; Tips -->
+    <div class="card">
+      <h2>⚠️ Common Pitfalls &amp; Tips</h2>
+      <ul>
+        <li><span class="emoji">⛔</span>Mixing encodings: Storing UTF-8 bytes in a system expecting ISO-8859-1 leads to broken characters (e.g., “ã©” instead of “é”).</li>
+        <li><span class="emoji">🔄</span>Always specify encoding when reading/writing text (e.g., in Node.js: <code>fs.readFile('file.txt', 'utf8', ...)</code>).</li>
+        <li><span class="emoji">🔍</span>If you see “�” (replacement character), it means the byte sequence didn’t match a valid code in the chosen encoding.</li>
+      </ul>
+    </div>
+
+    <!-- Card 12: Next Steps -->
+    <div class="card">
+      <h2>➡️ Next Steps</h2>
+      <ul>
+        <li><span class="emoji">🧑‍💻</span>Practice opening a few text files in your editor—toggle encoding between UTF-8, ISO-8859-1, and watch how characters change.</li>
+        <li><span class="emoji">📚</span>Read about <a href="https://unicode.org/standard/standard.html" target="_blank">Unicode Standard</a> if you want deeper knowledge on code points and planes.</li>
+        <li><span class="emoji">🚀</span>Next, we’ll apply these concepts to <strong>Buffers in Node.js</strong>—working directly with raw bytes and converting them to/from strings!</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

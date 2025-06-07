@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>📝 Beginner Notes: Unix Shells</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      background: #f0f4f8;
+      margin: 0; padding: 24px; color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2a6f97;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #1e3a5f;
+    }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔎 What Is a Shell?</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2><span class="emoji">🌐</span>Shell in the OS</h2>
+      <p>
+        The <strong>kernel</strong> is the core of Unix (talks to hardware).  
+        A <strong>shell</strong> is just another program—an interface between you and the kernel.  
+        When you type commands in your terminal, the shell turns them into system calls.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">📞</span>System Calls</h2>
+      <p>
+        System calls let programs talk to the kernel (e.g., <code>open()</code>, <code>read()</code>, <code>write()</code>).  
+        You find them in <code>man 2</code> pages.  
+        They’re usually used in C, but shells use them too under the hood.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">📚</span>Man‐Page Sections</h2>
+      <ul>
+        <li><code>man 1</code>: User commands (<code>ls</code>, <code>mkdir</code>)</li>
+        <li><code>man 2</code>: System calls (<code>open</code>, <code>read</code>)</li>
+        <li><code>man 3</code>: C library functions (<code>printf</code>, <code>malloc</code>)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🐚</span>Popular Shells</h2>
+      <ul>
+        <li><strong>sh</strong> (Thompson, 1971) – original, now obsolete</li>
+        <li><strong>Bourne sh</strong> (1979) – added features</li>
+        <li><strong>bash</strong> (“Bourne Again SHell”, 1989) – default on Linux</li>
+        <li><strong>zsh</strong> (1990) – more features, default on macOS</li>
+        <li>…and others (dash, csh, ksh)</li>
+      </ul>
+      <p> </p>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🔄</span>Launching a Shell</h2>
+      <p>
+        1. You open your <strong>terminal</strong> (app) → it tells the kernel: “Spawn a shell for me.”<br>
+        2. The kernel starts the shell process (bash, zsh, etc.).<br>
+        3. You type commands; the shell makes system calls and shows results.
+      </p>
+      <p>
+        Each new tab runs a <em>new</em> shell process.  
+        Type <code>echo $SHELL</code> to see which one you’re in! 😊
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>

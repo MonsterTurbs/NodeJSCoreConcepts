@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTTP &amp; Node.js – Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.5;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .emoji {
+      font-size: 1.3em;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">🌐</span>What is HTTP?</h2>
+    <p>
+      HTTP (HyperText Transfer Protocol) is the foundation of the Web.  
+      It defines how browsers and servers talk.  
+      Every website, API, or web app you use runs on HTTP(S).
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📦</span>Node.js &amp; HTTP Module</h2>
+    <p>
+      Node.js has a built-in <code>http</code> module.  
+      It lets you create web servers, handle requests &amp; send responses.  
+      All popular frameworks (Express, Koa, Nest…) build on this core.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🛠️</span>Main HTTP Concepts</h2>
+    <ul>
+      <li><strong>Requests:</strong> Method (GET, POST…), URL, headers, body</li>
+      <li><strong>Responses:</strong> Status code, headers, body</li>
+      <li><strong>Routing:</strong> Map URLs + methods to handler functions</li>
+      <li><strong>Middleware:</strong> Pre-/post-processing of requests</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🚀</span>Building “Butter” Framework</h2>
+    <p>
+      You’ll create a mini-Express called <em>Butter</em>.  
+      It supports:
+    </p>
+    <ul>
+      <li>Routing &amp; URL parameters</li>
+      <li>JSON parsing &amp; static file serving</li>
+      <li>Middleware chains (<code>next()</code>)</li>
+      <li>Helpers like <code>res.json()</code>, <code>res.sendFile()</code></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🎯</span>Why Master HTTP?</h2>
+    <p>
+      Understanding raw HTTP &amp; Node’s module empowers you to:
+    </p>
+    <ul>
+      <li>Read/write any web framework’s internals</li>
+      <li>Customize performance &amp; security (TLS, headers)</li>
+      <li>Build robust APIs without black-box libraries</li>
+      <li>Level-up full-stack skills—front &amp; back end</li>
+    </ul>
+  </div>
+
+</body>
+</html>

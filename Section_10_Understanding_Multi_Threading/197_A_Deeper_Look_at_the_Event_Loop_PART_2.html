@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🌀 Event Loop Explained for Kids</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9fafb; margin: 0; padding: 20px; color: #333; }
+    h1 { text-align: center; color: #2a6f97; }
+    main { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 800px; margin: 0 auto; }
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 16px; }
+    .card h2 { margin-top: 0; color: #1b3b5f; }
+    .card ul { padding-left: 20px; }
+    code { background: #eef1f5; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+    .emoji { margin-right: 6px; }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🌀 Event Loop Made Easy</h1>
+  <main>
+    <!-- Card 1 -->
+    <section class="card">
+      <h2><span class="emoji">🎬</span>Rare Callback Order</h2>
+      <p>Sometimes logs show <strong>A, B, D, C</strong> instead of the usual A, B, C, D. This happens because callbacks race to join when threads finish tasks in tiny microseconds.</p>
+    </section>
+
+    <!-- Card 2 -->
+    <section class="card">
+      <h2><span class="emoji">🔄</span>How It Happens</h2>
+      <ul>
+        <li>Main code schedules callbacks.</li>
+        <li>Two threads add callback C and D at slightly different times.</li>
+        <li>The loop picks up whichever arrives first.</li>
+      </ul>
+    </section>
+
+    <!-- Card 3 -->
+    <section class="card">
+      <h2><span class="emoji">🛑</span>Don’t Rely on Order</h2>
+      <p>Never write code that breaks if <code>setTimeout</code> and <code>setImmediate</code> swap places. Always assume order can change.</p>
+    </section>
+
+    <!-- Card 4 -->
+    <section class="card">
+      <h2><span class="emoji">✅</span>What Is Guaranteed</h2>
+      <ul>
+        <li><strong>A</strong> logs before any <code>nextTick</code> or Promise callbacks.</li>
+        <li><code>nextTick</code> and resolved-Promise run before other phases.</li>
+      </ul>
+    </section>
+
+    <!-- Card 5 -->
+    <section class="card">
+      <h2><span class="emoji">🕳️</span>Poll & setImmediate</h2>
+      <p>After I/O (like reading a file), the loop is in the <strong>poll</strong> phase. Then <code>setImmediate</code> always runs before timers (<code>setTimeout</code>) in the next tick.</p>
+    </section>
+
+    <!-- Card 6 -->
+    <section class="card">
+      <h2><span class="emoji">⚙️</span>Why <code>process.nextTick()</code>?</h2>
+      <p>We use <code>process.nextTick()</code> to delay work until after all our code runs but before the event loop continues. Handy for ensuring listeners run after setup.</p>
+    </section>
+
+    <!-- Card 7 -->
+    <section class="card">
+      <h2><span class="emoji">✨</span>Sync vs Async</h2>
+      <ul>
+        <li><em>Synchronous</em>: One thing at a time, same thread.</li>
+        <li><em>Asynchronous</em>: Work happens on another thread or OS, callback joins later.</li>
+      </ul>
+    </section>
+
+    <!-- Card 8 -->
+    <section class="card">
+      <h2><span class="emoji">💡</span>Promises & <code>async/await</code></h2>
+      <p>Promises and <code>await</code> are just nicer ways to write callbacks. Under the hood, they still use the event loop and callback queues.</p>
+    </section>
+
+    <!-- Card 9 -->
+    <section class="card">
+      <h2><span class="emoji">🚫</span>Blocking with <code>await</code></h2>
+      <p>Using <code>await</code> pauses only the <code>async</code> function, not the whole program. But big loops in <code>await</code> still block the main thread, so keep functions small.</p>
+    </section>
+
+    <!-- Card 10 -->
+    <section class="card">
+      <h2><span class="emoji">🔑</span>Key Takeaways</h2>
+      <ul>
+        <li>Event loop phases: timers, I/O, check, close.</li>
+        <li>Microtasks (nextTick/Promise) run first.</li>
+        <li>Don’t guess callback order; write safe code!</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

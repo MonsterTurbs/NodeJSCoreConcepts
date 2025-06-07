@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Using <code>net</code> to Send Raw HTTP – Study Notes</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .card {
+      border: 1px solid #ccc; border-radius: 8px;
+      padding: 16px; margin-bottom: 16px;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+      max-width: 800px;
+    }
+    .card h2 { margin-top: 0; font-size: 1.2em; }
+    .emoji { font-size: 1.4em; margin-right: 6px; }
+    code { background: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <!-- Card 1 -->
+  <div class="card">
+    <h2><span class="emoji">🎯</span>Goal</h2>
+    <p>Use Node’s <code>net</code> module to send a raw HTTP request to our simple HTTP server and inspect the TCP packet in Wireshark.</p>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card">
+    <h2><span class="emoji">🔧</span>Setup “net” Client</h2>
+    <ol>
+      <li>Copy your simple TCP sender code into <code>net-sender.js</code>.</li>
+      <li>Change <code>host</code> to <code>localhost</code> and <code>port</code> to <code>8050</code> (your HTTP server’s port).</li>
+      <li>Add listeners:
+        <ul>
+          <li><code>socket.on('data', …)</code> to log the HTTP response.</li>
+          <li><code>socket.on('end', …)</code> to log when the connection closes.</li>
+        </ul>
+      </li>
+    </ol>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="card">
+    <h2><span class="emoji">🐟</span>First Attempt</h2>
+    <p>Send a dummy buffer:</p>
+    <pre><code>let req = Buffer.from('hello');  
+socket.write(req);</code></pre>
+    <p><strong>Result:</strong> Server replied <code>400 Bad Request</code> – because it’s not valid HTTP.</p>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="card">
+    <h2><span class="emoji">🕵️‍♂️</span>Capture in Wireshark</h2>
+    <ol>
+      <li>Start HTTP server on port <code>8050</code>.</li>
+      <li>Run your normal HTTP client (e.g. <code>node simple-client.js</code>).</li>
+      <li>In Wireshark, listen on Loopback, then immediately stop capture after the request.</li>
+      <li>Filter for <code>tcp.port == 8050</code> – find the HTTP request packet.</li>
+      <li>Right-click → <strong>Copy → Bytes → As Hex Stream</strong>.</li>
+    </ol>
+  </div>
+
+  <!-- Card 5 -->
+  <div class="card">
+    <h2><span class="emoji">📋</span>Paste &amp; Send Raw HTTP</h2>
+    <ol>
+      <li>In <code>net-sender.js</code>, replace dummy buffer with:
+        <pre><code>const raw = Buffer.from('<em>YOUR_HEX_STREAM</em>', 'hex');  
+socket.write(raw);</code></pre>
+      </li>
+      <li>Run <code>node net-sender.js</code>.</li>
+      <li>The server now receives a valid HTTP request and you’ll see the proper response logged.</li>
+    </ol>
+  </div>
+
+</body>
+</html>

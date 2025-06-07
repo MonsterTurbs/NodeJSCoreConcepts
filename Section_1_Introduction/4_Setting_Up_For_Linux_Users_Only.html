@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Linux Setup Study Notes – Beginner Friendly</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f7;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .card {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #1abc9c;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🐧 Linux Setup: Beginner-Friendly Study Notes</h1>
+  <div class="container">
+    <!-- Card 1: Welcome & Guide -->
+    <div class="card">
+      <h2>👋 Welcome & Guide</h2>
+      <ul>
+        <li><span class="emoji">😊</span>This video shows how to prepare your <strong>Linux</strong> (Ubuntu 22) for the NodeJS course.</li>
+        <li><span class="emoji">⏭️</span>Use the Table of Contents (bottom-left of the video) to skip parts you already know.</li>
+        <li><span class="emoji">📥</span>Download the PDF of installation commands from Resources to copy/paste, instead of typing.</li>
+        <li><span class="emoji">❗</span>Don’t bookmark or add notes in the video—content will change when updated.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Terminal Basics -->
+    <div class="card">
+      <h2>💻 Terminal Basics</h2>
+      <ul>
+        <li><span class="emoji">🐚</span>Open Terminal: click “Show Applications” → search “Terminal” → open it.</li>
+        <li><span class="emoji">🔧</span>Zoom in/out: <code>Ctrl + Shift + +</code> to zoom in, <code>Ctrl + −</code> to zoom out.</li>
+        <li><span class="emoji">➕</span>New tab: click the “+” icon or press <code>Ctrl + Shift + T</code>.</li>
+        <li><span class="emoji">⌨️</span>Some handy shortcuts:  
+          <ul>
+            <li><span class="emoji">🎯</span><code>Ctrl + A</code> → move cursor to start of line.</li>
+            <li><span class="emoji">🎯</span><code>Ctrl + E</code> → move cursor to end of line.</li>
+            <li><span class="emoji">📋</span>Copy: select text → <code>Ctrl + Shift + C</code>. Paste: <code>Ctrl + Shift + V</code>.</li>
+            <li><span class="emoji">❌</span><code>Ctrl + C</code> → stop a running command or clear partial input.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔍</span>Find CPU & OS: run <code>uname -a</code>.  
+          <ul>
+            <li>If it shows <em>arm64</em>, you have an ARM-based machine. If <em>x86_64</em>, you have an Intel/AMD (x64) machine.</li>
+            <li>Also see “Ubuntu 22” in output.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📌</span>Pin Terminal to favorites: right-click its icon in the dock → “Add to Favorites”.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Browser -->
+    <div class="card">
+      <h2>🌐 Browser</h2>
+      <ul>
+        <li><span class="emoji">🔥</span>Firefox is usually pre-installed—feel free to use it. If you prefer Chrome, download and install it.</li>
+        <li><span class="emoji">👩‍💻</span>Open Developer Tools: right-click page → “Inspect” or press <code>Ctrl + Shift + I</code>. Use the <strong>Network</strong> tab to view requests/responses.</li>
+        <li><span class="emoji">⚠️</span>To install Chrome (x64): download <code>.deb</code> from google.com → in Terminal:  
+          <pre style="background:#f4f4f4; padding:8px;">sudo apt install ./google-chrome-stable_current_amd64.deb</pre>
+          If on ARM64, Chrome may not be supported—use Firefox instead.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Code Editor (VS Code) -->
+    <div class="card">
+      <h2>📝 Code Editor</h2>
+      <ul>
+        <li><span class="emoji">💻</span>Recommended: <strong>Visual Studio Code</strong>. If you already have an editor (e.g., Sublime, Atom), you can skip this.</li>
+        <li><span class="emoji">🔍</span>To install VS Code:<br>
+          1. Download the <code>.deb</code> for your CPU (<em>amd64</em> or <em>arm64</em>) from <a href="https://code.visualstudio.com" target="_blank">code.visualstudio.com</a>.<br>
+          2. In Terminal:  
+          <pre style="background:#f4f4f4; padding:8px;">sudo apt install ./code_*.deb</pre>
+        </li>
+        <li><span class="emoji">✨</span>Open via <code>code .</code> to launch VS Code in current folder (ensure <code>code</code> is in PATH).</li>
+        <li><span class="emoji">🎨</span>Install extensions:  
+          <ul>
+            <li>Material Theme: beautifies editor.</li>
+            <li>Material Icon Theme: file icons.</li>
+            <li>Prettier – Code formatter: auto-formats on save.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">⚙️</span>Enable “Format on Save”: in Settings (<code>Ctrl + ,</code>) → search “Format on Save” → check box → configure default formatter to Prettier via Command Palette (<code>Ctrl + Shift + P</code> → “Format Document With…” → select Prettier).</li>
+        <li><span class="emoji">🔗</span>Toggle Sidebar: <code>Ctrl + B</code>. Extensions: <code>Ctrl + Shift + X</code>, Explorer: <code>Ctrl + Shift + E</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: NVM & NodeJS -->
+    <div class="card">
+      <h2>🌟 Install NVM & NodeJS</h2>
+      <ul>
+        <li><span class="emoji">🌀</span><strong>NVM</strong> (Node Version Manager) lets you install and switch between multiple Node versions smoothly.</li>
+        <li><span class="emoji">⌨️</span>To install NVM:  
+          <pre style="background:#f4f4f4; padding:8px;">curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash</pre>
+        </li>
+        <li><span class="emoji">🔄</span>Reload profile:  
+          <pre style="background:#f4f4f4; padding:8px;">source ~/.bashrc</pre>  
+          (or <code>source ~/.zshrc</code> if using zsh). Verify with <code>nvm --version</code>.</li>
+        <li><span class="emoji">🚀</span>Install latest LTS NodeJS:  
+          <pre style="background:#f4f4f4; padding:8px;">nvm install --lts</pre>  
+          Then <code>nvm use --lts</code>. Confirm with <code>node -v</code> and <code>npm -v</code>.</li>
+        <li><span class="emoji">⚠️</span>If a system Node is already installed, use <code>which node</code> to find and uninstall it to avoid conflicts.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Postman -->
+    <div class="card">
+      <h2>🧪 Install Postman</h2>
+      <ul>
+        <li><span class="emoji">🌐</span>Postman is used to test HTTP APIs. We’ll use it in the HTTP section.</li>
+        <li><span class="emoji">🔍</span>To install:  
+          1. Download the Linux <code>.tar.gz</code> from <a href="https://www.postman.com/downloads/" target="_blank">postman.com/downloads</a> (choose ARM64 or x64).<br>
+          2. In Terminal:  
+          <pre style="background:#f4f4f4; padding:8px;">cd ~/Downloads  
+tar -xzf Postman-linux-*.tar.gz  
+mkdir -p ~/Applications  
+mv Postman/ ~/Applications/</pre>
+          3. Create a desktop shortcut: in Terminal:  
+          <pre style="background:#f4f4f4; padding:8px;">cat > ~/Desktop/postman.desktop << 'EOF'  
+[Desktop Entry]  
+Name=Postman  
+Exec=/home/USERNAME/Applications/Postman/Postman  
+Icon=/home/USERNAME/Applications/Postman/app/resources/app/assets/icon.png  
+Terminal=false  
+Type=Application  
+Categories=Development;  
+EOF  
+chmod +x ~/Desktop/postman.desktop</pre>  
+          Replace <code>USERNAME</code> with your Linux username.
+        </li>
+        <li><span class="emoji">✅</span>Launch via desktop icon or <code>~/Applications/Postman/Postman</code>.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Wireshark -->
+    <div class="card">
+      <h2>📡 Install Wireshark</h2>
+      <ul>
+        <li><span class="emoji">🔧</span>Wireshark captures network packets—useful for debugging networking code.</li>
+        <li><span class="emoji">⌨️</span>To install:  
+          <pre style="background:#f4f4f4; padding:8px;">sudo add-apt-repository ppa:wireshark-dev/stable  
+sudo apt update  
+sudo apt install wireshark</pre>
+        </li>
+        <li><span class="emoji">🔓</span>During installation, select “Yes” when asked to allow non-root users to capture packets.</li>
+        <li><span class="emoji">▶️</span>Run Wireshark with root privileges:  
+          <pre style="background:#f4f4f4; padding:8px;">sudo wireshark</pre>  
+          If you don’t run as root, interfaces won’t appear.</li>
+        <li><span class="emoji">❕</span>To capture on your loopback (127.0.0.1) or your main interface, double-click the interface in Wireshark.</li>
+        <li><span class="emoji">📘</span>You can turn off packet highlighting and auto-scroll via toolbar icons if it’s confusing.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Net-Tools (ifconfig) -->
+    <div class="card">
+      <h2>🔌 Net-Tools (ifconfig)</h2>
+      <ul>
+        <li><span class="emoji">⚙️</span>Install <strong>net-tools</strong> to use <code>ifconfig</code> and see IP addresses and interfaces.</li>
+        <li><span class="emoji">⌨️</span>In Terminal:  
+          <pre style="background:#f4f4f4; padding:8px;">sudo apt install net-tools</pre>
+        </li>
+        <li><span class="emoji">🔍</span>Run <code>ifconfig</code> to list interfaces.  
+          <ul>
+            <li><span class="emoji">🐧</span>Look for <em>lo</em> (loopback) and your main interface (e.g., <em>enp0s3</em> or <em>wlp2s0</em>).</li>
+            <li><span class="emoji">🌐</span>See IPv4 and IPv6 addresses for each interface.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Card 9: System Monitor -->
+    <div class="card">
+      <h2>📊 System Monitor</h2>
+      <ul>
+        <li><span class="emoji">🔍</span>“System Monitor” (GNOME System Monitor) shows running processes and resource usage (CPU, memory, network, disk).</li>
+        <li><span class="emoji">▶️</span>Open via “Show Applications” → search “System Monitor” → open it.</li>
+        <li><span class="emoji">👀</span>Tabs to check:  
+          <ul>
+            <li><strong>Processes</strong> – list all processes; right-click to kill, view open files, etc.</li>
+            <li><strong>Resources</strong> – graphs for CPU cores, memory usage, and swap usage.</li>
+            <li><strong>File Systems</strong> – displays disk usage, but we’ll mainly use the “Processes” and “Resources” tabs.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🕵️‍♂️</span>To monitor a Node process: run <code>node</code> or <code>node app.js</code> in Terminal, then find “node” in System Monitor to see CPU percentage and memory usage.</li>
+      </ul>
+    </div>
+
+    <!-- Card 10: Programmer Calculator -->
+    <div class="card">
+      <h2>🔢 Programmer Calculator</h2>
+      <ul>
+        <li><span class="emoji">🧮</span>Use the built-in Calculator in “Programmer” mode to convert between number bases (binary, octal, decimal, hex).</li>
+        <li><span class="emoji">▶️</span>Open Calculator via “Show Applications” → search “Calculator” → open it. Then choose “Programmer” from the menu (View &gt; Mode &gt; Programmer).</li>
+        <li><span class="emoji">✨</span>Converting examples:  
+          <ul>
+            <li>Enter a decimal number (e.g., “10”) → see its hex (0xA), octal (012), binary (1010).</li>
+            <li>Enter a hex number (e.g., “0xF”) → see decimal (15), octal (017), binary (1111).</li>
+            <li>Enter a binary sequence (e.g., “1010”) → see decimal (10), hex (0xA), octal (012).</li>
+          </ul>
+        </li>
+        <li><span class="emoji">📘</span>We’ll use this in the “Buffers” section to understand raw bytes (zeros/ones) vs. text.</li>
+      </ul>
+    </div>
+
+    <!-- Card 11: Testing a Simple Node App -->
+    <div class="card">
+      <h2>🚀 Testing a Simple NodeJS App</h2>
+      <ul>
+        <li><span class="emoji">📂</span>Open Terminal and navigate to Desktop:  
+          <code>cd ~/Desktop</code>.</li>
+        <li><span class="emoji">📄</span>Create a text file:  
+          <code>touch text.txt</code>. Then open in VS Code: <code>code text.txt</code> → type  
+          <em>This text is coming from Node.</em> → save and close.</li>
+        <li><span class="emoji">🆕</span>Create Node app file:  
+          <code>touch app.js</code> → open in VS Code: <code>code app.js</code>.</li>
+        <li><span class="emoji">💻</span>In <code>app.js</code>, copy/paste this code:  
+          <pre style="background:#f4f4f4; padding:8px;">  
+const http = require('http');  
+const fs = require('fs');  
+
+const server = http.createServer();  
+server.on('request', (req, res) => {  
+  const data = fs.readFileSync('text.txt');  
+  res.setHeader('Content-Type', 'text/plain');  
+  res.end(data);  
+});  
+
+server.listen(4080, '127.0.0.1', () => {  
+  console.log('Server running at http://' + server.address().address + ':' + server.address().port);  
+});  
+          </pre>
+        </li>
+        <li><span class="emoji">▶️</span>In Terminal:  
+          <code>node app.js</code> → you should see “Server running at http://127.0.0.1:4080”.</li>
+        <li><span class="emoji">🌐</span>Open Postman → set method to GET → URL <code>http://127.0.0.1:4080</code> → click “Send” → response should show “This text is coming from Node.”</li>
+        <li><span class="emoji">📡</span>Open Wireshark (with root privileges) → double-click “Loopback” interface to capture → in Postman click “Send” → stop Wireshark → find the HTTP packet from 127.0.0.1.  
+          <ul>
+            <li>Click that packet → scroll down to see the plain-text response: “This text is coming from Node.”</li>
+          </ul>
+        </li>
+        <li><span class="emoji">✅</span>If Postman returns the text and Wireshark captured packets, your Linux setup is complete!</li>
+        <li><span class="emoji">🎉</span>Congrats! You’re ready to follow along with the course.</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

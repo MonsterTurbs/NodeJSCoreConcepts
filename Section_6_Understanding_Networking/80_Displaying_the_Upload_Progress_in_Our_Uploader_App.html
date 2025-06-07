@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Progress – Uploader App Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.4;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.3em;
+    }
+    .emoji { font-size: 1.2em; margin-right: 6px; }
+    code { background: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">⏱️</span>Why Progress?</h2>
+    <p>When uploading big files, show users how much is done (e.g. 20%, 50%, 100%).</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📊</span>Get Total Size</h2>
+    <pre><code>// after opening file handle
+const stats = await fileHandle.stat();
+const totalSize = stats.size; // bytes</code></pre>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">📥</span>Track Bytes Sent</h2>
+    <pre><code>let uploadedBytes = 0;
+fileStream.on('data', chunk =&gt; {
+  uploadedBytes += chunk.length;
+  // …calculate &amp; show percent…
+});</code></pre>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">➗</span>Calculate &amp; Display %</h2>
+    <pre><code>const percent = Math.floor(uploadedBytes / totalSize * 100);
+if (percent !== lastPercent &amp;&amp; percent % 5 === 0) {
+  lastPercent = percent;
+  console.log(`Uploading… ${percent}%`);
+}</code></pre>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔄</span>Clear &amp; Update Line</h2>
+    <pre><code>const { clearLine, cursorTo } = require('readline');
+// each time before logging:
+clearLine(process.stdout, 0);
+cursorTo(process.stdout, 0);
+process.stdout.write(`Uploading… ${percent}%`);</code></pre>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🎉</span>Done!</h2>
+    <p>When <code>percent === 100</code>, finish upload and exit.</p>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🤖 Node.js Clustering: How to Use the Cluster Module</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .card p, .card ul {
+      margin: 0.5em 0;
+      line-height: 1.4;
+    }
+    .card code {
+      background: #eef3f7;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🤖 Node.js Clustering Tutorial</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ Setup Cluster File <code>cluster.js</code></h2>
+      <p>▪️ Create <code>cluster.js</code> in your project folder.<br/>
+      ▪️ Load the module:<br/>
+      <code>const cluster = require('node:cluster');</code> 😊</p>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ Primary vs. Worker 💡</h2>
+      <ul>
+        <li><code>cluster.isPrimary</code> is <strong>true</strong> only in the parent process.</li>
+        <li>Workers (children) have <code>isPrimary === false</code>.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ Fork Workers 🔄</h2>
+      <p>In the primary, spawn one worker per CPU core:</p>
+      <pre><code>
+const os = require('node:os');
+const cores = os.availableParallelism();
+for (let i = 0; i < cores; i++) {
+  cluster.fork();
+}</code></pre>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ Parent &amp; Child Logs 📋</h2>
+      <p>Distinguish each process:</p>
+      <pre><code>
+if (cluster.isPrimary) {
+  console.log('👑 Primary PID:', process.pid);
+} else {
+  console.log('🤖 Worker PID:', process.pid);
+}</code></pre>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ Auto-Respawn on Exit 🔁</h2>
+      <p>When a worker dies, the primary can fork a replacement:</p>
+      <pre><code>
+cluster.on('exit', (worker, code, signal) =&gt; {
+  console.log(`Worker ${worker.process.pid} died… restart`);
+  cluster.fork();
+});</code></pre>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ IPC: parent ⇆ worker 📨</h2>
+      <ul>
+        <li>Workers send messages:<br/>
+          <code>process.send({ action: 'request' });</code></li>
+        <li>Primary listens:<br/>
+          <code>cluster.on('message', (worker, msg) =&gt; { … });</code></li>
+      </ul>
+      <p>Great for counting requests or coordinating tasks!</p>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Starting Your Server 🚀</h2>
+      <p>In workers, <strong>require</strong> your app:</p>
+      <pre><code>
+if (!cluster.isPrimary) {
+  require('./server.js');
+}</code></pre>
+      <p>Now each worker runs <code>server.js</code> listening on the same port.</p>
+    </div>
+
+    <div class="card">
+      <h2>8️⃣ How It Actually Listens 🕸️</h2>
+      <p>The primary holds the TCP port; it <em>shares</em> it with workers via IPC.<br/>
+      Workers never bind the port directly—they receive connections from the primary.</p>
+    </div>
+
+    <div class="card">
+      <h2>9️⃣ Production with PM2 ✅</h2>
+      <p>Use <code>pm2</code> to auto-cluster &amp; manage:<br/>
+      <code>pm2 start server.js -i max</code><br/>
+      PM2 handles forks, restarts, logs &amp; monitoring for you!</p>
+    </div>
+
+  </div>
+</body>
+</html>

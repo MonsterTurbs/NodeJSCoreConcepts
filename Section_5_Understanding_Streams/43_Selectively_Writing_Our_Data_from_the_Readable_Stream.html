@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📝 Study Notes – Filtering Even Numbers from a Large File</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2d3748;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 30px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr; /* one card per row */
+      gap: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #2c5282;
+    }
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .card li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .emoji {
+      margin-right: 6px;
+    }
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .card {
+        box-shadow: none;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Filtering Even Numbers from a Huge File</h1>
+  <div class="container">
+
+    <!-- Card 1: Context & Goal -->
+    <div class="card">
+      <h2>🔍 Context & Goal</h2>
+      <ul>
+        <li><span class="emoji">📚</span>We have a very large file (“<code>textGigantic.txt</code>”) containing one billion numbers, each separated by two spaces.</li>
+        <li><span class="emoji">🎯</span>Our goal: <strong>read the file chunk by chunk</strong> and <strong>write only even numbers</strong> to a new “<code>dest.txt</code>” file.</li>
+        <li><span class="emoji">💾</span>We must avoid loading the entire file into memory—use <strong>Readable Streams</strong> with <code>pause()</code> and <code>resume()</code> to handle backpressure.</li>
+      </ul>
+    </div>
+
+    <!-- Card 2: Reading Chunks Safely -->
+    <div class="card">
+      <h2>📥 Read Chunks Safely</h2>
+      <ul>
+        <li><span class="emoji">📂</span>Open the huge file with padding to avoid VS Code crashing:  
+          <pre><code>cat textGigantic.txt</code>  
+          prints chunks to terminal without loading all into memory.</li>
+        <li><span class="emoji">⚠️</span>Opening in an editor crashes because it tries to load the full 10 GB into RAM.</li>
+        <li><span class="emoji">🔀</span>Solution: use a <code>fs.createReadStream('textGigantic.txt')</code> to read small chunks (e.g. 64 KB each) and process one chunk at a time.</li>
+      </ul>
+    </div>
+
+    <!-- Card 3: Splitting Each Chunk into Numbers -->
+    <div class="card">
+      <h2>✂️ Splitting Chunks into Number Strings</h2>
+      <ul>
+        <li><span class="emoji">🔤</span>Each chunk is a <code>Buffer</code> (bytes). Convert it into a string:  
+          <pre><code>const text = chunk.toString('utf8');</code></pre>
+        </li>
+        <li><span class="emoji">🧩</span>Numbers are separated by <strong>two spaces</strong> (“  ”). So split on “  ”:  
+          <pre><code>let parts = text.split('  ');</code></pre>
+        </li>
+        <li><span class="emoji">❗</span>Because a chunk may cut a number in half, the first and last entry in <code>parts</code> can be incomplete. We’ll fix those later.</li>
+      </ul>
+    </div>
+
+    <!-- Card 4: Fixing Incomplete Edges -->
+    <div class="card">
+      <h2>🔧 Fixing First & Last Partial Numbers</h2>
+      <ul>
+        <li><span class="emoji">⏪</span><strong>First element fix:</strong>  
+          <ul>
+            <li>If <code>parts[0]</code> is not a complete number (because chunk started midway), skip it or append it to the previous chunk’s leftover.</li>
+            <li>Store the incomplete tail from the previous chunk in a variable (e.g. <code>leftover</code>), then do:  
+              <pre><code>parts[0] = leftover + parts[0];</code></pre>
+            </li>
+          </ul>
+        </li>
+        <li><span class="emoji">⏩</span><strong>Last element fix:</strong>  
+          <ul>
+            <li>If the last entry <code>parts[parts.length – 1]</code> is partial, store it in <code>leftover</code> for the next chunk (don’t process it yet).</li>
+            <li>Trim <code>parts</code> so it excludes the last partial entry until it’s completed by the next chunk.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🔄</span>By passing the leftover between chunks, each split number will be complete before checking if it’s even.</li>
+      </ul>
+    </div>
+
+    <!-- Card 5: Checking Evenness & Writing Out -->
+    <div class="card">
+      <h2>🔢 Check Even & Write</h2>
+      <ul>
+        <li><span class="emoji">➗</span>Convert each string to a number:  
+          <pre><code>const num = Number(parts[i]);</code></pre>
+        </li>
+        <li><span class="emoji">✔️</span>Check if even:  
+          <pre><code>if (num % 2 === 0) {
+  writeStream.write(num + '  ');
+}</code></pre>
+          <ul>
+            <li>“  ” (two spaces) keeps the same separator format in <code>dest.txt</code>.</li>
+          </ul>
+        </li>
+        <li><span class="emoji">🖊️</span>Only call <code>writeStream.write()</code> for evens; discard odd numbers.</li>
+      </ul>
+    </div>
+
+    <!-- Card 6: Handling Backpressure -->
+    <div class="card">
+      <h2>🚦 Handling Backpressure</h2>
+      <ul>
+        <li><span class="emoji">🐏</span>If <code>writeStream.write(...) </code> returns <code>false</code>, it means the writable buffer is full:</li>
+          <pre><code>if (!writeStream.write(data)) {
+  readStream.pause();
+}</code></pre>
+        </li>
+        <li><span class="emoji">🔔</span>Listen for <code>'drain'</code> on <code>writeStream</code> to resume reading:</li>
+          <pre><code>writeStream.on('drain', () => {
+  readStream.resume();
+});</code></pre>
+        </li>
+        <li><span class="emoji">📉</span>This keeps memory stable (30–50 MB) even for a 10 GB file: the file is read/written in chunks without overfilling RAM.</li>
+      </ul>
+    </div>
+
+    <!-- Card 7: Putting It All Together -->
+    <div class="card">
+      <h2>🤝 Full Implementation Outline</h2>
+      <ul>
+        <li><span class="emoji">1️⃣</span>Open file handles:<br>
+          <pre><code>const { open } = require('fs/promises');
+(async () => {
+  const readHandle  = await open('textGigantic.txt', 'r');
+  const writeHandle = await open('dest.txt',       'w');
+  const readStream  = readHandle.createReadStream();
+  const writeStream = writeHandle.createWriteStream();</code></pre>
+        </li>
+        <li><span class="emoji">2️⃣</span>Initialize leftover:<br>
+          <pre><code>let leftover = '';</code></pre>
+        </li>
+        <li><span class="emoji">3️⃣</span>On <code>'data'</code> event:
+          <pre><code>readStream.on('data', (chunk) => {
+  // Convert buffer → string
+  let text = leftover + chunk.toString('utf8');
+  // Split by double-space
+  let parts = text.split('  ');
+  // Save incomplete tail for next chunk
+  leftover = parts.pop(); // last may be partial
+  // Process all complete parts
+  for (let str of parts) {
+    let num = Number(str);
+    if (!isNaN(num) && num % 2 === 0) {
+      if (!writeStream.write(num + '  ')) {
+        readStream.pause(); // backpressure
+      }
+    }
+  }
+});</code></pre>
+        </li>
+        <li><span class="emoji">4️⃣</span>On <code>'drain'</code> event:
+          <pre><code>writeStream.on('drain', () => {
+  readStream.resume();
+});</code></pre>
+        </li>
+        <li><span class="emoji">5️⃣</span>On <code>'end'</code> event:
+          <pre><code>readStream.on('end', () => {
+  // Process remaining leftover if any
+  if (leftover) {
+    let num = Number(leftover);
+    if (!isNaN(num) && num % 2 === 0) {
+      writeStream.write(num.toString());
+    }
+  }
+  writeStream.end(); // finish writing
+});</code></pre>
+        </li>
+        <li><span class="emoji">6️⃣</span>On <code>'finish'</code> event:
+          <pre><code>writeStream.on('finish', async () => {
+  console.log('All even numbers written to dest.txt');
+  await readHandle.close();
+  await writeHandle.close();
+});</code></pre>
+        </li>
+        <li><span class="emoji">💡</span>Result: <code>dest.txt</code> contains exactly 500 million even numbers, each separated by two spaces.</li>
+      </ul>
+    </div>
+
+    <!-- Card 8: Why This Works & Benefits -->
+    <div class="card">
+      <h2>🎉 Why This Works & Benefits</h2>
+      <ul>
+        <li><span class="emoji">🌊</span><strong>Streamed I/O:</strong> We never load the full file—only small chunks into memory at a time.</li>
+        <li><span class="emoji">⚡</span><strong>Efficient Filtering:</strong> Splitting each chunk into numbers and checking <code>% 2</code> is fast and only writes half the numbers.</li>
+        <li><span class="emoji">🛡️</span><strong>Controlled Memory:</strong> Using <code>pause()</code> / <code>resume()</code> ensures memory stays ~30–50 MB, even for a 10 GB file.</li>
+        <li><span class="emoji">🚀</span><strong>Scalable:</strong> You can repeat this for hundreds of gigabytes or terabytes without overloading RAM.</li>
+      </ul>
+    </div>
+
+    <!-- Card 9: Key Takeaways -->
+    <div class="card">
+      <h2>✅ Key Takeaways</h2>
+      <ul>
+        <li><span class="emoji">🔄</span>Always handle partial data at chunk edges (<code>leftover</code> management).</li>
+        <li><span class="emoji">⚖️</span>Use <code>write()</code>’s return value and <code>'drain'</code> event to manage backpressure.</li>
+        <li><span class="emoji">🧹</span>Close file handles after streams finish to free resources.</li>
+        <li><span class="emoji">🎯</span>Processing large data in a streaming fashion keeps your application responsive and memory usage low.</li>
+      </ul>
+    </div>
+
+    <!-- Card 10: Next Steps -->
+    <div class="card">
+      <h2>➡️ Next Steps</h2>
+      <ul>
+        <li><span class="emoji">🔧</span>Try modifying the script to filter <em>prime numbers</em> instead of even numbers.</li>
+        <li><span class="emoji">📈</span>Benchmark performance: measure time and memory as file size grows.</li>
+        <li><span class="emoji">🚀</span>Use <code>pipeline()</code> (from <code>'stream'</code> module) for cleaner error handling in future stream tasks.</li>
+        <li><span class="emoji">💡</span>Apply similar techniques to network data, HTTP responses, or any large binary streams (images, video).</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AWS Cost Warning – Study Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.5;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2em;
+    }
+    .emoji {
+      font-size: 1.3em;
+      margin-right: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2><span class="emoji">💸</span>Avoid Unexpected AWS Charges</h2>
+    <p>When you finish using your AWS server, always <strong>terminate it</strong> through the AWS console.  
+    AWS bills by the hour for each running instance, and prices vary by server type—so stopping or terminating your server stops the hourly charges.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="emoji">🔌</span>Release Unused Elastic IPs</h2>
+    <p>If you assigned an Elastic IP to your server, remember to <strong>delete or release it</strong> when you no longer need it.  
+    AWS charges a small fee for each unused Elastic IP address, so releasing them keeps your bill lower.</p>
+  </div>
+
+</body>
+</html>

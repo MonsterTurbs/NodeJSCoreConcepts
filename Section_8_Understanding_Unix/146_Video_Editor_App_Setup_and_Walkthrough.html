@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🎬 Video Editor Starter Notes</title>
+  <style>
+    body {
+      margin: 0; padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 16px;
+      transition: transform .2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .card p, .card ul {
+      margin: 0.5em 0;
+      line-height: 1.4;
+    }
+    .card code {
+      background: #eef3f7;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    a {
+      color: #1a73e8;
+    }
+    @media print {
+      body { background: #fff; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎬 Video Editor Starter – Study Notes</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>1️⃣ Project Overview</h2>
+      <p>This is a full-featured video editor backend. Users can:</p>
+      <ul>
+        <li>🔼 Upload videos</li>
+        <li>🔊 Extract audio</li>
+        <li>📐 Resize/crop</li>
+        <li>💾 Download originals or processed assets</li>
+      </ul>
+      <p>Frontend is a React SPA; backend is Node.js + custom “Kpic” framework.</p>
+    </div>
+
+    <div class="card">
+      <h2>2️⃣ Client Structure &amp; API Calls</h2>
+      <p>Frontend code lives in <code>public/scripts.js</code> (built by React/Webpack).</p>
+      <p>All HTTP requests are marked with <code>{@api call}</code>. Key endpoints:</p>
+      <ul>
+        <li><code>GET /api/videos</code> – list user’s videos</li>
+        <li><code>POST /api/videos/:id/extract-audio</code> – extract audio</li>
+        <li><code>GET /api/videos/:id/download?type=audio</code> – download asset</li>
+      </ul>
+      <p>Search for <code>{@api call}</code> comments in <code>public/scripts.js</code>.</p>
+    </div>
+
+    <div class="card">
+      <h2>3️⃣ Persistent File-based “DB” 💾</h2>
+      <p>Data (users, sessions, videos) is stored in JSON files under <code>/data</code>.</p>
+      <p>Use <code>DB.update()</code> to reload from files, and <code>DB.save()</code> to write back.</p>
+      <p>Keeps data across restarts—essential for long video jobs and clustering.</p>
+    </div>
+
+    <div class="card">
+      <h2>4️⃣ Clean Code Organization 📂</h2>
+      <ul>
+        <li><strong><code>src/index.js</code>:</strong> app setup, middleware, router, error handler</li>
+        <li><strong><code>src/middleware/</code>:</strong> auth &amp; static file serving</li>
+        <li><strong><code>src/routes.js</code>:</strong> maps URL → controller functions</li>
+        <li><strong><code>src/controllers/</code>:</strong> one file per resource (user.js, video.js)</li>
+        <li><strong><code>src/db.js</code>:</strong> file-based data layer</li>
+      </ul>
+      <p>Keeps each concern in its own folder for maintainability. 👍</p>
+    </div>
+
+    <div class="card">
+      <h2>5️⃣ Kpic Feature: JSON Body Parser 📥</h2>
+      <p>Utility <code>parseJson</code> lives in <code>util.js</code>. Add with:</p>
+      <pre><code>cpp.beforeEach(cp.parseJson)</code></pre>
+      <p>Automatically parses <code>application/json</code> bodies into <code>req.body</code>.</p>
+    </div>
+
+    <div class="card">
+      <h2>6️⃣ Kpic Feature: Static File Server 📁</h2>
+      <p><code>serveStatic</code> scans your <code>public/</code> folder once at startup and maps URLs → files:</p>
+      <pre><code>cpp.use(cp.serveStatic(path.join(__dirname, 'public')))</code></pre>
+      <p>Fast lookup via an in-memory map; restart required if you add new files. 🚀</p>
+    </div>
+
+    <div class="card">
+      <h2>7️⃣ Kpic Feature: Error Handler ⚠️</h2>
+      <p>Add after all routes to catch errors:</p>
+      <pre><code>cpp.use(cp.handleError)</code></pre>
+      <p>Controllers throw or pass an Error with <code>.status</code> &amp; <code>.message</code>, then:</p>
+      <ul>
+        <li>Sends JSON { message } &amp; correct HTTP status</li>
+        <li>Logs unexpected errors &amp; returns 500</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>8️⃣ Kpic Feature: URL Params Parser 🌐</h2>
+      <p>Access query params via <code>req.params.get('key')</code>—wrapped URLSearchParams:</p>
+      <pre><code>let id = req.params.get('id')</code></pre>
+      <p>No more manual <code>split('?')</code> steps in your controllers.</p>
+    </div>
+
+    <div class="card">
+      <h2>9️⃣ Quick Test: Add “Get Videos” Route 🧪</h2>
+      <p>1. In <code>src/controllers/video.js</code>:</p>
+      <pre><code>exports.getVideos = (req, res, handleError) =&gt; {
+  let name = req.params.get('name');
+  if (!name) return handleError(400, 'Please specify a name');
+  res.json({ message: `Your name is ${name}` });
+};</code></pre>
+      <p>2. In <code>src/routes.js</code>:</p>
+      <pre><code>server.routes('get', '/api/videos', video.getVideos)</code></pre>
+      <p>3. Run <code>npm start</code> → <code>GET localhost:8060/api/videos?name=Joe</code> 😊</p>
+    </div>
+
+  </div>
+</body>
+</html>

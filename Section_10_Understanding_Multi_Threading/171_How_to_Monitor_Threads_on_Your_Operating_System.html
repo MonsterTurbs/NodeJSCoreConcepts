@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🧵 Study Notes: Introduction to Threads &amp; Multithreading</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f7fafc; color:#2d3748; }
+    h1 { text-align:center; color:#2c5282; margin-bottom:1em; }
+    .container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      max-width:800px;
+      margin:auto;
+    }
+    .card {
+      background:#ffffff;
+      border-radius:8px;
+      box-shadow:0 1px 4px rgba(0,0,0,0.1);
+      padding:20px;
+    }
+    .card h2 { margin-top:0; color:#2b6cb0; }
+    ul { padding-left:1.2em; margin:0; }
+    li { margin-bottom:0.6em; }
+    code { background:#ebf8ff; padding:2px 4px; border-radius:4px; font-family:monospace; }
+    @media print { .card { box-shadow:none; } }
+  </style>
+</head>
+<body>
+  <h1>🧵 Threads &amp; Multithreading (Beginner)</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>🎯 Why Multithreading?</h2>
+      <ul>
+        <li>Boost performance by using all CPU cores 🚀</li>
+        <li>Do heavy tasks (like prime calculations) without blocking your app 🔧</li>
+        <li>Manage background jobs separately (e.g. logging) 📝</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🔄 Processes &amp; Threads</h2>
+      <ul>
+        <li><strong>Process:</strong> A running program with its own memory space.</li>
+        <li><strong>Thread:</strong> A “worker” inside a process sharing memory.</li>
+        <li>Every process starts with 1 main thread; you can spawn more 🧵</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🛌 Process States</h2>
+      <ul>
+        <li><strong>Ready:</strong> Waiting in line for CPU time ⏳</li>
+        <li><strong>Running:</strong> Actively using the CPU 🔥</li>
+        <li><strong>Sleep:</strong> Blocked waiting for I/O or timer 🌙</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>✅ Concurrency vs. Parallelism</h2>
+      <ul>
+        <li>🔄 <strong>Concurrency</strong>: Many tasks make progress by quick switching.</li>
+        <li>🔀 <strong>Parallelism</strong>: Multiple tasks run at the exact same time on different cores.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>💡 How Threads Work</h2>
+      <ul>
+        <li>Each thread has its own Program Counter (PC) pointing to the next instruction.</li>
+        <li>OS scheduler gives each thread a time slice (quantum) on a core, then switches.</li>
+        <li>Threads can sleep/block for I/O, then return to Ready when event completes.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>👷 Creating Threads (Why vs. Child Processes)</h2>
+      <ul>
+        <li>Threads are lighter &amp; faster to spawn than full processes 🏃‍♂️</li>
+        <li>Share memory easily—no heavy IPC setup required 🔗</li>
+        <li>Ideal for dividing CPU‐heavy tasks across cores ⚙️</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📊 Core Example</h2>
+      <ul>
+        <li>On a 4-core CPU with 7 threads:</li>
+        <li>All threads share cores equally → each uses ~57% of one core</li>
+        <li>Only 4 threads run in true parallel at any moment ⚡</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🧠 Key Takeaways</h2>
+      <ul>
+        <li>Threads = units of execution inside a process.</li>
+        <li>OS time-slices threads for concurrency on any CPU.</li>
+        <li>Parallelism needs multiple cores + multiple threads.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

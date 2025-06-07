@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>🧵 Intro to Multithreading – Study Notes</title>
+  <style>
+    body { margin:0; padding:20px; font-family:Arial,sans-serif; background:#f0f4f8; color:#1a202c; }
+    h1 { text-align:center; color:#2b6cb0; margin-bottom:1em; }
+    .container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      max-width:720px;
+      margin:auto;
+    }
+    .card {
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      padding:20px;
+    }
+    .card h2 { margin-top:0; color:#2c7a7b; }
+    ul { margin:0; padding-left:1.2em; }
+    li { margin-bottom:0.5em; }
+    .emoji { margin-right:6px; }
+    @media print { .card { box-shadow:none; } }
+  </style>
+</head>
+<body>
+  <h1>🧵 Introduction to Multithreading in Node.js</h1>
+  <div class="container">
+
+    <div class="card">
+      <h2>🔍 What &amp; Why Multithreading?</h2>
+      <ul>
+        <li><span class="emoji">⚡</span>Run work on multiple CPU cores for big speedups (×4–8×).</li>
+        <li><span class="emoji">🗓️</span>Useful for heavy CPU tasks &amp; scheduling parallel jobs.</li>
+        <li><span class="emoji">🧠</span>Core CS topic—learn to avoid race conditions, deadlocks, sync bugs.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>❌ Common “Single-Threaded” Myths</h2>
+      <ul>
+        <li><span class="emoji">🚫</span>Myth: “Node.js runs everything in one thread.” → False!<br/>
+            • OS I/O uses threads<br/>
+            • libuv thread-pool (fs, crypto, zlib)<br/>
+            • V8 engine internal threads
+        </li>
+        <li><span class="emoji">🚫</span>Myth: “You can’t truly multithread in Node.” → False!<br/>
+            • Worker Threads are real OS threads<br/>
+            • Share memory via <code>SharedArrayBuffer</code></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>⚙️ Event Loop vs. Workers</h2>
+      <ul>
+        <li><span class="emoji">🔄</span>The main Event Loop stays single-threaded for I/O scale.</li>
+        <li><span class="emoji">🧱</span>Use <code>cluster</code> or <code>worker_threads</code> to spin up extra loops/threads.</li>
+        <li><span class="emoji">📈</span>Gain parallelism without blocking your main loop.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>🛠️ When to Use What</h2>
+      <ul>
+        <li><span class="emoji">👥</span><strong>Cluster:</strong> multiple processes, each its own loop—great for I/O load.</li>
+        <li><span class="emoji">🪡</span><strong>Worker Threads:</strong> lighter OS threads—ideal for CPU-heavy work.</li>
+        <li><span class="emoji">⚠️</span>Avoid spawning thousands of threads; coordinate &amp; queue tasks.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>✅ Prerequisites &amp; Setup</h2>
+      <ul>
+        <li><span class="emoji">📚</span>Know Node I/O, Streams, Buffers, child_process &amp; cluster basics.</li>
+        <li><span class="emoji">🐧</span>Understand Unix concepts: processes, IPC, thread-pool.</li>
+        <li><span class="emoji">💻</span>Machine with ≥4 CPU cores for best hands-on experience.</li>
+        <li><span class="emoji">🧪</span>Be ready to test rigorously &amp; monitor for race-condition bugs.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>
