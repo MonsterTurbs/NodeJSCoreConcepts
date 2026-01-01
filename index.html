@@ -12,83 +12,131 @@
       box-sizing: border-box;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
+
+    :root{
+      --sidebar-w: 280px;
+      --header-h: 64px;
+      --footer-h: 64px;
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --text: #333;
+      --muted: #6b7280;
+      --sidebar: #2c3e50;
+      --sidebar-2: #34495e;
+      --active: #1abc9c;
+      --active-2: #16a085;
+      --shadow: rgba(0,0,0,0.08);
+      --border: rgba(0,0,0,0.08);
+    }
+
+    html, body { height: 100%; }
     body {
       display: flex;
       height: 100vh;
-      background-color: #f4f6f8;
-      color: #333;
+      background-color: var(--bg);
+      color: var(--text);
       overflow: hidden; /* prevent double scrollbars */
     }
 
     /* ───── Sidebar ───── */
     .sidebar {
-      width: 260px;
-      background-color: #2c3e50;
+      width: var(--sidebar-w);
+      background-color: var(--sidebar);
       color: #ecf0f1;
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
+      transition: width 0.22s ease;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+    body.nav-collapsed .sidebar{
+      width: 0;
+      border-right: none;
+      overflow: hidden;
+    }
+
+    .sidebar-header{
+      padding: 1rem 1rem 0.75rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
     .sidebar h2 {
       text-align: center;
-      padding: 1rem 0;
-      font-size: 1.2rem;
-      letter-spacing: 1px;
-      border-bottom: 1px solid #34495e;
+      font-size: 1.15rem;
+      letter-spacing: 0.8px;
+      margin-bottom: 0.75rem;
+    }
+
+    .search {
+      width: 100%;
+      padding: 0.55rem 0.7rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      outline: none;
+      font-size: 0.95rem;
+    }
+    .search::placeholder{ color: rgba(255,255,255,0.65); }
+    .search:focus{
+      border-color: rgba(26,188,156,0.65);
+      box-shadow: 0 0 0 3px rgba(26,188,156,0.15);
     }
 
     .nav-container {
       flex-grow: 1;
       overflow-y: auto;
-      padding-bottom: 1rem;
+      padding: 0.75rem 0.5rem 1rem;
     }
-    .nav-list {
-      list-style: none;
-      padding-left: 0.5rem;
-    }
-    .nav-list > li {
-      margin-bottom: 0.3rem;
-    }
-    .nav-list .section-title {
-      display: block;
-      padding: 0.6rem 1rem;
-      font-weight: bold;
-      cursor: default;
+
+    .nav-list { list-style: none; }
+    .nav-list > li { margin-bottom: 0.35rem; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.65rem 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
       color: #bdc3c7;
       text-transform: uppercase;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       letter-spacing: 0.5px;
       border-left: 4px solid transparent;
-      transition: background 0.2s;
+      transition: background 0.15s;
+      user-select: none;
+      border-radius: 8px;
     }
-    .nav-list .section-title:hover {
-      background-color: #34495e;
-    }
+    .section-title:hover { background-color: var(--sidebar-2); }
+    .section-title .chev { opacity: 0.85; font-size: 0.95rem; }
 
     .sub-list {
       list-style: none;
-      padding-left: 1rem;
+      padding-left: 0.5rem;
+      margin-top: 0.25rem;
+      display: block;
     }
-    .sub-list li {
-      margin: 0.2rem 0;
-    }
+    .sub-list.collapsed { display: none; }
+
+    .sub-list li { margin: 0.18rem 0; }
     .sub-list a {
       display: block;
-      padding: 0.4rem 1rem;
+      padding: 0.5rem 0.85rem;
       color: #ecf0f1;
       text-decoration: none;
       border-left: 4px solid transparent;
-      transition: background 0.2s, border-left 0.2s;
-      font-size: 0.9rem;
+      transition: background 0.15s, border-left 0.15s;
+      font-size: 0.92rem;
+      border-radius: 8px;
     }
-    .sub-list a:hover {
-      background-color: #34495e;
-    }
+    .sub-list a:hover { background-color: var(--sidebar-2); }
     .sub-list a.active {
-      background-color: #1abc9c;
-      border-left: 4px solid #16a085;
+      background-color: var(--active);
+      border-left: 4px solid var(--active-2);
       color: #fff;
     }
+    .sub-list a.hidden { display:none; }
 
     /* ───── Main Content ───── */
     .main-content {
@@ -96,62 +144,121 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      min-width: 0;
     }
+
     .header {
-      background-color: #fff;
-      padding: 1rem 1.5rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      height: var(--header-h);
+      background-color: var(--card);
+      padding: 0 1rem;
+      box-shadow: 0 2px 4px var(--shadow);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toggle-btn{
+      width: 2.25rem;
+      height: 2.25rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
       flex-shrink: 0;
     }
+    .toggle-btn:focus{ outline: 3px solid rgba(26,188,156,0.2); outline-offset: 2px; }
+
     .header h1 {
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       color: #2c3e50;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .content-area {
       flex-grow: 1;
-      padding: 1.5rem;
-      overflow-y: auto;
-      background-color: #fff;
+      padding: 0.9rem;
+      overflow: hidden;
+      background-color: var(--bg);
+    }
+
+    .viewer-wrap{
+      height: 100%;
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+    #viewer{
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #fff;
     }
 
     /* ───── Footer / Next Button ───── */
     .footer {
-      background-color: #fff;
-      padding: 1rem 1.5rem;
+      height: var(--footer-h);
+      background-color: var(--card);
+      padding: 0 1rem;
       box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
-      text-align: right;
+      border-top: 1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content: flex-end;
+      gap: 0.5rem;
       flex-shrink: 0;
     }
-    .btn-next {
-      background-color: #1abc9c;
-      color: #fff;
-      padding: 0.6rem 1.2rem;
+
+    .btn {
+      padding: 0.6rem 1.1rem;
       border: none;
-      border-radius: 4px;
+      border-radius: 10px;
       font-size: 0.95rem;
       cursor: pointer;
-      transition: background-color 0.2s;
+      transition: background-color 0.15s;
+      color: #fff;
+      background-color: var(--active);
     }
-    .btn-next:hover {
-      background-color: #16a085;
+    .btn:hover { background-color: var(--active-2); }
+    .btn:disabled { opacity: 0.5; cursor: default; }
+    .btn-secondary{
+      background-color: #64748b;
     }
-    .btn-next:disabled {
-      opacity: 0.5;
-      cursor: default;
+    .btn-secondary:hover{ background-color: #475569; }
+
+    @media (max-width: 900px){
+      :root{ --sidebar-w: 80vw; }
     }
   </style>
 </head>
+
 <body>
   <!-- ───── Sidebar ───── -->
   <nav class="sidebar">
-    <h2>Node.js Course</h2>
+    <div class="sidebar-header">
+      <h2>Node.js Course</h2>
+      <input id="search" class="search" type="search" placeholder="Search lecture…" autocomplete="off" />
+    </div>
+
     <div class="nav-container">
       <ul class="nav-list">
+
         <!-- Section 1: Introduction -->
         <li>
-          <span class="section-title">Section 1 – Introduction</span>
-          <ul class="sub-list">
+          <div class="section-title" data-section="s1">
+            <span>Section 1 – Introduction</span><span class="chev">▾</span>
+          </div>
+          <ul class="sub-list" data-sub="s1">
             <li><a data-page="Section_1_Introduction/1_Course_Overview.html" href="#">1 Course Overview</a></li>
             <li><a data-page="Section_1_Introduction/2_Setting_Up_For_Windows_Users_Only.html" href="#">2 Setup (Windows)</a></li>
             <li><a data-page="Section_1_Introduction/3_Setting_Up_For_Mac_Users_Only.html" href="#">3 Setup (Mac)</a></li>
@@ -164,16 +271,20 @@
 
         <!-- Section 2: Understanding EventEmitter -->
         <li>
-          <span class="section-title">Section 2 – EventEmitter</span>
-          <ul class="sub-list">
+          <div class="section-title" data-section="s2">
+            <span>Section 2 – EventEmitter</span><span class="chev">▾</span>
+          </div>
+          <ul class="sub-list" data-sub="s2">
             <li><a data-page="Section_2_Understanding_EventEmitter/8_Understanding_EventEmitter.html" href="#">8 Understanding EventEmitter</a></li>
           </ul>
         </li>
 
         <!-- Section 3: Understanding Buffers -->
         <li>
-          <span class="section-title">Section 3 – Buffers</span>
-          <ul class="sub-list">
+          <div class="section-title" data-section="s3">
+            <span>Section 3 – Buffers</span><span class="chev">▾</span>
+          </div>
+          <ul class="sub-list" data-sub="s3">
             <li><a data-page="Section_3_Understanding_Buffers/9_Introdcution.html" href="#">9 Buffers Intro</a></li>
             <li><a data-page="Section_3_Understanding_Buffers/10_Understanding_Binary_Numbers.html" href="#">10 Binary Numbers</a></li>
             <li><a data-page="Section_3_Understanding_Buffers/11_Understanding_Hexadecimal_Numbers.html" href="#">11 Hexadecimal Numbers</a></li>
@@ -190,8 +301,10 @@
 
         <!-- Section 4: Understanding File System -->
         <li>
-          <span class="section-title">Section 4 – File System</span>
-          <ul class="sub-list">
+          <div class="section-title" data-section="s4">
+            <span>Section 4 – File System</span><span class="chev">▾</span>
+          </div>
+          <ul class="sub-list" data-sub="s4">
             <li><a data-page="Section_4_Understanding_File_System/20_Introduction.html" href="#">20 Introduction</a></li>
             <li><a data-page="Section_4_Understanding_File_System/21_What_Exactly_Is_a_File.html" href="#">21 What Is a File</a></li>
             <li><a data-page="Section_4_Understanding_File_System/22_How_Nodejs_Deals_with_Files.html" href="#">22 How Node.js Deals with Files</a></li>
@@ -212,8 +325,10 @@
 
         <!-- Section 5: Understanding Streams -->
         <li>
-          <span class="section-title">Section 5 – Streams</span>
-          <ul class="sub-list">
+          <div class="section-title" data-section="s5">
+            <span>Section 5 – Streams</span><span class="chev">▾</span>
+          </div>
+          <ul class="sub-list" data-sub="s5">
             <li><a data-page="Section_5_Understanding_Streams/35_Introduction.html" href="#">35 Introduction</a></li>
             <li><a data-page="Section_5_Understanding_Streams/36_Benchmarking_Writing_a_Million_Times_to_a_File.html" href="#">36 Benchmark File Writes</a></li>
             <li><a data-page="Section_5_Understanding_Streams/37_Using_Streams_Naively_in_Our_Solution.html" href="#">37 Naive Streams</a></li>
@@ -238,8 +353,10 @@
 
         <!-- Section 6: Understanding Networking -->
         <li>
-          <span class="section-title">Section 6 – Networking</span>
-          <ul class="sub-list">
+          <div class="section-title" data-section="s6">
+            <span>Section 6 – Networking</span><span class="chev">▾</span>
+          </div>
+          <ul class="sub-list" data-sub="s6">
             <li><a data-page="Section_6_Understanding_Networking/54_Introduction.html" href="#">54 Introduction</a></li>
             <li><a data-page="Section_6_Understanding_Networking/55_Understanding_MAC_Addresses_and_Switches.html" href="#">55 MAC Addresses & Switches</a></li>
             <li><a data-page="Section_6_Understanding_Networking/56_Understanding_Routers_and_How_the_Internet_Works.html" href="#">56 Routers & Internet</a></li>
@@ -276,8 +393,10 @@
 
         <!-- Section 7: Understanding HTTP -->
         <li>
-          <span class="section-title">Section 7 – HTTP</span>
-          <ul class="sub-list">
+          <div class="section-title" data-section="s7">
+            <span>Section 7 – HTTP</span><span class="chev">▾</span>
+          </div>
+          <ul class="sub-list" data-sub="s7">
             <li><a data-page="Section_7_Understanding_HTTP/85_Introduction.html" href="#">85 Introduction</a></li>
             <li><a data-page="Section_7_Understanding_HTTP/86_The_Idea_of_HTTP.html" href="#">86 The Idea of HTTP</a></li>
             <li><a data-page="Section_7_Understanding_HTTP/87_Creating_a_Simple_HTTP_Server_in_Node.html" href="#">87 Simple HTTP Server</a></li>
@@ -316,8 +435,10 @@
 
         <!-- Section 8: Understanding Unix -->
         <li>
-          <span class="section-title">Section 8 – Unix</span>
-          <ul class="sub-list">
+          <div class="section-title" data-section="s8">
+            <span>Section 8 – Unix</span><span class="chev">▾</span>
+          </div>
+          <ul class="sub-list" data-sub="s8">
             <li><a data-page="Section_8_Understanding_Unix/118_Introduction.html" href="#">118 Introduction</a></li>
             <li><a data-page="Section_8_Understanding_Unix/119_What_Is_Unix.html" href="#">119 What Is Unix</a></li>
             <li><a data-page="Section_8_Understanding_Unix/120_Why_Should_We_Care_About_Unix.html" href="#">120 Why Unix Matters</a></li>
@@ -365,10 +486,12 @@
 
         <!-- Section 9: Understanding Compression -->
         <li>
-          <span class="section-title">Section 9 – Compression</span>
-          <ul class="sub-list">
+          <div class="section-title" data-section="s9">
+            <span>Section 9 – Compression</span><span class="chev">▾</span>
+          </div>
+          <ul class="sub-list" data-sub="s9">
             <li><a data-page="Section_9_Understanding_Compression/160_Introduction.html" href="#">160 Introduction</a></li>
-            <li><a data-page="Section_9_Understanding_Compression/161_How_Does_a_Lossless_Compression_Work.html" href="#">161 Lossless Compression</a></li>
+            <li><a data-page="Section_9_Understanding_Compression/161_How_Does_a_Lossless_Comression_Work.html" href="#">161 Lossless Compression</a></li>
             <li><a data-page="Section_9_Understanding_Compression/162_Lossy_Compression.html" href="#">162 Lossy Compression</a></li>
             <li><a data-page="Section_9_Understanding_Compression/163_Gzip_Brotli_and_Deflate.html" href="#">163 Gzip/Brotli/Deflate</a></li>
             <li><a data-page="Section_9_Understanding_Compression/164_Compression_in_HTTP.html" href="#">164 HTTP Compression</a></li>
@@ -378,10 +501,12 @@
           </ul>
         </li>
 
-        <!-- Section 10: Understanding Multi Threading -->
+        <!-- Section 10: Multi Threading -->
         <li>
-          <span class="section-title">Section 10 – Multi Threading</span>
-          <ul class="sub-list">
+          <div class="section-title" data-section="s10">
+            <span>Section 10 – Multi Threading</span><span class="chev">▾</span>
+          </div>
+          <ul class="sub-list" data-sub="s10">
             <li><a data-page="Section_10_Understanding_Multi_Threading/168_Introduction.html" href="#">168 Introduction</a></li>
             <li><a data-page="Section_10_Understanding_Multi_Threading/169_Guide_for_Skilled_Multi_Threaded_Developers.html" href="#">169 MultiThread Guide</a></li>
             <li><a data-page="Section_10_Understanding_Multi_Threading/170_What_Exactly_Is_a_Thread.html" href="#">170 What Is a Thread</a></li>
@@ -416,10 +541,12 @@
           </ul>
         </li>
 
-        <!-- Section 11: Understanding Cryptography -->
+        <!-- Section 11: Cryptography -->
         <li>
-          <span class="section-title">Section 11 – Cryptography</span>
-          <ul class="sub-list">
+          <div class="section-title" data-section="s11">
+            <span>Section 11 – Cryptography</span><span class="chev">▾</span>
+          </div>
+          <ul class="sub-list" data-sub="s11">
             <li><a data-page="Section_11_Understanding_Cryptography/199_Introduction.html" href="#">199 Introduction</a></li>
             <li><a data-page="Section_11_Understanding_Cryptography/200_Introduction_to_Symmetric_Encryption.html" href="#">200 Symmetric Encryption</a></li>
             <li><a data-page="Section_11_Understanding_Cryptography/201_The_Unbreakable_Encryption_OTP_From_Scratch.html" href="#">201 OTP Encryption</a></li>
@@ -431,7 +558,7 @@
             <li><a data-page="Section_11_Understanding_Cryptography/207_Understanding_Hashing.html" href="#">207 Hashing</a></li>
             <li><a data-page="Section_11_Understanding_Cryptography/208_SHA_256_From_Scratch.html" href="#">208 SHA-256</a></li>
             <li><a data-page="Section_11_Understanding_Cryptography/209_What_It_Takes_to_Break_SHA_256.html" href="#">209 Breaking SHA-256</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/210_Message_Authentication_Codes.html" href="#">210 MACs (MAC)</a></li>
+            <li><a data-page="Section_11_Understanding_Cryptography/210_Message_Authentication_Codes.html" href="#">210 MACs</a></li>
             <li><a data-page="Section_11_Understanding_Cryptography/211_Understanding_Key_Derivation_Functions.html" href="#">211 KDFs</a></li>
             <li><a data-page="Section_11_Understanding_Cryptography/212_Building_a_File_Encryption_Application.html" href="#">212 File Encryption App</a></li>
             <li><a data-page="Section_11_Understanding_Cryptography/213_Part_2_Under_Production.html" href="#">213 Under Production</a></li>
@@ -453,147 +580,228 @@
 
         <!-- Section 12: Security -->
         <li>
-          <span class="section-title">Section 12 – Security</span>
-          <ul class="sub-list">
+          <div class="section-title" data-section="s12">
+            <span>Section 12 – Security</span><span class="chev">▾</span>
+          </div>
+          <ul class="sub-list" data-sub="s12">
             <li><a data-page="Section_12_Security/227_Introduction.html" href="#">227 Introduction</a></li>
             <li><a data-page="Section_12_Security/228_How_to_Securely_Store_User_Passwords.html" href="#">228 Secure Password Storage</a></li>
             <li><a data-page="Section_12_Security/229_More_Lectures_on_the_Way.html" href="#">229 More Lectures</a></li>
           </ul>
         </li>
+
       </ul>
     </div>
   </nav>
 
   <!-- ───── Main Content Area ───── -->
   <div class="main-content">
-    <!-- Top Header: Display Current Page Title -->
     <div class="header">
+      <button class="toggle-btn" id="toggle-btn" aria-label="Toggle sidebar" title="Toggle sidebar">☰</button>
       <h1 id="page-title">Welcome</h1>
     </div>
 
-    <!-- Content Area (where we inject each lecture’s HTML) -->
-    <div id="content-area" class="content-area">
-      <p>Select any lecture from the sidebar to begin.</p>
+    <div class="content-area">
+      <div class="viewer-wrap">
+        <iframe id="viewer" title="Lecture viewer"></iframe>
+      </div>
     </div>
 
-    <!-- Bottom Footer: Next Button -->
     <div class="footer">
-      <button class="btn-next" id="next-button" disabled>Next →</button>
+      <button class="btn btn-secondary" id="prev-button" disabled>← Prev</button>
+      <button class="btn" id="next-button" disabled>Next →</button>
     </div>
   </div>
 
-  <!-- ───── JavaScript: dynamic loading, highlighting, history ───── -->
   <script>
-    // Helper: grab all sidebar <a> elements (in one flat array)
-    const allLinks = Array.from(document.querySelectorAll(".sub-list a"));
-    const contentArea = document.getElementById("content-area");
+    const body = document.body;
+
+    const toggleBtn = document.getElementById("toggle-btn");
     const pageTitleEl = document.getElementById("page-title");
+    const viewer = document.getElementById("viewer");
+
+    const prevBtn = document.getElementById("prev-button");
     const nextBtn = document.getElementById("next-button");
 
-    // When a sidebar link is clicked:
-    allLinks.forEach((link, index) => {
-      link.addEventListener("click", event => {
-        event.preventDefault();
-        const pagePath = link.getAttribute("data-page");
-        loadPage(pagePath, true);
+    const searchEl = document.getElementById("search");
+    const sectionHeaders = Array.from(document.querySelectorAll(".section-title"));
+    const allLinks = Array.from(document.querySelectorAll(".sub-list a"));
+
+    const LS_LAST = "nodeCourse:lastPage";
+    const LS_SIDEBAR = "nodeCourse:sidebarCollapsed";
+    const LS_SECTIONS = "nodeCourse:sectionsCollapsed"; // JSON map
+
+    function setSidebarCollapsed(collapsed){
+      body.classList.toggle("nav-collapsed", collapsed);
+      localStorage.setItem(LS_SIDEBAR, String(collapsed));
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      setSidebarCollapsed(!body.classList.contains("nav-collapsed"));
+    });
+
+    // Section expand/collapse
+    function loadSectionState(){
+      try { return JSON.parse(localStorage.getItem(LS_SECTIONS) || "{}"); }
+      catch { return {}; }
+    }
+    function saveSectionState(state){
+      localStorage.setItem(LS_SECTIONS, JSON.stringify(state));
+    }
+
+    function setSectionCollapsed(sectionKey, collapsed){
+      const sub = document.querySelector(`.sub-list[data-sub="${sectionKey}"]`);
+      const chev = document.querySelector(`.section-title[data-section="${sectionKey}"] .chev`);
+      if (!sub) return;
+
+      sub.classList.toggle("collapsed", collapsed);
+      if (chev) chev.textContent = collapsed ? "▸" : "▾";
+
+      const state = loadSectionState();
+      state[sectionKey] = collapsed;
+      saveSectionState(state);
+    }
+
+    sectionHeaders.forEach(h => {
+      h.addEventListener("click", () => {
+        const key = h.getAttribute("data-section");
+        const sub = document.querySelector(`.sub-list[data-sub="${key}"]`);
+        const collapsed = sub && !sub.classList.contains("collapsed");
+        setSectionCollapsed(key, collapsed);
       });
     });
 
-    // Load a given fragment (lecture) into #content-area
-    function loadPage(pagePath, pushToHistory) {
-      fetch(pagePath)
-        .then(resp => {
-          if (!resp.ok) throw new Error("Failed to fetch: " + resp.status);
-          return resp.text();
-        })
-        .then(htmlFragment => {
-          // 1) Inject the HTML into content-area
-          contentArea.innerHTML = htmlFragment;
-
-          // 2) Highlight the active link
-          highlightActiveLink(pagePath);
-
-          // 3) Set the page title
-          setPageTitleFromPath(pagePath);
-
-          // 4) Configure the “Next” button
-          configureNextButton(pagePath);
-
-          // 5) Push to browser history (so back/forward works)
-          if (pushToHistory) {
-            history.pushState({ page: pagePath }, "", "?page=" + encodeURIComponent(pagePath));
-          }
-        })
-        .catch(err => {
-          console.error(err);
-          contentArea.innerHTML = "<p style='color:red;'>Error loading page.</p>";
-        });
-    }
-
-    // Highlight sidebar link whose data-page === pagePath
-    function highlightActiveLink(pagePath) {
-      allLinks.forEach(link => {
-        if (link.getAttribute("data-page") === pagePath) {
-          link.classList.add("active");
-        } else {
-          link.classList.remove("active");
-        }
-      });
-    }
-
-    // Prettify filename → H1 text & document.title
     function setPageTitleFromPath(pagePath) {
-      // Take trailing part after last slash
       const filename = pagePath.split("/").pop();
       const pretty = filename
-        .replace(/\.html$/, "")
+        .replace(/\.html$/i, "")
         .replace(/_/g, " ")
         .replace(/\b(\w)/g, m => m.toUpperCase());
       pageTitleEl.textContent = pretty;
       document.title = pretty + " – Node.js Core Concepts";
     }
 
-    // Find index of current in allLinks, then wire up Next button
-    function configureNextButton(pagePath) {
-      const idx = allLinks.findIndex(link => link.getAttribute("data-page") === pagePath);
-      if (idx !== -1 && idx < allLinks.length - 1) {
-        nextBtn.disabled = false;
-        nextBtn.onclick = () => {
-          const nextPage = allLinks[idx + 1].getAttribute("data-page");
-          loadPage(nextPage, true);
-        };
-      } else {
-        nextBtn.disabled = true;
-        nextBtn.onclick = null;
+    function highlightActiveLink(pagePath){
+      allLinks.forEach(a => a.classList.toggle("active", a.getAttribute("data-page") === pagePath));
+    }
+
+    function getVisibleLinks(){
+      return allLinks.filter(a => !a.classList.contains("hidden"));
+    }
+
+    function configurePrevNext(pagePath){
+      const visible = getVisibleLinks();
+      const idx = visible.findIndex(a => a.getAttribute("data-page") === pagePath);
+
+      const hasPrev = idx > 0;
+      const hasNext = idx !== -1 && idx < visible.length - 1;
+
+      prevBtn.disabled = !hasPrev;
+      nextBtn.disabled = !hasNext;
+
+      prevBtn.onclick = hasPrev ? () => loadPage(visible[idx - 1].getAttribute("data-page"), true) : null;
+      nextBtn.onclick = hasNext ? () => loadPage(visible[idx + 1].getAttribute("data-page"), true) : null;
+    }
+
+    // IMPORTANT: Use iframe so it works on file://
+    function loadPage(pagePath, pushHistory){
+      viewer.src = pagePath;
+
+      highlightActiveLink(pagePath);
+      setPageTitleFromPath(pagePath);
+      configurePrevNext(pagePath);
+
+      localStorage.setItem(LS_LAST, pagePath);
+
+      // Expand the section containing the active link
+      const activeLink = allLinks.find(a => a.getAttribute("data-page") === pagePath);
+      if (activeLink){
+        const sub = activeLink.closest(".sub-list");
+        if (sub){
+          const key = sub.getAttribute("data-sub");
+          if (key) setSectionCollapsed(key, false);
+        }
+      }
+
+      if (pushHistory) {
+        const url = new URL(location.href);
+        url.searchParams.set("page", pagePath);
+        history.pushState({ page: pagePath }, "", url);
       }
     }
 
-    // On popstate (user clicked Back/Forward), load that page without pushing new history
-    window.addEventListener("popstate", event => {
-      const state = event.state;
-      if (state && state.page) {
-        loadPage(state.page, false);
+    // Link clicks
+    allLinks.forEach(a => {
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        const pagePath = a.getAttribute("data-page");
+        loadPage(pagePath, true);
+      });
+    });
+
+    // Search filter
+    searchEl.addEventListener("input", () => {
+      const q = searchEl.value.trim().toLowerCase();
+      allLinks.forEach(a => {
+        const text = a.textContent.toLowerCase();
+        a.classList.toggle("hidden", q && !text.includes(q));
+      });
+
+      // If active gets hidden, move to first visible
+      const active = document.querySelector(".sub-list a.active");
+      if (active && active.classList.contains("hidden")){
+        const first = getVisibleLinks()[0];
+        if (first) loadPage(first.getAttribute("data-page"), true);
+        else {
+          viewer.removeAttribute("src");
+          pageTitleEl.textContent = "No matches";
+          document.title = "Node.js Core Concepts";
+          prevBtn.disabled = true;
+          nextBtn.disabled = true;
+        }
       } else {
-        // If no state (e.g. user pressed Back from initial), show welcome screen
-        contentArea.innerHTML = "<p>Select any lecture from the sidebar to begin.</p>";
-        pageTitleEl.textContent = "Welcome";
-        document.title = "Node.js Core Concepts";
-        highlightActiveLink("");
-        nextBtn.disabled = true;
+        const current = document.querySelector(".sub-list a.active");
+        configurePrevNext(current ? current.getAttribute("data-page") : "");
       }
     });
 
-    // On initial load: check if URL has “?page=…” so we load that right away
+    // Back/forward
+    window.addEventListener("popstate", (e) => {
+      const page = (e.state && e.state.page) || new URL(location.href).searchParams.get("page");
+      if (page) loadPage(page, false);
+    });
+
     window.addEventListener("DOMContentLoaded", () => {
-      const params = new URLSearchParams(location.search);
-      const requested = params.get("page");
-      if (requested) {
-        // Verify it’s in our link list:
-        const matchingLink = allLinks.find(a => a.getAttribute("data-page") === requested);
-        if (matchingLink) {
-          loadPage(requested, false);
-        }
+      // restore sidebar
+      const sidebarCollapsed = localStorage.getItem(LS_SIDEBAR);
+      setSidebarCollapsed(sidebarCollapsed === "true");
+
+      // restore section collapsed state
+      const st = loadSectionState();
+      sectionHeaders.forEach(h => {
+        const key = h.getAttribute("data-section");
+        if (!key) return;
+        const collapsed = !!st[key];
+        setSectionCollapsed(key, collapsed);
+      });
+
+      // initial page: URL > last saved > none
+      const requested = new URL(location.href).searchParams.get("page");
+      const last = localStorage.getItem(LS_LAST);
+
+      if (requested && allLinks.some(a => a.getAttribute("data-page") === requested)){
+        loadPage(requested, false);
+        return;
       }
+      if (last && allLinks.some(a => a.getAttribute("data-page") === last)){
+        loadPage(last, false);
+        return;
+      }
+
+      pageTitleEl.textContent = "Welcome";
+      document.title = "Node.js Core Concepts";
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
     });
   </script>
 </body>
