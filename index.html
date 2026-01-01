@@ -1,808 +1,894 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Node.js Core Concepts</title>
+  <title>Node.js Core Concepts — Index</title>
   <style>
-    /* ───── Reset & Base ───── */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    }
-
     :root{
-      --sidebar-w: 280px;
-      --header-h: 64px;
-      --footer-h: 64px;
-      --bg: #f4f6f8;
-      --card: #ffffff;
-      --text: #333;
-      --muted: #6b7280;
-      --sidebar: #2c3e50;
-      --sidebar-2: #34495e;
-      --active: #1abc9c;
-      --active-2: #16a085;
-      --shadow: rgba(0,0,0,0.08);
-      --border: rgba(0,0,0,0.08);
+      --bg:#ffffff;
+      --text:#111;
+      --muted:#666;
+      --border:#e5e5e5;
+      --panel:#fafafa;
+      --link:#0b57d0;
+      --focus:#1a73e8;
+      --shadow: 0 8px 30px rgba(0,0,0,.06);
+    }
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.5;
+      overflow:hidden; /* keep scroll inside sidebar/content */
     }
 
-    html, body { height: 100%; }
-    body {
-      display: flex;
-      height: 100vh;
-      background-color: var(--bg);
-      color: var(--text);
-      overflow: hidden; /* prevent double scrollbars */
+    /* Layout */
+    .app{
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      height:100vh;
+      overflow:hidden;
+      transition: grid-template-columns .18s ease;
+    }
+    .app.sidebar-collapsed{
+      grid-template-columns: 0px 1fr;
     }
 
-    /* ───── Sidebar ───── */
-    .sidebar {
-      width: var(--sidebar-w);
-      background-color: var(--sidebar);
-      color: #ecf0f1;
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-      transition: width 0.22s ease;
-      border-right: 1px solid rgba(255,255,255,0.08);
+    /* Sidebar */
+    .sidebar{
+      border-right:1px solid var(--border);
+      background:var(--panel);
+      display:flex;
+      flex-direction:column;
+      min-width:260px;
+      height:100vh;
+      overflow:hidden; /* scroll only inside .sidebar-body */
+      transition: transform .18s ease, width .18s ease, opacity .18s ease;
     }
-    body.nav-collapsed .sidebar{
-      width: 0;
-      border-right: none;
-      overflow: hidden;
+    .app.sidebar-collapsed .sidebar{
+      width:0;
+      min-width:0;
+      opacity:0;
+      pointer-events:none;
     }
 
     .sidebar-header{
-      padding: 1rem 1rem 0.75rem;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 14px 14px 10px;
+      border-bottom:1px solid var(--border);
+      background:#fff;
     }
-    .sidebar h2 {
-      text-align: center;
-      font-size: 1.15rem;
-      letter-spacing: 0.8px;
-      margin-bottom: 0.75rem;
+    .sidebar-title{
+      font-size:14px;
+      font-weight:700;
+      margin:0 0 8px;
+      display:flex;
+      align-items:center;
+      gap:8px;
     }
-
-    .search {
-      width: 100%;
-      padding: 0.55rem 0.7rem;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      outline: none;
-      font-size: 0.95rem;
+    .sidebar-title span.badge{
+      font-weight:600;
+      font-size:12px;
+      color:#fff;
+      background:#111;
+      border-radius:999px;
+      padding:2px 8px;
     }
-    .search::placeholder{ color: rgba(255,255,255,0.65); }
+    .search{
+      width:100%;
+      padding:10px 10px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      outline:none;
+      font-size:13px;
+    }
     .search:focus{
-      border-color: rgba(26,188,156,0.65);
-      box-shadow: 0 0 0 3px rgba(26,188,156,0.15);
+      border-color:var(--focus);
+      box-shadow:0 0 0 2px rgba(26,115,232,.15);
     }
 
-    .nav-container {
-      flex-grow: 1;
-      overflow-y: auto;
-      padding: 0.75rem 0.5rem 1rem;
+    .sidebar-body{
+      flex:1;
+      overflow-y:auto;
+      overflow-x:hidden;
+      padding:10px;
+      scrollbar-gutter: stable; /* modern Chromium */
     }
 
-    .nav-list { list-style: none; }
-    .nav-list > li { margin-bottom: 0.35rem; }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      padding: 0.65rem 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      color: #bdc3c7;
-      text-transform: uppercase;
-      font-size: 0.82rem;
-      letter-spacing: 0.5px;
-      border-left: 4px solid transparent;
-      transition: background 0.15s;
-      user-select: none;
-      border-radius: 8px;
+    details.section{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:12px;
+      margin:10px 0;
+      overflow:hidden;
+      box-shadow: 0 1px 0 rgba(0,0,0,.02);
     }
-    .section-title:hover { background-color: var(--sidebar-2); }
-    .section-title .chev { opacity: 0.85; font-size: 0.95rem; }
-
-    .sub-list {
-      list-style: none;
-      padding-left: 0.5rem;
-      margin-top: 0.25rem;
-      display: block;
+    details.section > summary{
+      cursor:pointer;
+      list-style:none;
+      padding:10px 12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid var(--border);
+      background:#fff;
+      user-select:none;
     }
-    .sub-list.collapsed { display: none; }
+    details.section > summary::-webkit-details-marker{ display:none }
 
-    .sub-list li { margin: 0.18rem 0; }
-    .sub-list a {
-      display: block;
-      padding: 0.5rem 0.85rem;
-      color: #ecf0f1;
-      text-decoration: none;
-      border-left: 4px solid transparent;
-      transition: background 0.15s, border-left 0.15s;
-      font-size: 0.92rem;
-      border-radius: 8px;
+    .sec-left{ display:flex; flex-direction:column; gap:2px; }
+    .sec-name{ font-size:13px; font-weight:700; }
+    .sec-folder{
+      font-size:12px;
+      color:var(--muted);
+      overflow-wrap:anywhere;
     }
-    .sub-list a:hover { background-color: var(--sidebar-2); }
-    .sub-list a.active {
-      background-color: var(--active);
-      border-left: 4px solid var(--active-2);
-      color: #fff;
-    }
-    .sub-list a.hidden { display:none; }
-
-    /* ───── Main Content ───── */
-    .main-content {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      min-width: 0;
+    .sec-count{
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+      padding-top:2px;
     }
 
-    .header {
-      height: var(--header-h);
-      background-color: var(--card);
-      padding: 0 1rem;
-      box-shadow: 0 2px 4px var(--shadow);
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      border-bottom: 1px solid var(--border);
+    .lecture-list{ padding:8px 8px 10px; }
+    .lecture{
+      display:block;
+      text-decoration:none;
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:10px;
+      font-size:13px;
+      border:1px solid transparent;
+      overflow-wrap:anywhere;
+    }
+    .lecture:hover{
+      background:var(--panel);
+      border-color:var(--border);
+    }
+    .lecture.active{
+      background:#eef4ff;
+      border-color:#c7dcff;
+      color:#0b57d0;
+      font-weight:700;
+    }
+    .lecture small{
+      display:block;
+      color:var(--muted);
+      font-weight:400;
+      margin-top:2px;
+      font-size:12px;
     }
 
-    .toggle-btn{
-      width: 2.25rem;
-      height: 2.25rem;
-      border: 1px solid var(--border);
-      background: #fff;
-      border-radius: 10px;
-      cursor: pointer;
+    /* Main */
+    .main{
+      display:flex;
+      flex-direction:column;
+      height:100vh;
+      overflow:hidden;
+      background:#fff;
+    }
+
+    .topbar{
+      border-bottom:1px solid var(--border);
+      background:#fff;
+      padding:10px 14px;
       display:flex;
       align-items:center;
-      justify-content:center;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-      flex-shrink: 0;
-    }
-    .toggle-btn:focus{ outline: 3px solid rgba(26,188,156,0.2); outline-offset: 2px; }
-
-    .header h1 {
-      font-size: 1.2rem;
-      color: #2c3e50;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      gap:10px;
+      flex-wrap:wrap;
+      position:relative;
+      z-index:1;
     }
 
-    .content-area {
-      flex-grow: 1;
-      padding: 0.9rem;
-      overflow: hidden;
-      background-color: var(--bg);
-    }
-
-    .viewer-wrap{
-      height: 100%;
-      width: 100%;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-    }
-    #viewer{
-      width: 100%;
-      height: 100%;
-      border: 0;
-      background: #fff;
-    }
-
-    /* ───── Footer / Next Button ───── */
-    .footer {
-      height: var(--footer-h);
-      background-color: var(--card);
-      padding: 0 1rem;
-      box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
-      border-top: 1px solid var(--border);
+    .crumb{
       display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:260px;
+      flex:1;
+    }
+    .crumb .h1{
+      margin:0;
+      font-size:14px;
+      font-weight:800;
+      overflow-wrap:anywhere;
+    }
+    .crumb .h2{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+      overflow-wrap:anywhere;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--border);
+      background:#fff;
+      color:#111;
+      padding:8px 10px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:13px;
+      display:inline-flex;
       align-items:center;
-      justify-content: flex-end;
-      gap: 0.5rem;
-      flex-shrink: 0;
+      gap:8px;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{ background:var(--panel) }
+    .btn:disabled{ opacity:.45; cursor:not-allowed; }
+    .btn.primary{
+      border-color:#c7dcff;
+      background:#eef4ff;
+      color:#0b57d0;
+      font-weight:700;
     }
 
-    .btn {
-      padding: 0.6rem 1.1rem;
-      border: none;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: background-color 0.15s;
-      color: #fff;
-      background-color: var(--active);
+    .content{
+      height:100%;
+      overflow:hidden;
+      background:#fff;
     }
-    .btn:hover { background-color: var(--active-2); }
-    .btn:disabled { opacity: 0.5; cursor: default; }
-    .btn-secondary{
-      background-color: #64748b;
+    iframe#viewer{
+      width:100%;
+      height:100%;
+      border:0;
+      background:#fff;
     }
-    .btn-secondary:hover{ background-color: #475569; }
 
-    @media (max-width: 900px){
-      :root{ --sidebar-w: 80vw; }
+    /* Mobile sidebar drawer */
+    .overlay{ display:none; }
+    @media (max-width: 920px){
+      body{ overflow:auto }
+      .app{ grid-template-columns: 1fr; }
+      .sidebar{
+        position:fixed;
+        inset:0 auto 0 0;
+        width:min(88vw, 360px);
+        box-shadow: var(--shadow);
+        transform: translateX(-105%);
+        opacity:1;
+        pointer-events:auto;
+        z-index:20;
+      }
+      .app.sidebar-open-mobile .sidebar{
+        transform: translateX(0);
+      }
+      .overlay{
+        display:block;
+        position:fixed;
+        inset:0;
+        background: rgba(0,0,0,.25);
+        z-index:15;
+        opacity:0;
+        pointer-events:none;
+        transition: opacity .18s ease;
+      }
+      .app.sidebar-open-mobile ~ .overlay{
+        opacity:1;
+        pointer-events:auto;
+      }
+      .app.sidebar-collapsed{ grid-template-columns: 1fr; }
+    }
+
+    /* Print: hide navigation chrome */
+    @media print{
+      .sidebar, .topbar, .overlay{ display:none !important; }
+      .app{ grid-template-columns: 1fr; height:auto; }
+      .main{ height:auto; }
+      .content{ height:auto; }
+      iframe#viewer{ height:100vh; }
     }
   </style>
 </head>
 
 <body>
-  <!-- ───── Sidebar ───── -->
-  <nav class="sidebar">
-    <div class="sidebar-header">
-      <h2>Node.js Course</h2>
-      <input id="search" class="search" type="search" placeholder="Search lecture…" autocomplete="off" />
-    </div>
-
-    <div class="nav-container">
-      <ul class="nav-list">
-
-        <!-- Section 1: Introduction -->
-        <li>
-          <div class="section-title" data-section="s1">
-            <span>Section 1 – Introduction</span><span class="chev">▾</span>
-          </div>
-          <ul class="sub-list" data-sub="s1">
-            <li><a data-page="Section_1_Introduction/1_Course_Overview.html" href="#">1 Course Overview</a></li>
-            <li><a data-page="Section_1_Introduction/2_Setting_Up_For_Windows_Users_Only.html" href="#">2 Setup (Windows)</a></li>
-            <li><a data-page="Section_1_Introduction/3_Setting_Up_For_Mac_Users_Only.html" href="#">3 Setup (Mac)</a></li>
-            <li><a data-page="Section_1_Introduction/4_Setting_Up_For_Linux_Users_Only.html" href="#">4 Setup (Linux)</a></li>
-            <li><a data-page="Section_1_Introduction/5_Introduction_to_the_Command_Line.html" href="#">5 Intro to CLI</a></li>
-            <li><a data-page="Section_1_Introduction/6_Learning_NVM_and_Nodejs_Versions.html" href="#">6 NVM & Versions</a></li>
-            <li><a data-page="Section_1_Introduction/7_Nodejs_Under_the_Hood.html" href="#">7 Node.js Under the Hood</a></li>
-          </ul>
-        </li>
-
-        <!-- Section 2: Understanding EventEmitter -->
-        <li>
-          <div class="section-title" data-section="s2">
-            <span>Section 2 – EventEmitter</span><span class="chev">▾</span>
-          </div>
-          <ul class="sub-list" data-sub="s2">
-            <li><a data-page="Section_2_Understanding_EventEmitter/8_Understanding_EventEmitter.html" href="#">8 Understanding EventEmitter</a></li>
-          </ul>
-        </li>
-
-        <!-- Section 3: Understanding Buffers -->
-        <li>
-          <div class="section-title" data-section="s3">
-            <span>Section 3 – Buffers</span><span class="chev">▾</span>
-          </div>
-          <ul class="sub-list" data-sub="s3">
-            <li><a data-page="Section_3_Understanding_Buffers/9_Introdcution.html" href="#">9 Buffers Intro</a></li>
-            <li><a data-page="Section_3_Understanding_Buffers/10_Understanding_Binary_Numbers.html" href="#">10 Binary Numbers</a></li>
-            <li><a data-page="Section_3_Understanding_Buffers/11_Understanding_Hexadecimal_Numbers.html" href="#">11 Hexadecimal Numbers</a></li>
-            <li><a data-page="Section_3_Understanding_Buffers/12_Using_a_Programming_Calculator.html" href="#">12 Programming Calculator</a></li>
-            <li><a data-page="Section_3_Understanding_Buffers/13_Understanding_Character_Encodings.html" href="#">13 Character Encodings</a></li>
-            <li><a data-page="Section_3_Understanding_Buffers/14_The_Concept_of_Buffers.html" href="#">14 Buffers Concept</a></li>
-            <li><a data-page="Section_3_Understanding_Buffers/15_Buffers_in_Action.html" href="#">15 Buffers in Action</a></li>
-            <li><a data-page="Section_3_Understanding_Buffers/16_Allocating_Huge_Buffers.html" href="#">16 Huge Buffers</a></li>
-            <li><a data-page="Section_3_Understanding_Buffers/17_Fastest_Way_of_Allocating_Buffers.html" href="#">17 Fast Allocation</a></li>
-            <li><a data-page="Section_3_Understanding_Buffers/18_Reading_the_Nodejs_Docs.html" href="#">18 Reading Docs</a></li>
-            <li><a data-page="Section_3_Understanding_Buffers/19_Outro.html" href="#">19 Buffers Outro</a></li>
-          </ul>
-        </li>
-
-        <!-- Section 4: Understanding File System -->
-        <li>
-          <div class="section-title" data-section="s4">
-            <span>Section 4 – File System</span><span class="chev">▾</span>
-          </div>
-          <ul class="sub-list" data-sub="s4">
-            <li><a data-page="Section_4_Understanding_File_System/20_Introduction.html" href="#">20 Introduction</a></li>
-            <li><a data-page="Section_4_Understanding_File_System/21_What_Exactly_Is_a_File.html" href="#">21 What Is a File</a></li>
-            <li><a data-page="Section_4_Understanding_File_System/22_How_Nodejs_Deals_with_Files.html" href="#">22 How Node.js Deals with Files</a></li>
-            <li><a data-page="Section_4_Understanding_File_System/23_Three_Different_Ways_of_Doing_the_Same_Thing.html" href="#">23 Three Ways of Doing It</a></li>
-            <li><a data-page="Section_4_Understanding_File_System/24_Starting_Point_for_Building_Our_Application.html" href="#">24 Starting Our App</a></li>
-            <li><a data-page="Section_4_Understanding_File_System/25_Watching_the_Command_File_for_Changes.html" href="#">25 Watching File Changes</a></li>
-            <li><a data-page="Section_4_Understanding_File_System/26_Reading_the_Content_of_the_Command_File.html" href="#">26 Reading File Content</a></li>
-            <li><a data-page="Section_4_Understanding_File_System/27_Cleaning_Up_the_Code_using_EventEmitter.html" href="#">27 Cleanup with EventEmitter</a></li>
-            <li><a data-page="Section_4_Understanding_File_System/28_Making_Sense_Out_of_the_Read_Data.html" href="#">28 Parsing Read Data</a></li>
-            <li><a data-page="Section_4_Understanding_File_System/29_Implementing_the_Create_File_Command.html" href="#">29 Create File Command</a></li>
-            <li><a data-page="Section_4_Understanding_File_System/30_Defining_the_Rest_of_the_Commands.html" href="#">30 Define Other Commands</a></li>
-            <li><a data-page="Section_4_Understanding_File_System/31_Solution_Implementing_the_deleteFile_Function.html" href="#">31 deleteFile Solution</a></li>
-            <li><a data-page="Section_4_Understanding_File_System/32_Solution_Implementing_the_renameFile_Function.html" href="#">32 renameFile Solution</a></li>
-            <li><a data-page="Section_4_Understanding_File_System/33_Solution_Implementing_the_addToFile_Function.html" href="#">33 addToFile Solution</a></li>
-            <li><a data-page="Section_4_Understanding_File_System/34_Outro.html" href="#">34 Outro</a></li>
-          </ul>
-        </li>
-
-        <!-- Section 5: Understanding Streams -->
-        <li>
-          <div class="section-title" data-section="s5">
-            <span>Section 5 – Streams</span><span class="chev">▾</span>
-          </div>
-          <ul class="sub-list" data-sub="s5">
-            <li><a data-page="Section_5_Understanding_Streams/35_Introduction.html" href="#">35 Introduction</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/36_Benchmarking_Writing_a_Million_Times_to_a_File.html" href="#">36 Benchmark File Writes</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/37_Using_Streams_Naively_in_Our_Solution.html" href="#">37 Naive Streams</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/38_So_What_Exactly_Are_Streams.html" href="#">38 What Are Streams?</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/39_Understanding_Different_Types_of_Streams.html" href="#">39 Stream Types</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/40_Fixing_the_Memory_Issue_in_Our_Program.html" href="#">40 Fix Memory Issue</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/41_Reading_Writable_Streams_Nodejs_Docs_and_Recap.html" href="#">41 Writable Streams Docs</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/42_Readable_Streams_in_Action.html" href="#">42 Readable Streams</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/43_Selectively_Writing_Our_Data_from_the_Readable_Stream.html" href="#">43 Selective Write</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/44_Understanding_the_Splitting_Issue.html" href="#">44 Splitting Issue</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/45_Implementing_the_Solution_and_Resolving_the_Splitting_Issue.html" href="#">45 Resolve Split</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/46_Reading_Nodejs_Docs_and_Recap.html" href="#">46 Streams Docs Recap</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/47_Building_Our_Own_Streaming_Solution_Using_Buffers.html" href="#">47 Custom Streaming Solution</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/48_Understanding_Piping.html" href="#">48 Understanding Piping</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/49_Implementing_Our_Own_Writable_Stream.html" href="#">49 Own Writable Stream</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/50_Implementing_Our_Own_Readable_Stream.html" href="#">50 Own Readable Stream</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/51_Understanding_Duplex_and_Transform_Streams.html" href="#">51 Duplex & Transform</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/52_Creating_an_Encryption_Decryption_Application.html" href="#">52 Encryption/Decryption App</a></li>
-            <li><a data-page="Section_5_Understanding_Streams/53_Final_Notes.html" href="#">53 Streams Outro</a></li>
-          </ul>
-        </li>
-
-        <!-- Section 6: Understanding Networking -->
-        <li>
-          <div class="section-title" data-section="s6">
-            <span>Section 6 – Networking</span><span class="chev">▾</span>
-          </div>
-          <ul class="sub-list" data-sub="s6">
-            <li><a data-page="Section_6_Understanding_Networking/54_Introduction.html" href="#">54 Introduction</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/55_Understanding_MAC_Addresses_and_Switches.html" href="#">55 MAC Addresses & Switches</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/56_Understanding_Routers_and_How_the_Internet_Works.html" href="#">56 Routers & Internet</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/57_Understanding_Networking_Layers.html" href="#">57 Networking Layers</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/58_A_Quick_Tip_About_Filtering_in_Wireshark.html" href="#">58 Wireshark Tip</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/59_Creating_a_Simple_TCP_Application_in_Nodejs.html" href="#">59 TCP App</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/60_Understanding_the_Transport_Layer_TCP_UDP.html" href="#">60 TCP/UDP Transport</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/61_A_Networking_Scenario_in_Action.html" href="#">61 Networking Scenario</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/62_Understanding_Port_Numbers.html" href="#">62 Port Numbers</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/63_Starting_Point_for_Building_Our_Chat_App.html" href="#">63 Chat App Start</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/64_Creating_a_Chat_Application_PART_1.html" href="#">64 Chat App Part 1</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/65_Creating_a_Chat_Application_PART_2.html" href="#">65 Chat App Part 2</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/66_Improving_the_UI_of_our_Chat_App.html" href="#">66 Chat UI Improvements</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/67_Identifying_Users_in_the_Chat_App.html" href="#">67 User IDs in Chat</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/68_Notifying_Everyone_When_Somebody_Joins_Leaves_the_Chat.html" href="#">68 Join/Leave Notifications</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/69_A_Note_About_the_end_Event_on_Windows.html" href="#">69 ‘iend’ Event on Windows</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/70_Some_Final_Notes_About_the_Chat_App.html" href="#">70 Final Chat Notes</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/71_Deploying_our_Chat_App_to_AWS.html" href="#">71 Deploy to AWS</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/72_Commands_Used_for_Installing_NVM.html" href="#">72 NVM Commands</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/73_Understanding_IPv4_Addresses.html" href="#">73 IPv4 Addresses</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/74_Understanding_DNS.html" href="#">74 DNS</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/75_Understanding_IPv6_Addresses.html" href="#">75 IPv6 Addresses</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/76_Starting_Point_for_Building_Our_Uploader_App.html" href="#">76 Uploader App Start</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/77_Creating_an_Uploader_Application.html" href="#">77 Uploader App</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/78_Taking_Care_of_Backpressures_in_the_Uploader_App.html" href="#">78 Backpressure in Uploader</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/79_Getting_the_File_Names_Dynamically_in_the_Uploader_App.html" href="#">79 Dynamic File Names</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/80_Displaying_the_Upload_Progress_in_Our_Uploader_App.html" href="#">80 Upload Progress</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/81_Deploying_our_Uploader_App.html" href="#">81 Deploy Uploader App</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/82_AWS_Cost_Warning_Server_Termination_Reminder.html" href="#">82 AWS Cost Warning</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/83_Understanding_UDP_and_the_Dgram_Module.html" href="#">83 UDP & dgram</a></li>
-            <li><a data-page="Section_6_Understanding_Networking/84_Outro.html" href="#">84 Outro</a></li>
-          </ul>
-        </li>
-
-        <!-- Section 7: Understanding HTTP -->
-        <li>
-          <div class="section-title" data-section="s7">
-            <span>Section 7 – HTTP</span><span class="chev">▾</span>
-          </div>
-          <ul class="sub-list" data-sub="s7">
-            <li><a data-page="Section_7_Understanding_HTTP/85_Introduction.html" href="#">85 Introduction</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/86_The_Idea_of_HTTP.html" href="#">86 The Idea of HTTP</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/87_Creating_a_Simple_HTTP_Server_in_Node.html" href="#">87 Simple HTTP Server</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/88_Understanding_HTTP_Messages_Requests_and_Responses.html" href="#">88 HTTP Messages</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/89_Understanding_Connection_Types.html" href="#">89 Connection Types</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/90_Building_our_Client_and_Sending_a_Request.html" href="#">90 Client Request</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/91_Sending_a_Response_to_the_Client.html" href="#">91 Send Response</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/92_Learning_Postman_and_Testing_Our_Server_with_It.html" href="#">92 Postman Testing</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/93_Reading_Some_Docs.html" href="#">93 Read Docs</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/94_Sending_an_HTTP_Request_Directly_on_Top_of_TCP!_PART_1.html" href="#">94 Raw HTTP (Part 1)</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/95_Sending_an_HTTP_Request_Directly_on_Top_of_TCP!_PART_2.html" href="#">95 Raw HTTP (Part 2)</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/96_Emulating_our_HTTP_Server_Using_the_Net_Module.html" href="#">96 Net Module Emulation</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/97_Understanding_Media_Types_MIME_Types.html" href="#">97 MIME Types</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/98_Understanding_HTTP_Methods.html" href="#">98 HTTP Methods</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/99_Understanding_HTTP_status_codes.html" href="#">99 Status Codes</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/100_Creating_a_Simple_Web_Server_in_Node.html" href="#">100 Simple Web Server</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/101_Serving_a_CSS_and_JavaScript_File.html" href="#">101 Serve CSS/JS</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/102_Adding_Some_JSON_Routes.html" href="#">102 JSON Routes</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/103_Adding_a_File_Upload_Route.html" href="#">103 File Upload</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/104_Creating_our_Own_Little_Mini_Express_Framework!.html" href="#">104 Mini Express Framework</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/105_Making_our_Framework_More_Robust.html" href="#">105 Robust Framework</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/106_Getting_Ready_for_Our_Next_Project.html" href="#">106 Next Project Prep</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/107_Using_Our_Framework_to_Create_a_Web_App.html" href="#">107 Use Our Framework</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/108_Adding_the_Login_Route.html" href="#">108 Login Route</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/109_Understanding_HTTP_Proxies.html" href="#">109 HTTP Proxies</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/110_HTTP_is_Stateless.html" href="#">110 HTTP is Stateless</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/111_Understanding_Cookies.html" href="#">111 Cookies</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/112_Recognizing_Users_for_Future_Requests_after_Logging_In.html" href="#">112 Recognize Users</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/113_Sending_the_Users_Info_in_Profile.html" href="#">113 User Profile Info</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/114_Enhancing_Our_Framework_with_Middleware_Support.html" href="#">114 Middleware Support</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/115_Defining_the_Middleware_Functions.html" href="#">115 Define Middleware</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/116_Implementing_the_Create_Post_Update_User_and_Logout_Routes.html" href="#">116 CRUD & Logout</a></li>
-            <li><a data-page="Section_7_Understanding_HTTP/117_Outro.html" href="#">117 Outro</a></li>
-          </ul>
-        </li>
-
-        <!-- Section 8: Understanding Unix -->
-        <li>
-          <div class="section-title" data-section="s8">
-            <span>Section 8 – Unix</span><span class="chev">▾</span>
-          </div>
-          <ul class="sub-list" data-sub="s8">
-            <li><a data-page="Section_8_Understanding_Unix/118_Introduction.html" href="#">118 Introduction</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/119_What_Is_Unix.html" href="#">119 What Is Unix</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/120_Why_Should_We_Care_About_Unix.html" href="#">120 Why Unix Matters</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/121_Setting_Up_Unix_on_Windows_WSL_For_Wndows_Users_Only.html" href="#">121 Unix on WSL</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/122_A_First_Look_at_the_Child_Process_Module.html" href="#">122 Child Process Module</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/123_Understanding_Unix_Shells.html" href="#">123 Unix Shells</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/124_Demystifying_Bash_Execution_Order_Aliases_Functions_Built_ins_and_Path.html" href="#">124 Bash Execution Order</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/125_A_Few_Notes_about_Unix_File_Permissions.html" href="#">125 Unix Permissions</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/126_Sourcing_in_Bash.html" href="#">126 Sourcing in Bash</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/127_Understanding_Shell_Config_Files.html" href="#">127 Shell Config Files</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/128_What_Exactly_is_a_Child_Process.html" href="#">128 What is Child Process</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/129_Understanding_Environment_Variables.html" href="#">129 Environment Vars</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/130_Understanding_Unix_File_System_Paths_and_CWD.html" href="#">130 FS Paths & CWD</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/131_Understanding_Stdout_Stdin_and_Stderr.html" href="#">131 Stdout/Stdin/Stderr</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/132_Understanding_Pipes_and_Output_Redirection_in_Bash.html" href="#">132 Pipes & Redirection</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/133_Building_a_Command_Line_Utility_with_Nodejs.html" href="#">133 CLI Utility with Node.js</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/134_Building_Massive_Communication_App_Node_Part.html" href="#">134 Comm App (Node)</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/135_Intro_to_the_C_Part.html" href="#">135 Intro to C</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/136_Learning_C_Our_First_App.html" href="#">136 C First App</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/137_Learning_C_Static_Types_and_Our_Memory.html" href="#">137 C Static Types & Memory</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/138_Learning_C_Memory_Allocation.html" href="#">138 C Memory Allocation</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/139_Learning_C_Reading_the_Arguments.html" href="#">139 C Reading Arguments</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/140_Building_Massive_Communication_App_C_Part.html" href="#">140 Comm App (C)</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/141_Only_Watch_if_You_Skipped_the_C_Part.html" href="#">141 Skip if No C</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/142_Another_Way_of_IPC_Unix_Domain_Sockets.html" href="#">142 Unix Domain Sockets</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/143_Understanding_Clustering.html" href="#">143 Clustering</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/144_Clustering_in_Action.html" href="#">144 Clustering in Action</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/145_Installing_and_Building_FFmpeg_from_Source_Code.html" href="#">145 FFmpeg Build</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/146_Video_Editor_App_Setup_and_Walkthrough.html" href="#">146 Video Editor Walkthrough</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/147_Adding_the_Upload_Route.html" href="#">147 Upload Route</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/148_Quick_Intro_to_FFmpeg_and_Video_Files.html" href="#">148 FFmpeg Intro</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/149_Making_a_Thumbnail_and_Getting_the_Dimensions_After_an_Upload.html" href="#">149 Thumbnail & Dimensions</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/150_Returning_the_List_of_Uploaded_Videos.html" href="#">150 List Uploaded Videos</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/151_Adding_a_Route_for_Returning_the_Video_Assets.html" href="#">151 Video Assets Route</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/152_Adding_a_Route_to_Extract_the_Audio_of_a_Video_File.html" href="#">152 Audio Extract Route</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/153_Adding_the_Resize_Route.html" href="#">153 Resize Route</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/154_Scheduling_the_Resizes.html" href="#">154 Schedule Resizes</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/155_More_on_Queue_based_Processing.html" href="#">155 Queue Processing</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/156_Resuming_Scheduled_Resize_Operations_Upon_App_Restart.html" href="#">156 Resume Scheduled Resizes</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/157_Running_Our_Application_in_Cluster_Mode.html" href="#">157 Cluster Mode</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/158_Refactor_from_Cpeak_to_Express_in_Less_than_20_Minutes!.html" href="#">158 Refactor to Express</a></li>
-            <li><a data-page="Section_8_Understanding_Unix/159_Outro.html" href="#">159 Outro</a></li>
-          </ul>
-        </li>
-
-        <!-- Section 9: Understanding Compression -->
-        <li>
-          <div class="section-title" data-section="s9">
-            <span>Section 9 – Compression</span><span class="chev">▾</span>
-          </div>
-          <ul class="sub-list" data-sub="s9">
-            <li><a data-page="Section_9_Understanding_Compression/160_Introduction.html" href="#">160 Introduction</a></li>
-            <li><a data-page="Section_9_Understanding_Compression/161_How_Does_a_Lossless_Comression_Work.html" href="#">161 Lossless Compression</a></li>
-            <li><a data-page="Section_9_Understanding_Compression/162_Lossy_Compression.html" href="#">162 Lossy Compression</a></li>
-            <li><a data-page="Section_9_Understanding_Compression/163_Gzip_Brotli_and_Deflate.html" href="#">163 Gzip/Brotli/Deflate</a></li>
-            <li><a data-page="Section_9_Understanding_Compression/164_Compression_in_HTTP.html" href="#">164 HTTP Compression</a></li>
-            <li><a data-page="Section_9_Understanding_Compression/165_Compression_vs_Minification.html" href="#">165 Compression vs Minification</a></li>
-            <li><a data-page="Section_9_Understanding_Compression/166_Deploying_Compression_onto_Our_Apps.html" href="#">166 Deploy Compression</a></li>
-            <li><a data-page="Section_9_Understanding_Compression/167_Final_Notes.html" href="#">167 Compression Outro</a></li>
-          </ul>
-        </li>
-
-        <!-- Section 10: Multi Threading -->
-        <li>
-          <div class="section-title" data-section="s10">
-            <span>Section 10 – Multi Threading</span><span class="chev">▾</span>
-          </div>
-          <ul class="sub-list" data-sub="s10">
-            <li><a data-page="Section_10_Understanding_Multi_Threading/168_Introduction.html" href="#">168 Introduction</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/169_Guide_for_Skilled_Multi_Threaded_Developers.html" href="#">169 MultiThread Guide</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/170_What_Exactly_Is_a_Thread.html" href="#">170 What Is a Thread</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/171_How_to_Monitor_Threads_on_Your_Operating_System.html" href="#">171 Monitor Threads</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/172_Understanding_CPU_Usage.html" href="#">172 CPU Usage</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/173_Spawning_Threads.html" href="#">173 Spawning Threads</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/174_Thread_Communication_through_Message_Passing.html" href="#">174 Thread Communication</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/175_Introduction_to_Our_CPU_Intensive_Program.html" href="#">175 CPU Intensive App</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/176_Enhancing_Performance_with_Multi_Threading.html" href="#">176 Enhance Performance</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/177_Handling_CPU_Intensive_Operations_in_an_HTTP_Server.html" href="#">177 CPU vs I/O</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/178_isMainThread.html" href="#">178 isMainThread</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/179_CPU_Intensive_vs_IO_Intensive.html" href="#">179 CPU vs I/O Deep Dive</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/180_Examining_a_Crypto_Heavy_Multi_Threaded_App.html" href="#">180 Crypto App</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/181_Nodejs_Thread_Pool.html" href="#">181 Thread Pool</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/182_Developing_a_Thread_Pool_From_Scratch.html" href="#">182 Build Thread Pool</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/183_Event_Loop_Utilization_and_Main_Thread.html" href="#">183 Event Loop & Threads</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/184_Keep_the_Main_Thread_Light_with_Batch_Processing.html" href="#">184 Batch Processing</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/185_Effortlessly_Expanding_Our_Thread_Pool_Capabilities.html" href="#">185 Expand Thread Pool</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/186_Dont_Block_the_Worker_Pool!.html" href="#">186 Don’t Block Worker Pool</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/187_Handling_Billions_of_HTTP_Requests.html" href="#">187 High Volume Requests</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/188_Communication_Through_Shared_Memory.html" href="#">188 Shared Memory</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/189_ArrayBuffers_SharedArrayBuffers_and_TypedArrays.html" href="#">189 ArrayBuffers & TypedArrays</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/190_Race_Conditions.html" href="#">190 Race Conditions</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/191_Understanding_Atomic_Operations.html" href="#">191 Atomic Operations</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/192_Understanding_Mutual_Exclusion.html" href="#">192 Mutual Exclusion</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/193_Deadlocks.html" href="#">193 Deadlocks</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/194_Enhancing_Performance_Through_Shared_Memory.html" href="#">194 Shared Memory Perf</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/195_Native_Multi_Threading_with_C_C_plusplus_Addons.html" href="#">195 Native Threads (C/C++)</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/196_A_Deeper_Look_at_the_Event_Loop_PART_1.html" href="#">196 Event Loop Part 1</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/197_A_Deeper_Look_at_the_Event_Loop_PART_2.html" href="#">197 Event Loop Part 2</a></li>
-            <li><a data-page="Section_10_Understanding_Multi_Threading/198_Outro.html" href="#">198 Outro</a></li>
-          </ul>
-        </li>
-
-        <!-- Section 11: Cryptography -->
-        <li>
-          <div class="section-title" data-section="s11">
-            <span>Section 11 – Cryptography</span><span class="chev">▾</span>
-          </div>
-          <ul class="sub-list" data-sub="s11">
-            <li><a data-page="Section_11_Understanding_Cryptography/199_Introduction.html" href="#">199 Introduction</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/200_Introduction_to_Symmetric_Encryption.html" href="#">200 Symmetric Encryption</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/201_The_Unbreakable_Encryption_OTP_From_Scratch.html" href="#">201 OTP Encryption</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/202_How_AES_Encryption_Works.html" href="#">202 How AES Works</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/203_Understanding_AES_Modes.html" href="#">203 AES Modes</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/204_What_It_Takes_to_Break_AES.html" href="#">204 Breaking AES</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/205_What_About_Brute_Forcing_OTP.html" href="#">205 Brute Forcing OTP</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/206_History_of_AES.html" href="#">206 AES History</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/207_Understanding_Hashing.html" href="#">207 Hashing</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/208_SHA_256_From_Scratch.html" href="#">208 SHA-256</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/209_What_It_Takes_to_Break_SHA_256.html" href="#">209 Breaking SHA-256</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/210_Message_Authentication_Codes.html" href="#">210 MACs</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/211_Understanding_Key_Derivation_Functions.html" href="#">211 KDFs</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/212_Building_a_File_Encryption_Application.html" href="#">212 File Encryption App</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/213_Part_2_Under_Production.html" href="#">213 Under Production</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/214_Introduction_to_Asymmetric_Cryptography.html" href="#">214 Asymmetric Intro</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/215_Introduction_to_RSA.html" href="#">215 RSA Intro</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/216_The_Mathematics_Behind_RSA.html" href="#">216 RSA Math</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/217_What_It_Takes_to_Break_RSA.html" href="#">217 Breaking RSA</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/218_HTTPS_from_Scratch.html" href="#">218 HTTPS</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/219_Elliptic_Curve_Diffie_Hellman.html" href="#">219 ECDH</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/220_Signatures.html" href="#">220 Signatures</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/221_Digital_Certificates.html" href="#">221 Certificates</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/222_Understanding_TLS.html" href="#">222 TLS</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/223_Secure_Communication_in_Microservices.html" href="#">223 Microservices Security</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/224_Understanding_PKI.html" href="#">224 PKI</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/225_Legal_Battles_over_Cryptography.html" href="#">225 Crypto Law</a></li>
-            <li><a data-page="Section_11_Understanding_Cryptography/226_Outro.html" href="#">226 Outro</a></li>
-          </ul>
-        </li>
-
-        <!-- Section 12: Security -->
-        <li>
-          <div class="section-title" data-section="s12">
-            <span>Section 12 – Security</span><span class="chev">▾</span>
-          </div>
-          <ul class="sub-list" data-sub="s12">
-            <li><a data-page="Section_12_Security/227_Introduction.html" href="#">227 Introduction</a></li>
-            <li><a data-page="Section_12_Security/228_How_to_Securely_Store_User_Passwords.html" href="#">228 Secure Password Storage</a></li>
-            <li><a data-page="Section_12_Security/229_More_Lectures_on_the_Way.html" href="#">229 More Lectures</a></li>
-          </ul>
-        </li>
-
-      </ul>
-    </div>
-  </nav>
-
-  <!-- ───── Main Content Area ───── -->
-  <div class="main-content">
-    <div class="header">
-      <button class="toggle-btn" id="toggle-btn" aria-label="Toggle sidebar" title="Toggle sidebar">☰</button>
-      <h1 id="page-title">Welcome</h1>
-    </div>
-
-    <div class="content-area">
-      <div class="viewer-wrap">
-        <iframe id="viewer" title="Lecture viewer"></iframe>
+  <div id="app" class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" aria-label="Course navigation">
+      <div class="sidebar-header">
+        <div class="sidebar-title">📚 Node.js Core Concepts <span class="badge">Index</span></div>
+        <input id="search" class="search" type="search" placeholder="Search lecture… (e.g., Streams, HTTP, TLS)" />
       </div>
-    </div>
+      <div id="sidebarBody" class="sidebar-body"></div>
+    </aside>
 
-    <div class="footer">
-      <button class="btn btn-secondary" id="prev-button" disabled>← Prev</button>
-      <button class="btn" id="next-button" disabled>Next →</button>
-    </div>
+    <!-- Main -->
+    <main class="main">
+      <div class="topbar">
+        <button id="btnToggleSidebar" class="btn primary" type="button" title="Toggle sidebar (Desktop) / Open menu (Mobile)">
+          ☰ Menu
+        </button>
+
+        <button id="btnPrev" class="btn" type="button" title="Previous lecture">⬅️ Prev</button>
+        <button id="btnNext" class="btn" type="button" title="Next lecture">Next ➡️</button>
+        <button id="btnOpen" class="btn" type="button" title="Open current lecture in a new tab">🧾 Open</button>
+        <button id="btnPrint" class="btn" type="button" title="Print current lecture">🖨️ Print</button>
+
+        <div class="crumb" aria-live="polite">
+          <p id="currentTitle" class="h1">Select a lecture from the sidebar…</p>
+          <p id="currentPath" class="h2">Tip: Use Prev/Next. When navigating, it auto-scrolls to top. ✅</p>
+        </div>
+      </div>
+
+      <div class="content">
+        <iframe id="viewer" title="Lecture viewer" src="about:blank"></iframe>
+      </div>
+    </main>
   </div>
 
+  <!-- Mobile overlay -->
+  <div id="overlay" class="overlay" aria-hidden="true"></div>
+
   <script>
-    const body = document.body;
+    // ------------------------------------------------------------
+    // DATA: Node.js folders + lecture HTML files (based on your list)
+    // ------------------------------------------------------------
+    const SECTIONS = [
+      {
+        folder: "Section_1_Introduction",
+        title: "Section 1 – Introduction",
+        items: [
+          ["1 Course Overview", "1_Course_Overview.html"],
+          ["2 Setup (Windows)", "2_Setting_Up_For_Windows_Users_Only.html"],
+          ["3 Setup (Mac)", "3_Setting_Up_For_Mac_Users_Only.html"],
+          ["4 Setup (Linux)", "4_Setting_Up_For_Linux_Users_Only.html"],
+          ["5 Intro to CLI", "5_Introduction_to_the_Command_Line.html"],
+          ["6 NVM & Versions", "6_Learning_NVM_and_Nodejs_Versions.html"],
+          ["7 Node.js Under the Hood", "7_Nodejs_Under_the_Hood.html"],
+        ],
+      },
+      {
+        folder: "Section_2_Understanding_EventEmitter",
+        title: "Section 2 – EventEmitter",
+        items: [
+          ["8 Understanding EventEmitter", "8_Understanding_EventEmitter.html"],
+        ],
+      },
+      {
+        folder: "Section_3_Understanding_Buffers",
+        title: "Section 3 – Buffers",
+        items: [
+          ["9 Buffers Intro", "9_Introdcution.html"],
+          ["10 Binary Numbers", "10_Understanding_Binary_Numbers.html"],
+          ["11 Hexadecimal Numbers", "11_Understanding_Hexadecimal_Numbers.html"],
+          ["12 Programming Calculator", "12_Using_a_Programming_Calculator.html"],
+          ["13 Character Encodings", "13_Understanding_Character_Encodings.html"],
+          ["14 Buffers Concept", "14_The_Concept_of_Buffers.html"],
+          ["15 Buffers in Action", "15_Buffers_in_Action.html"],
+          ["16 Huge Buffers", "16_Allocating_Huge_Buffers.html"],
+          ["17 Fast Allocation", "17_Fastest_Way_of_Allocating_Buffers.html"],
+          ["18 Reading Docs", "18_Reading_the_Nodejs_Docs.html"],
+          ["19 Buffers Outro", "19_Outro.html"],
+        ],
+      },
+      {
+        folder: "Section_4_Understanding_File_System",
+        title: "Section 4 – File System",
+        items: [
+          ["20 Introduction", "20_Introduction.html"],
+          ["21 What Is a File", "21_What_Exactly_Is_a_File.html"],
+          ["22 How Node.js Deals with Files", "22_How_Nodejs_Deals_with_Files.html"],
+          ["23 Three Ways of Doing It", "23_Three_Different_Ways_of_Doing_the_Same_Thing.html"],
+          ["24 Starting Our App", "24_Starting_Point_for_Building_Our_Application.html"],
+          ["25 Watching File Changes", "25_Watching_the_Command_File_for_Changes.html"],
+          ["26 Reading File Content", "26_Reading_the_Content_of_the_Command_File.html"],
+          ["27 Cleanup with EventEmitter", "27_Cleaning_Up_the_Code_using_EventEmitter.html"],
+          ["28 Parsing Read Data", "28_Making_Sense_Out_of_the_Read_Data.html"],
+          ["29 Create File Command", "29_Implementing_the_Create_File_Command.html"],
+          ["30 Define Other Commands", "30_Defining_the_Rest_of_the_Commands.html"],
+          ["31 deleteFile Solution", "31_Solution_Implementing_the_deleteFile_Function.html"],
+          ["32 renameFile Solution", "32_Solution_Implementing_the_renameFile_Function.html"],
+          ["33 addToFile Solution", "33_Solution_Implementing_the_addToFile_Function.html"],
+          ["34 Outro", "34_Outro.html"],
+        ],
+      },
+      {
+        folder: "Section_5_Understanding_Streams",
+        title: "Section 5 – Streams",
+        items: [
+          ["35 Introduction", "35_Introduction.html"],
+          ["36 Benchmark File Writes", "36_Benchmarking_Writing_a_Million_Times_to_a_File.html"],
+          ["37 Naive Streams", "37_Using_Streams_Naively_in_Our_Solution.html"],
+          ["38 What Are Streams?", "38_So_What_Exactly_Are_Streams.html"],
+          ["39 Stream Types", "39_Understanding_Different_Types_of_Streams.html"],
+          ["40 Fix Memory Issue", "40_Fixing_the_Memory_Issue_in_Our_Program.html"],
+          ["41 Writable Streams Docs", "41_Reading_Writable_Streams_Nodejs_Docs_and_Recap.html"],
+          ["42 Readable Streams", "42_Readable_Streams_in_Action.html"],
+          ["43 Selective Write", "43_Selectively_Writing_Our_Data_from_the_Readable_Stream.html"],
+          ["44 Splitting Issue", "44_Understanding_the_Splitting_Issue.html"],
+          ["45 Resolve Split", "45_Implementing_the_Solution_and_Resolving_the_Splitting_Issue.html"],
+          ["46 Streams Docs Recap", "46_Reading_Nodejs_Docs_and_Recap.html"],
+          ["47 Custom Streaming Solution", "47_Building_Our_Own_Streaming_Solution_Using_Buffers.html"],
+          ["48 Understanding Piping", "48_Understanding_Piping.html"],
+          ["49 Own Writable Stream", "49_Implementing_Our_Own_Writable_Stream.html"],
+          ["50 Own Readable Stream", "50_Implementing_Our_Own_Readable_Stream.html"],
+          ["51 Duplex & Transform", "51_Understanding_Duplex_and_Transform_Streams.html"],
+          ["52 Encryption/Decryption App", "52_Creating_an_Encryption_Decryption_Application.html"],
+          ["53 Streams Outro", "53_Final_Notes.html"],
+        ],
+      },
+      {
+        folder: "Section_6_Understanding_Networking",
+        title: "Section 6 – Networking",
+        items: [
+          ["54 Introduction", "54_Introduction.html"],
+          ["55 MAC Addresses & Switches", "55_Understanding_MAC_Addresses_and_Switches.html"],
+          ["56 Routers & Internet", "56_Understanding_Routers_and_How_the_Internet_Works.html"],
+          ["57 Networking Layers", "57_Understanding_Networking_Layers.html"],
+          ["58 Wireshark Tip", "58_A_Quick_Tip_About_Filtering_in_Wireshark.html"],
+          ["59 TCP App", "59_Creating_a_Simple_TCP_Application_in_Nodejs.html"],
+          ["60 TCP/UDP Transport", "60_Understanding_the_Transport_Layer_TCP_UDP.html"],
+          ["61 Networking Scenario", "61_A_Networking_Scenario_in_Action.html"],
+          ["62 Port Numbers", "62_Understanding_Port_Numbers.html"],
+          ["63 Chat App Start", "63_Starting_Point_for_Building_Our_Chat_App.html"],
+          ["64 Chat App Part 1", "64_Creating_a_Chat_Application_PART_1.html"],
+          ["65 Chat App Part 2", "65_Creating_a_Chat_Application_PART_2.html"],
+          ["66 Chat UI Improvements", "66_Improving_the_UI_of_our_Chat_App.html"],
+          ["67 User IDs in Chat", "67_Identifying_Users_in_the_Chat_App.html"],
+          ["68 Join/Leave Notifications", "68_Notifying_Everyone_When_Somebody_Joins_Leaves_the_Chat.html"],
+          ["69 'iend' Event on Windows", "69_A_Note_About_the_end_Event_on_Windows.html"],
+          ["70 Final Chat Notes", "70_Some_Final_Notes_About_the_Chat_App.html"],
+          ["71 Deploy to AWS", "71_Deploying_our_Chat_App_to_AWS.html"],
+          ["72 NVM Commands", "72_Commands_Used_for_Installing_NVM.html"],
+          ["73 IPv4 Addresses", "73_Understanding_IPv4_Addresses.html"],
+          ["74 DNS", "74_Understanding_DNS.html"],
+          ["75 IPv6 Addresses", "75_Understanding_IPv6_Addresses.html"],
+          ["76 Uploader App Start", "76_Starting_Point_for_Building_Our_Uploader_App.html"],
+          ["77 Uploader App", "77_Creating_an_Uploader_Application.html"],
+          ["78 Backpressure in Uploader", "78_Taking_Care_of_Backpressures_in_the_Uploader_App.html"],
+          ["79 Dynamic File Names", "79_Getting_the_File_Names_Dynamically_in_the_Uploader_App.html"],
+          ["80 Upload Progress", "80_Displaying_the_Upload_Progress_in_Our_Uploader_App.html"],
+          ["81 Deploy Uploader App", "81_Deploying_our_Uploader_App.html"],
+          ["82 AWS Cost Warning", "82_AWS_Cost_Warning_Server_Termination_Reminder.html"],
+          ["83 UDP & dgram", "83_Understanding_UDP_and_the_Dgram_Module.html"],
+          ["84 Outro", "84_Outro.html"],
+        ],
+      },
+      {
+        folder: "Section_7_Understanding_HTTP",
+        title: "Section 7 – HTTP",
+        items: [
+          ["85 Introduction", "85_Introduction.html"],
+          ["86 The Idea of HTTP", "86_The_Idea_of_HTTP.html"],
+          ["87 Simple HTTP Server", "87_Creating_a_Simple_HTTP_Server_in_Node.html"],
+          ["88 HTTP Messages", "88_Understanding_HTTP_Messages_Requests_and_Responses.html"],
+          ["89 Connection Types", "89_Understanding_Connection_Types.html"],
+          ["90 Client Request", "90_Building_our_Client_and_Sending_a_Request.html"],
+          ["91 Send Response", "91_Sending_a_Response_to_the_Client.html"],
+          ["92 Postman Testing", "92_Learning_Postman_and_Testing_Our_Server_with_It.html"],
+          ["93 Read Docs", "93_Reading_Some_Docs.html"],
+          ["94 Raw HTTP (Part 1)", "94_Sending_an_HTTP_Request_Directly_on_Top_of_TCP!_PART_1.html"],
+          ["95 Raw HTTP (Part 2)", "95_Sending_an_HTTP_Request_Directly_on_Top_of_TCP!_PART_2.html"],
+          ["96 Net Module Emulation", "96_Emulating_our_HTTP_Server_Using_the_Net_Module.html"],
+          ["97 MIME Types", "97_Understanding_Media_Types_MIME_Types.html"],
+          ["98 HTTP Methods", "98_Understanding_HTTP_Methods.html"],
+          ["99 Status Codes", "99_Understanding_HTTP_status_codes.html"],
+          ["100 Simple Web Server", "100_Creating_a_Simple_Web_Server_in_Node.html"],
+          ["101 Serve CSS/JS", "101_Serving_a_CSS_and_JavaScript_File.html"],
+          ["102 JSON Routes", "102_Adding_Some_JSON_Routes.html"],
+          ["103 File Upload", "103_Adding_a_File_Upload_Route.html"],
+          ["104 Mini Express Framework", "104_Creating_our_Own_Little_Mini_Express_Framework!.html"],
+          ["105 Robust Framework", "105_Making_our_Framework_More_Robust.html"],
+          ["106 Next Project Prep", "106_Getting_Ready_for_Our_Next_Project.html"],
+          ["107 Use Our Framework", "107_Using_Our_Framework_to_Create_a_Web_App.html"],
+          ["108 Login Route", "108_Adding_the_Login_Route.html"],
+          ["109 HTTP Proxies", "109_Understanding_HTTP_Proxies.html"],
+          ["110 HTTP is Stateless", "110_HTTP_is_Stateless.html"],
+          ["111 Cookies", "111_Understanding_Cookies.html"],
+          ["112 Recognize Users", "112_Recognizing_Users_for_Future_Requests_after_Logging_In.html"],
+          ["113 User Profile Info", "113_Sending_the_Users_Info_in_Profile.html"],
+          ["114 Middleware Support", "114_Enhancing_Our_Framework_with_Middleware_Support.html"],
+          ["115 Define Middleware", "115_Defining_the_Middleware_Functions.html"],
+          ["116 CRUD & Logout", "116_Implementing_the_Create_Post_Update_User_and_Logout_Routes.html"],
+          ["117 Outro", "117_Outro.html"],
+        ],
+      },
+      {
+        folder: "Section_8_Understanding_Unix",
+        title: "Section 8 – Unix",
+        items: [
+          ["118 Introduction", "118_Introduction.html"],
+          ["119 What Is Unix", "119_What_Is_Unix.html"],
+          ["120 Why Unix Matters", "120_Why_Should_We_Care_About_Unix.html"],
+          ["121 Unix on WSL", "121_Setting_Up_Unix_on_Windows_WSL_For_Wndows_Users_Only.html"],
+          ["122 Child Process Module", "122_A_First_Look_at_the_Child_Process_Module.html"],
+          ["123 Unix Shells", "123_Understanding_Unix_Shells.html"],
+          ["124 Bash Execution Order", "124_Demystifying_Bash_Execution_Order_Aliases_Functions_Built_ins_and_Path.html"],
+          ["125 Unix Permissions", "125_A_Few_Notes_about_Unix_File_Permissions.html"],
+          ["126 Sourcing in Bash", "126_Sourcing_in_Bash.html"],
+          ["127 Shell Config Files", "127_Understanding_Shell_Config_Files.html"],
+          ["128 What is Child Process", "128_What_Exactly_is_a_Child_Process.html"],
+          ["129 Environment Vars", "129_Understanding_Environment_Variables.html"],
+          ["130 FS Paths & CWD", "130_Understanding_Unix_File_System_Paths_and_CWD.html"],
+          ["131 Stdout/Stdin/Stderr", "131_Understanding_Stdout_Stdin_and_Stderr.html"],
+          ["132 Pipes & Redirection", "132_Understanding_Pipes_and_Output_Redirection_in_Bash.html"],
+          ["133 CLI Utility with Node.js", "133_Building_a_Command_Line_Utility_with_Nodejs.html"],
+          ["134 Comm App (Node)", "134_Building_Massive_Communication_App_Node_Part.html"],
+          ["135 Intro to C", "135_Intro_to_the_C_Part.html"],
+          ["136 C First App", "136_Learning_C_Our_First_App.html"],
+          ["137 C Static Types & Memory", "137_Learning_C_Static_Types_and_Our_Memory.html"],
+          ["138 C Memory Allocation", "138_Learning_C_Memory_Allocation.html"],
+          ["139 C Reading Arguments", "139_Learning_C_Reading_the_Arguments.html"],
+          ["140 Comm App (C)", "140_Building_Massive_Communication_App_C_Part.html"],
+          ["141 Skip if No C", "141_Only_Watch_if_You_Skipped_the_C_Part.html"],
+          ["142 Unix Domain Sockets", "142_Another_Way_of_IPC_Unix_Domain_Sockets.html"],
+          ["143 Clustering", "143_Understanding_Clustering.html"],
+          ["144 Clustering in Action", "144_Clustering_in_Action.html"],
+          ["145 FFmpeg Build", "145_Installing_and_Building_FFmpeg_from_Source_Code.html"],
+          ["146 Video Editor Walkthrough", "146_Video_Editor_App_Setup_and_Walkthrough.html"],
+          ["147 Upload Route", "147_Adding_the_Upload_Route.html"],
+          ["148 FFmpeg Intro", "148_Quick_Intro_to_FFmpeg_and_Video_Files.html"],
+          ["149 Thumbnail & Dimensions", "149_Making_a_Thumbnail_and_Getting_the_Dimensions_After_an_Upload.html"],
+          ["150 List Uploaded Videos", "150_Returning_the_List_of_Uploaded_Videos.html"],
+          ["151 Video Assets Route", "151_Adding_a_Route_for_Returning_the_Video_Assets.html"],
+          ["152 Audio Extract Route", "152_Adding_a_Route_to_Extract_the_Audio_of_a_Video_File.html"],
+          ["153 Resize Route", "153_Adding_the_Resize_Route.html"],
+          ["154 Schedule Resizes", "154_Scheduling_the_Resizes.html"],
+          ["155 Queue Processing", "155_More_on_Queue_based_Processing.html"],
+          ["156 Resume Scheduled Resizes", "156_Resuming_Scheduled_Resize_Operations_Upon_App_Restart.html"],
+          ["157 Cluster Mode", "157_Running_Our_Application_in_Cluster_Mode.html"],
+          ["158 Refactor to Express", "158_Refactor_from_Cpeak_to_Express_in_Less_than_20_Minutes!.html"],
+          ["159 Outro", "159_Outro.html"],
+        ],
+      },
+      {
+        folder: "Section_9_Understanding_Compression",
+        title: "Section 9 – Compression",
+        items: [
+          ["160 Introduction", "160_Introduction.html"],
+          ["161 Lossless Compression", "161_How_Does_a_Lossless_Compression_Work.html"],
+          ["162 Lossy Compression", "162_Lossy_Compression.html"],
+          ["163 Gzip/Brotli/Deflate", "163_Gzip_Brotli_and_Deflate.html"],
+          ["164 HTTP Compression", "164_Compression_in_HTTP.html"],
+          ["165 Compression vs Minification", "165_Compression_vs_Minification.html"],
+          ["166 Deploy Compression", "166_Deploying_Compression_onto_Our_Apps.html"],
+          ["167 Compression Outro", "167_Final_Notes.html"],
+        ],
+      },
+      {
+        folder: "Section_10_Understanding_Multi_Threading",
+        title: "Section 10 – Multi Threading",
+        items: [
+          ["168 Introduction", "168_Introduction.html"],
+          ["169 MultiThread Guide", "169_Guide_for_Skilled_Multi_Threaded_Developers.html"],
+          ["170 What Is a Thread", "170_What_Exactly_Is_a_Thread.html"],
+          ["171 Monitor Threads", "171_How_to_Monitor_Threads_on_Your_Operating_System.html"],
+          ["172 CPU Usage", "172_Understanding_CPU_Usage.html"],
+          ["173 Spawning Threads", "173_Spawning_Threads.html"],
+          ["174 Thread Communication", "174_Thread_Communication_through_Message_Passing.html"],
+          ["175 CPU Intensive App", "175_Introduction_to_Our_CPU_Intensive_Program.html"],
+          ["176 Enhance Performance", "176_Enhancing_Performance_with_Multi_Threading.html"],
+          ["177 CPU vs I/O", "177_Handling_CPU_Intensive_Operations_in_an_HTTP_Server.html"],
+          ["178 isMainThread", "178_isMainThread.html"],
+          ["179 CPU vs I/O Deep Dive", "179_CPU_Intensive_vs_IO_Intensive.html"],
+          ["180 Crypto App", "180_Examining_a_Crypto_Heavy_Multi_Threaded_App.html"],
+          ["181 Thread Pool", "181_Nodejs_Thread_Pool.html"],
+          ["182 Build Thread Pool", "182_Developing_a_Thread_Pool_From_Scratch.html"],
+          ["183 Event Loop & Threads", "183_Event_Loop_Utilization_and_Main_Thread.html"],
+          ["184 Batch Processing", "184_Keep_the_Main_Thread_Light_with_Batch_Processing.html"],
+          ["185 Expand Thread Pool", "185_Effortlessly_Expanding_Our_Thread_Pool_Capabilities.html"],
+          ["186 Don’t Block Worker Pool", "186_Dont_Block_the_Worker_Pool!.html"],
+          ["187 High Volume Requests", "187_Handling_Billions_of_HTTP_Requests.html"],
+          ["188 Shared Memory", "188_Communication_Through_Shared_Memory.html"],
+          ["189 ArrayBuffers & TypedArrays", "189_ArrayBuffers_SharedArrayBuffers_and_TypedArrays.html"],
+          ["190 Race Conditions", "190_Race_Conditions.html"],
+          ["191 Atomic Operations", "191_Understanding_Atomic_Operations.html"],
+          ["192 Mutual Exclusion", "192_Understanding_Mutual_Exclusion.html"],
+          ["193 Deadlocks", "193_Deadlocks.html"],
+          ["194 Shared Memory Perf", "194_Enhancing_Performance_Through_Shared_Memory.html"],
+          ["195 Native Threads (C/C++)", "195_Native_Multi_Threading_with_C_C_plusplus_Addons.html"],
+          ["196 Event Loop Part 1", "196_A_Deeper_Look_at_the_Event_Loop_PART_1.html"],
+          ["197 Event Loop Part 2", "197_A_Deeper_Look_at_the_Event_Loop_PART_2.html"],
+          ["198 Outro", "198_Outro.html"],
+        ],
+      },
+      {
+        folder: "Section_11_Understanding_Cryptography",
+        title: "Section 11 – Cryptography",
+        items: [
+          ["199 Introduction", "199_Introduction.html"],
+          ["200 Symmetric Encryption", "200_Introduction_to_Symmetric_Encryption.html"],
+          ["201 OTP Encryption", "201_The_Unbreakable_Encryption_OTP_From_Scratch.html"],
+          ["202 How AES Works", "202_How_AES_Encryption_Works.html"],
+          ["203 AES Modes", "203_Understanding_AES_Modes.html"],
+          ["204 Breaking AES", "204_What_It_Takes_to_Break_AES.html"],
+          ["205 Brute Forcing OTP", "205_What_About_Brute_Forcing_OTP.html"],
+          ["206 AES History", "206_History_of_AES.html"],
+          ["207 Hashing", "207_Understanding_Hashing.html"],
+          ["208 SHA-256", "208_SHA_256_From_Scratch.html"],
+          ["209 Breaking SHA-256", "209_What_It_Takes_to_Break_SHA_256.html"],
+          ["210 MACs (MAC)", "210_Message_Authentication_Codes.html"],
+          ["211 KDFs", "211_Understanding_Key_Derivation_Functions.html"],
+          ["212 File Encryption App", "212_Building_a_File_Encryption_Application.html"],
+          ["213 Under Production", "213_Part_2_Under_Production.html"],
+          ["214 Asymmetric Intro", "214_Introduction_to_Asymmetric_Cryptography.html"],
+          ["215 RSA Intro", "215_Introduction_to_RSA.html"],
+          ["216 RSA Math", "216_The_Mathematics_Behind_RSA.html"],
+          ["217 Breaking RSA", "217_What_It_Takes_to_Break_RSA.html"],
+          ["218 HTTPS", "218_HTTPS_from_Scratch.html"],
+          ["219 ECDH", "219_Elliptic_Curve_Diffie_Hellman.html"],
+          ["220 Signatures", "220_Signatures.html"],
+          ["221 Certificates", "221_Digital_Certificates.html"],
+          ["222 TLS", "222_Understanding_TLS.html"],
+          ["223 Microservices Security", "223_Secure_Communication_in_Microservices.html"],
+          ["224 PKI", "224_Understanding_PKI.html"],
+          ["225 Crypto Law", "225_Legal_Battles_over_Cryptography.html"],
+          ["226 Outro", "226_Outro.html"],
+        ],
+      },
+      {
+        folder: "Section_12_Security",
+        title: "Section 12 – Security",
+        items: [
+          ["227 Introduction", "227_Introduction.html"],
+          ["228 Secure Password Storage", "228_How_to_Securely_Store_User_Passwords.html"],
+          ["229 More Lectures", "229_More_Lectures_on_the_Way.html"],
+        ],
+      },
+    ];
 
-    const toggleBtn = document.getElementById("toggle-btn");
-    const pageTitleEl = document.getElementById("page-title");
+    // Flatten into ordered lecture list for Prev/Next
+    const LECTURES = [];
+    SECTIONS.forEach((sec) => {
+      sec.items.forEach(([title, file]) => {
+        LECTURES.push({
+          sectionTitle: sec.title,
+          folder: sec.folder,
+          title,
+          file,
+          path: `${sec.folder}/${file}`
+        });
+      });
+    });
+
+    // UI elements
+    const app = document.getElementById("app");
+    const overlay = document.getElementById("overlay");
+    const sidebarBody = document.getElementById("sidebarBody");
+    const searchInput = document.getElementById("search");
     const viewer = document.getElementById("viewer");
+    const currentTitle = document.getElementById("currentTitle");
+    const currentPath = document.getElementById("currentPath");
+    const btnPrev = document.getElementById("btnPrev");
+    const btnNext = document.getElementById("btnNext");
+    const btnOpen = document.getElementById("btnOpen");
+    const btnPrint = document.getElementById("btnPrint");
+    const btnToggleSidebar = document.getElementById("btnToggleSidebar");
 
-    const prevBtn = document.getElementById("prev-button");
-    const nextBtn = document.getElementById("next-button");
+    // State
+    let currentIndex = -1;
+    const LS_KEY = "node_index_sidebar_collapsed";
 
-    const searchEl = document.getElementById("search");
-    const sectionHeaders = Array.from(document.querySelectorAll(".section-title"));
-    const allLinks = Array.from(document.querySelectorAll(".sub-list a"));
-
-    const LS_LAST = "nodeCourse:lastPage";
-    const LS_SIDEBAR = "nodeCourse:sidebarCollapsed";
-    const LS_SECTIONS = "nodeCourse:sectionsCollapsed"; // JSON map
-
-    function setSidebarCollapsed(collapsed){
-      body.classList.toggle("nav-collapsed", collapsed);
-      localStorage.setItem(LS_SIDEBAR, String(collapsed));
+    function escapeHtml(s) {
+      return (s || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
     }
 
-    toggleBtn.addEventListener("click", () => {
-      setSidebarCollapsed(!body.classList.contains("nav-collapsed"));
-    });
-
-    // Section expand/collapse
-    function loadSectionState(){
-      try { return JSON.parse(localStorage.getItem(LS_SECTIONS) || "{}"); }
-      catch { return {}; }
-    }
-    function saveSectionState(state){
-      localStorage.setItem(LS_SECTIONS, JSON.stringify(state));
+    function isMobile() {
+      return window.matchMedia("(max-width: 920px)").matches;
     }
 
-    function setSectionCollapsed(sectionKey, collapsed){
-      const sub = document.querySelector(`.sub-list[data-sub="${sectionKey}"]`);
-      const chev = document.querySelector(`.section-title[data-section="${sectionKey}"] .chev`);
-      if (!sub) return;
-
-      sub.classList.toggle("collapsed", collapsed);
-      if (chev) chev.textContent = collapsed ? "▸" : "▾";
-
-      const state = loadSectionState();
-      state[sectionKey] = collapsed;
-      saveSectionState(state);
+    function setSidebarStateDesktop(collapsed) {
+      if (collapsed) app.classList.add("sidebar-collapsed");
+      else app.classList.remove("sidebar-collapsed");
+      try { localStorage.setItem(LS_KEY, collapsed ? "1" : "0"); } catch (e) {}
     }
 
-    sectionHeaders.forEach(h => {
-      h.addEventListener("click", () => {
-        const key = h.getAttribute("data-section");
-        const sub = document.querySelector(`.sub-list[data-sub="${key}"]`);
-        const collapsed = sub && !sub.classList.contains("collapsed");
-        setSectionCollapsed(key, collapsed);
-      });
-    });
-
-    function setPageTitleFromPath(pagePath) {
-      const filename = pagePath.split("/").pop();
-      const pretty = filename
-        .replace(/\.html$/i, "")
-        .replace(/_/g, " ")
-        .replace(/\b(\w)/g, m => m.toUpperCase());
-      pageTitleEl.textContent = pretty;
-      document.title = pretty + " – Node.js Core Concepts";
+    function openSidebarMobile() {
+      app.classList.add("sidebar-open-mobile");
+      overlay.setAttribute("aria-hidden", "false");
     }
 
-    function highlightActiveLink(pagePath){
-      allLinks.forEach(a => a.classList.toggle("active", a.getAttribute("data-page") === pagePath));
+    function closeSidebarMobile() {
+      app.classList.remove("sidebar-open-mobile");
+      overlay.setAttribute("aria-hidden", "true");
     }
 
-    function getVisibleLinks(){
-      return allLinks.filter(a => !a.classList.contains("hidden"));
-    }
-
-    function configurePrevNext(pagePath){
-      const visible = getVisibleLinks();
-      const idx = visible.findIndex(a => a.getAttribute("data-page") === pagePath);
-
-      const hasPrev = idx > 0;
-      const hasNext = idx !== -1 && idx < visible.length - 1;
-
-      prevBtn.disabled = !hasPrev;
-      nextBtn.disabled = !hasNext;
-
-      prevBtn.onclick = hasPrev ? () => loadPage(visible[idx - 1].getAttribute("data-page"), true) : null;
-      nextBtn.onclick = hasNext ? () => loadPage(visible[idx + 1].getAttribute("data-page"), true) : null;
-    }
-
-    // IMPORTANT: Use iframe so it works on file://
-    function loadPage(pagePath, pushHistory){
-      viewer.src = pagePath;
-
-      highlightActiveLink(pagePath);
-      setPageTitleFromPath(pagePath);
-      configurePrevNext(pagePath);
-
-      localStorage.setItem(LS_LAST, pagePath);
-
-      // Expand the section containing the active link
-      const activeLink = allLinks.find(a => a.getAttribute("data-page") === pagePath);
-      if (activeLink){
-        const sub = activeLink.closest(".sub-list");
-        if (sub){
-          const key = sub.getAttribute("data-sub");
-          if (key) setSectionCollapsed(key, false);
-        }
-      }
-
-      if (pushHistory) {
-        const url = new URL(location.href);
-        url.searchParams.set("page", pagePath);
-        history.pushState({ page: pagePath }, "", url);
-      }
-    }
-
-    // Link clicks
-    allLinks.forEach(a => {
-      a.addEventListener("click", (e) => {
-        e.preventDefault();
-        const pagePath = a.getAttribute("data-page");
-        loadPage(pagePath, true);
-      });
-    });
-
-    // Search filter
-    searchEl.addEventListener("input", () => {
-      const q = searchEl.value.trim().toLowerCase();
-      allLinks.forEach(a => {
-        const text = a.textContent.toLowerCase();
-        a.classList.toggle("hidden", q && !text.includes(q));
-      });
-
-      // If active gets hidden, move to first visible
-      const active = document.querySelector(".sub-list a.active");
-      if (active && active.classList.contains("hidden")){
-        const first = getVisibleLinks()[0];
-        if (first) loadPage(first.getAttribute("data-page"), true);
-        else {
-          viewer.removeAttribute("src");
-          pageTitleEl.textContent = "No matches";
-          document.title = "Node.js Core Concepts";
-          prevBtn.disabled = true;
-          nextBtn.disabled = true;
-        }
+    function toggleSidebar() {
+      if (isMobile()) {
+        if (app.classList.contains("sidebar-open-mobile")) closeSidebarMobile();
+        else openSidebarMobile();
       } else {
-        const current = document.querySelector(".sub-list a.active");
-        configurePrevNext(current ? current.getAttribute("data-page") : "");
+        const collapsed = app.classList.contains("sidebar-collapsed");
+        setSidebarStateDesktop(!collapsed);
       }
+    }
+
+    function buildSidebar() {
+      sidebarBody.innerHTML = "";
+      SECTIONS.forEach((sec, secIdx) => {
+        const details = document.createElement("details");
+        details.className = "section";
+        if (secIdx < 2) details.open = true;
+
+        const summary = document.createElement("summary");
+        summary.innerHTML = `
+          <div class="sec-left">
+            <div class="sec-name">📌 ${escapeHtml(sec.title)}</div>
+            <div class="sec-folder">${escapeHtml(sec.folder)}</div>
+          </div>
+          <div class="sec-count">(${sec.items.length})</div>
+        `;
+        details.appendChild(summary);
+
+        const list = document.createElement("div");
+        list.className = "lecture-list";
+
+        sec.items.forEach(([title, file]) => {
+          const path = `${sec.folder}/${file}`;
+          const a = document.createElement("a");
+          a.className = "lecture";
+          a.href = `#file=${encodeURIComponent(path)}`;
+          a.dataset.path = path;
+          a.dataset.title = title;
+          a.dataset.section = sec.title;
+          a.innerHTML = `📄 ${escapeHtml(title)}<small>${escapeHtml(path)}</small>`;
+          a.addEventListener("click", (e) => {
+            e.preventDefault();
+            loadByPath(path, true);
+            if (isMobile()) closeSidebarMobile();
+          });
+          list.appendChild(a);
+        });
+
+        details.appendChild(list);
+        sidebarBody.appendChild(details);
+      });
+    }
+
+    function setActiveLink(path) {
+      document.querySelectorAll(".lecture").forEach(a => {
+        a.classList.toggle("active", a.dataset.path === path);
+      });
+    }
+
+    function updateTopbar() {
+      if (currentIndex < 0) {
+        btnPrev.disabled = true;
+        btnNext.disabled = true;
+        btnOpen.disabled = true;
+        btnPrint.disabled = true;
+        currentTitle.textContent = "Select a lecture from the sidebar…";
+        currentPath.textContent = "Tip: Use search, then click a lecture. ✅";
+        return;
+      }
+
+      const item = LECTURES[currentIndex];
+      btnPrev.disabled = currentIndex === 0;
+      btnNext.disabled = currentIndex === LECTURES.length - 1;
+      btnOpen.disabled = false;
+      btnPrint.disabled = false;
+
+      currentTitle.textContent = `🧠 ${item.title}`;
+      currentPath.textContent = `📂 ${item.sectionTitle}  •  ${item.path}`;
+    }
+
+    function scrollToTopEverywhere() {
+      window.scrollTo(0, 0);
+      try {
+        viewer.contentWindow.scrollTo(0, 0);
+        const doc = viewer.contentDocument;
+        if (doc) {
+          doc.documentElement.scrollTop = 0;
+          if (doc.body) doc.body.scrollTop = 0;
+        }
+      } catch (err) {
+        // ignore if blocked
+      }
+    }
+
+    function loadByPath(path, pushHash) {
+      const idx = LECTURES.findIndex(x => x.path === path);
+      if (idx === -1) return;
+
+      currentIndex = idx;
+      const item = LECTURES[currentIndex];
+
+      viewer.src = item.path;
+      setActiveLink(item.path);
+      updateTopbar();
+
+      if (pushHash) {
+        location.hash = `file=${encodeURIComponent(item.path)}`;
+      }
+
+      viewer.onload = () => {
+        scrollToTopEverywhere();
+      };
+    }
+
+    function loadFromHash() {
+      const h = location.hash || "";
+      const m = h.match(/file=([^&]+)/);
+      if (m && m[1]) {
+        const path = decodeURIComponent(m[1]);
+        loadByPath(path, false);
+        return true;
+      }
+      return false;
+    }
+
+    // Prev/Next
+    btnPrev.addEventListener("click", () => {
+      if (currentIndex > 0) loadByPath(LECTURES[currentIndex - 1].path, true);
+    });
+    btnNext.addEventListener("click", () => {
+      if (currentIndex >= 0 && currentIndex < LECTURES.length - 1) {
+        loadByPath(LECTURES[currentIndex + 1].path, true);
+      }
+    });
+
+    // Open in new tab
+    btnOpen.addEventListener("click", () => {
+      if (currentIndex < 0) return;
+      window.open(LECTURES[currentIndex].path, "_blank");
+    });
+
+    // Print current lecture
+    btnPrint.addEventListener("click", () => {
+      if (currentIndex < 0) return;
+      try {
+        viewer.contentWindow.focus();
+        viewer.contentWindow.print();
+      } catch (err) {
+        window.open(LECTURES[currentIndex].path, "_blank");
+      }
+    });
+
+    // Toggle sidebar
+    btnToggleSidebar.addEventListener("click", toggleSidebar);
+    overlay.addEventListener("click", () => {
+      if (isMobile()) closeSidebarMobile();
+    });
+
+    // ESC closes sidebar on mobile
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && isMobile() && app.classList.contains("sidebar-open-mobile")) {
+        closeSidebarMobile();
+      }
+    });
+
+    // Search
+    searchInput.addEventListener("input", () => {
+      const q = (searchInput.value || "").trim().toLowerCase();
+      document.querySelectorAll(".lecture").forEach(a => {
+        const text = `${a.dataset.title} ${a.dataset.path} ${a.dataset.section}`.toLowerCase();
+        a.style.display = text.includes(q) ? "block" : "none";
+      });
     });
 
     // Back/forward
-    window.addEventListener("popstate", (e) => {
-      const page = (e.state && e.state.page) || new URL(location.href).searchParams.get("page");
-      if (page) loadPage(page, false);
+    window.addEventListener("hashchange", () => {
+      loadFromHash();
     });
 
-    window.addEventListener("DOMContentLoaded", () => {
-      // restore sidebar
-      const sidebarCollapsed = localStorage.getItem(LS_SIDEBAR);
-      setSidebarCollapsed(sidebarCollapsed === "true");
-
-      // restore section collapsed state
-      const st = loadSectionState();
-      sectionHeaders.forEach(h => {
-        const key = h.getAttribute("data-section");
-        if (!key) return;
-        const collapsed = !!st[key];
-        setSectionCollapsed(key, collapsed);
-      });
-
-      // initial page: URL > last saved > none
-      const requested = new URL(location.href).searchParams.get("page");
-      const last = localStorage.getItem(LS_LAST);
-
-      if (requested && allLinks.some(a => a.getAttribute("data-page") === requested)){
-        loadPage(requested, false);
-        return;
-      }
-      if (last && allLinks.some(a => a.getAttribute("data-page") === last)){
-        loadPage(last, false);
-        return;
-      }
-
-      pageTitleEl.textContent = "Welcome";
-      document.title = "Node.js Core Concepts";
-      prevBtn.disabled = true;
-      nextBtn.disabled = true;
+    // On resize: ensure correct sidebar mode (close mobile drawer, keep desktop preference)
+    window.addEventListener("resize", () => {
+      if (!isMobile()) closeSidebarMobile();
     });
+
+    // Init
+    buildSidebar();
+
+    // Restore desktop collapsed preference
+    try {
+      const collapsed = localStorage.getItem(LS_KEY) === "1";
+      if (!isMobile()) setSidebarStateDesktop(collapsed);
+    } catch (e) {}
+
+    // Load hash target, otherwise load first lecture
+    if (!loadFromHash()) {
+      if (LECTURES.length > 0) loadByPath(LECTURES[0].path, true);
+      else updateTopbar();
+    }
   </script>
 </body>
 </html>
